@@ -48,4 +48,25 @@ public class SysMenuRoleVo {
     @ApiModelProperty(value = "子集")
     private List<SysMenuRoleVo> children;
 
+    @Override
+    public boolean equals(Object o) {
+        SysMenuRoleVo thisPojo = (SysMenuRoleVo) o;
+        //只有name 和 address 相等，也算相等
+        if (this.getId().equals(thisPojo.getId())){
+            return true;
+        }else {
+            return false;
+        }
+    }
+    @Override
+    public int hashCode() {
+        //根据name和address重新计算hashcode
+        int result = getId().hashCode();
+        //17是死值, jdk建议用17
+        result = 17 * result ;
+        return result;
+    }
+
+
+
 }

@@ -389,3 +389,20 @@ export function taskLogPage(params) {
 export function taskLogClear(params) {
     return axios.get('/tansci/taskLog/clear', { params: params });
 }
+
+// ====================采集管理=========================
+/**
+ * 采集管理
+ * @param {*} params 
+ * @returns 
+ */
+export function collect(params) {
+    // return axios.get('/tansci/collect/record', params);
+    // return axios.get('/tansci/collect/t1', { params: params },'blob');
+    return axios({
+        method: 'get',
+        url: '/tansci/collect/record',
+        responseType: 'blob',
+        params: params
+      });
+}

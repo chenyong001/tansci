@@ -45,9 +45,12 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     @Override
     public List<SysMenu> list(SysMenuDto dto) {
         if (Objects.nonNull(SecurityUserUtils.getUser().getType()) && Objects.equals(1, SecurityUserUtils.getUser().getType())) {
-            SysUserRole role = sysUserRoleService.getOne(Wrappers.<SysUserRole>lambdaQuery().eq(SysUserRole::getUserId, SecurityUserUtils.getUser().getId()));
-            dto.setRoleId(role.getRoleId());
+//            SysUserRole role = sysUserRoleService.getOne(Wrappers.<SysUserRole>lambdaQuery().eq(SysUserRole::getUserId, SecurityUserUtils.getUser().getId()));
+//            dto.setRoleId(role.getRoleId());
         }
+//        修复：新增用户分配的权限显示了全部的菜单，并未根据分配的菜单进行显示
+        SysUserRole role = sysUserRoleService.getOne(Wrappers.<SysUserRole>lambdaQuery().eq(SysUserRole::getUserId, SecurityUserUtils.getUser().getId()));
+        dto.setRoleId(role.getRoleId());
         List<SysMenu> list = this.baseMapper.list(dto);
         if (Objects.nonNull(dto.getRoleId())) {
             // 获取所有菜单的父idgit

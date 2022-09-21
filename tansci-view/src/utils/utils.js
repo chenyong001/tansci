@@ -57,6 +57,21 @@ export function timeFormate(timeStamp) {
 }
 
 /**
+ * 显示当前时间（年月日时分秒）
+ * @param {*} timeStamp 
+ * @returns 
+ */
+export function timeFormate2(timeStamp) {
+    var year = new Date(timeStamp).getFullYear();
+    var month = new Date(timeStamp).getMonth() + 1 < 10 ? "0" + (new Date(timeStamp).getMonth() + 1) : new Date(timeStamp).getMonth() + 1;
+    var date = new Date(timeStamp).getDate() < 10 ? "0" + new Date(timeStamp).getDate() : new Date(timeStamp).getDate();
+    var hh = new Date(timeStamp).getHours() < 10 ? "0" + new Date(timeStamp).getHours() : new Date(timeStamp).getHours();
+    var mm = new Date(timeStamp).getMinutes() < 10 ? "0" + new Date(timeStamp).getMinutes() : new Date(timeStamp).getMinutes();
+    var ss = new Date(timeStamp).getSeconds() < 10 ? "0" + new Date(timeStamp).getSeconds() : new Date(timeStamp).getSeconds();
+    return year + month  + date + hh + mm  + ss ;
+}
+
+/**
  * 毫秒转 dd:HH:mm:sss
  */
 export function formatDuring(val) {
