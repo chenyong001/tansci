@@ -26,7 +26,7 @@ export default defineConfig({
             'Access-Control-Allow-Origin': '*',
         },
         disableHostCheck: true,
-        port: 3000,
+        port: 80,
         proxy: {
             '/tansci': {
                 target: url,
