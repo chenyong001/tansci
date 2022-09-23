@@ -9,8 +9,6 @@ import com.tansci.common.constant.Constants;
 import com.tansci.common.task.RecordTask;
 import com.tansci.domain.system.Record;
 import com.tansci.domain.system.RecordData;
-import com.tansci.domain.system.TaskConfig;
-import com.tansci.service.impl.system.RecordServiceImpl;
 import com.tansci.service.system.RecordDataService;
 import com.tansci.service.system.RecordService;
 import com.tansci.utils.ExportUtil;
