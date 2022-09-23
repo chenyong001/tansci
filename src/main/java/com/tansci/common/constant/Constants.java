@@ -59,4 +59,9 @@ public class Constants {
      */
     public final static Integer DEFAULT_THREAD_POOL = 10;
 
+    /**
+     * 操作系统换行符，自动适应
+     */
+    public final  static  String  OS_LINE_SPERATOR=System.getProperty("line.separator");
+
 }

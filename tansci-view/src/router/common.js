@@ -32,5 +32,11 @@ export default[
             meta: { title: "首页" },
             component: () => import('@/views/common/Main.vue')
         }]
+    },
+    {
+        path: '/recordData',
+        name: 'recordData',
+        meta: {title: "详情"},
+        component: () => import('@/views/collect/RecordData.vue')
     }
 ]

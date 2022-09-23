@@ -3,7 +3,7 @@ package com.tansci.service.system;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.tansci.domain.system.Record;
+import com.tansci.domain.system.RecordData;
 
 import java.util.List;
 
@@ -14,17 +14,19 @@ import java.util.List;
  * @Author： tanyp
  * @Date： 2022/2/25 9:45
  **/
-public interface RecordService extends IService<Record> {
+public interface RecordDataService extends IService<RecordData> {
 
-  IPage<Record> page(Page page, Record record);
+  IPage<RecordData> page(Page page, RecordData recordData);
 
   //    @Override
   @Override
-  boolean save(Record record);
+  boolean save(RecordData recordData);
 
-  Record selectOne(Record record);
+  boolean saveBatch(List<RecordData> recordDataList);
 
-  void update(Record record);
+  Integer countRecord(RecordData recordData);
+
+  List<RecordData> selectList(RecordData dto);
 
   //    boolean update(TaskConfig taskConfig);
 

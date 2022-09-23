@@ -8,7 +8,7 @@ package com.tansci.enums;
 
 public enum LanguageEnum {
   EN("en")
-//  , ZH("zh-Hans"), DE("de"), FR("fr"), JA("ja")
+  , ZH("zh-Hans"), DE("de"), FR("fr"), JA("ja")
   ;
 
   private String language;

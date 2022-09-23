@@ -11,6 +11,7 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class DateUtil {
   public static final String FORMAT_YYYY = "yyyy";
@@ -36,7 +37,6 @@ public class DateUtil {
 
   public static Date str2Date(String strDate, String format) {
     SimpleDateFormat sdf = new SimpleDateFormat(format);
-
     try {
       return sdf.parse(strDate);
     } catch (ParseException var4) {

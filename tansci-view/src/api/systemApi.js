@@ -392,17 +392,48 @@ export function taskLogClear(params) {
 
 // ====================采集管理=========================
 /**
+ * 采集任务分页
+ * @param {*} params 
+ * @returns 
+ */
+export function collectPage(params) {
+    return axios.get('/tansci/collect/page', { params: params });
+}
+/**
+ * 采集数据分页
+ * @param {*} params 
+ * @returns 
+ */
+export function collectDataPage(params) {
+    return axios.get('/tansci/collect/dataPage', { params: params });
+}
+/**
+ * 导出采集数据分页
+ * @param {*} params 
+ * @returns 
+ */
+export function exportTxt(params) {
+    return axios({
+        method: 'get',
+        url: '/tansci/collect/exportTxt',
+        responseType: 'blob',
+        params: params
+      });
+
+}
+/**
  * 采集管理
  * @param {*} params 
  * @returns 
  */
 export function collect(params) {
     // return axios.get('/tansci/collect/record', params);
-    // return axios.get('/tansci/collect/t1', { params: params },'blob');
-    return axios({
-        method: 'get',
-        url: '/tansci/collect/record',
-        responseType: 'blob',
-        params: params
-      });
+    // return axios.post('/tansci/taskConfig/save', params);
+
+    return axios.get('/tansci/collect/record', { params: params });
+    // return axios({
+    //     method: 'get',
+    //     url: '/tansci/collect/record',
+    //     params: params
+    //   });
 }

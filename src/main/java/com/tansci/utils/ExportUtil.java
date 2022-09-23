@@ -1,13 +1,19 @@
 package com.tansci.utils;
 
+import com.tansci.common.constant.Constants;
+import com.tansci.domain.system.Record;
+import com.tansci.domain.system.RecordData;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
 import javax.servlet.http.HttpServletResponse;
 
 public class ExportUtil {
@@ -37,24 +43,47 @@ public class ExportUtil {
 
   }
 
+  public static void exportTxt(HttpServletResponse response, List<RecordData> recordDataList) {
+    response.reset();
+    response.setCharacterEncoding("utf-8");
+    response.setContentType("application/octet-stream;charset=utf-8");
+    response.addHeader("Content-Disposition", "attachment;filename=data_" + System.currentTimeMillis() + ".txt");
+    PrintWriter writer = null;
+
+    try {
+      writer = response.getWriter();
+      StringBuffer sb = new StringBuffer();
+      recordDataList.stream().forEach(recordData -> {
+        sb.append(DateUtil.date2Str(recordData.getTimestamp(),DateUtil.FORMAT_YYYY_MM_DD_HH_MM_SS)).append("===>")
+            .append(recordData.getSubtitle()).append(Constants.OS_LINE_SPERATOR);
+      });
+      writer.write(sb.toString());
+      writer.flush();
+    } catch (Exception var12) {
+    } finally {
+      ResourcesUtil.multiClose(writer);
+    }
+
+  }
 
   public static void exportZip(HttpServletResponse response, Map<String, String> resultMap) {
     response.reset();
     response.setCharacterEncoding("utf-8");
-//    response.setContentType("multipart/form-data");
+    //    response.setContentType("multipart/form-data");
     response.setContentType("application/octet-stream;charset=utf-8");
-    response.addHeader("Content-Disposition", "attachment;filename=data_" + DateUtil.date2Str(new Date(), "yyyyMMddHHmmss") + ".zip");
+    response.addHeader("Content-Disposition",
+        "attachment;filename=data_" + DateUtil.date2Str(new Date(), "yyyyMMddHHmmss") + ".zip");
     ZipOutputStream out = null;
 
     try {
       out = new ZipOutputStream(response.getOutputStream());
       ZipOutputStream finalOut = out;
       resultMap.entrySet().stream().forEach((entry) -> {
-        System.out.println((String)entry.getKey() + "," + (String)entry.getValue());
+        System.out.println((String) entry.getKey() + "," + (String) entry.getValue());
 
         try {
-          finalOut.putNextEntry(new ZipEntry((String)entry.getKey() + ".txt"));
-          finalOut.write(((String)entry.getValue()).getBytes());
+          finalOut.putNextEntry(new ZipEntry((String) entry.getKey() + ".txt"));
+          finalOut.write(((String) entry.getValue()).getBytes());
           finalOut.closeEntry();
           finalOut.flush();
         } catch (IOException var3) {
@@ -70,40 +99,43 @@ public class ExportUtil {
 
   }
 
-//
-//  public static void exportZip(HttpServletResponse response, Map<String, String> resultMap) {
-//    response.setCharacterEncoding("utf-8");
-//    response.setContentType("multipart/form-data");
-////    response.setContentType("application/force-download");
-//    response.addHeader("Content-Disposition",
-//        "attachment;filename=data_" + DateUtil.date2Str(new Date(), "yyyyMMddHHmmss") + ".zip");
-//    ZipOutputStream out = null;
-//
-//    try {
-//      out = new ZipOutputStream(response.getOutputStream());
-//      ZipOutputStream finalOut = out;
-//      resultMap.entrySet().stream().forEach((entry) -> {
-//        System.out.println((String) entry.getKey() + "," + (String) entry.getValue());
-//
-//        try {
-//          finalOut.putNextEntry(new ZipEntry((String) entry.getKey() + ".txt"));
-//          finalOut.write(((String) entry.getValue()).getBytes());
-//          finalOut.closeEntry();
-//          finalOut.flush();
-//        } catch (IOException var3) {
-//          var3.printStackTrace();
-//        }
-//
-//      });
-//    } catch (Exception var7) {
-//      var7.printStackTrace();
-//    } finally {
-////      ResourcesUtil.multiClose(new ZipOutputStream[] { out });
-//    }
-//
-//  }
   //
-  //  public static void main(String[] args) {
+  //  public static void exportZip(HttpServletResponse response, Map<String, String> resultMap) {
+  //    response.setCharacterEncoding("utf-8");
+  //    response.setContentType("multipart/form-data");
+  ////    response.setContentType("application/force-download");
+  //    response.addHeader("Content-Disposition",
+  //        "attachment;filename=data_" + DateUtil.date2Str(new Date(), "yyyyMMddHHmmss") + ".zip");
+  //    ZipOutputStream out = null;
+  //
+  //    try {
+  //      out = new ZipOutputStream(response.getOutputStream());
+  //      ZipOutputStream finalOut = out;
+  //      resultMap.entrySet().stream().forEach((entry) -> {
+  //        System.out.println((String) entry.getKey() + "," + (String) entry.getValue());
+  //
+  //        try {
+  //          finalOut.putNextEntry(new ZipEntry((String) entry.getKey() + ".txt"));
+  //          finalOut.write(((String) entry.getValue()).getBytes());
+  //          finalOut.closeEntry();
+  //          finalOut.flush();
+  //        } catch (IOException var3) {
+  //          var3.printStackTrace();
+  //        }
+  //
+  //      });
+  //    } catch (Exception var7) {
+  //      var7.printStackTrace();
+  //    } finally {
+  ////      ResourcesUtil.multiClose(new ZipOutputStream[] { out });
+  //    }
+  //
+  //  }
+  //
+    public static void main(String[] args) {
+
+      System.out.println("aaaaaaaaaa"+System.getProperty("line.separator")+"bbbbbbbbb");
+    }
   //    Map<String, String> resultMap = new HashMap();
   //    resultMap.put("a1", "a111111111111111111111111111111111111111");
   //    resultMap.put("b1", "b111111111111111111111111111111111111111");
