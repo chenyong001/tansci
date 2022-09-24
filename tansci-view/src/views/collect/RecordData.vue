@@ -7,8 +7,8 @@
                 @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange">
                 <template #search>
                     <div><el-button type="primary" @click="onExportTxt">导出</el-button></div>
-                    <div><el-input v-model="this.searchForm.docId" type="hidden" ></el-input></div>
-                       <div> <el-select v-model="this.searchForm.property" placeholder="请选择语言类型" style="width:70%" >
+                    <div><el-input v-model="searchForm.docId" type="hidden" ></el-input></div>
+                       <div> <el-select v-model="searchForm.property" placeholder="请选择语言类型" style="width:70%" >
                             <el-option label="英语" value="en" ></el-option>
                             <el-option label="中文" value="zh-Hans"></el-option>
                              <el-option label="德语" value="de"></el-option>
