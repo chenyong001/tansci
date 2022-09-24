@@ -1,6 +1,7 @@
 <template>
     <div class="record_data">
         <el-card>
+              
               <p>测试docid=========={{ searchForm.docId }}</p>
             <Table :data="tableData" :column="tableTitle" :operation="false" :page="page" :loading="loading"
                 @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange">
@@ -34,7 +35,11 @@ export default {
     data () {
       return {
         // 保存传递过来的index
-        docId: ''
+        searchForm:{
+          docId: '',
+          property:''
+        }
+        
         
       }
     }, 
@@ -114,7 +119,7 @@ watch: {
     // 初始化数据
     const onCollectPage = () =>{
         state.loading = true;
-        // state.searchForm.docId=this.$route.params.docId;
+        // state.searchForm.docId=this.$route.params.id;
         // state.searchForm.docId=this.docId;
         collectDataPage(Object.assign(state.page,state.searchForm)).then(res=>{
             state.loading = false;
