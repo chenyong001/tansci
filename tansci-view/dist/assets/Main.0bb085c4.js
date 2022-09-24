@@ -1,0 +1,1 @@
+import{_ as a}from"./plugin-vue_export-helper.21dcd24c.js";import{P as t,r as s,t as _,o as n,b as o,c}from"./index.3389bda0.js";const r={class:"main-container"},i=t({__name:"Main",setup(p){const e=s({});return _(e),n(()=>{}),(u,d)=>(o(),c("div",r," \u6B22\u8FCE\u4F7F\u7528 Tansci "))}});var l=a(i,[["__scopeId","data-v-32d7ca84"]]);export{l as default};
