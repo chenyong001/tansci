@@ -18,6 +18,6 @@ sql：
 #tansci根目录下新增Dockerfile
 #cd /home/ubuntu/tansci
 #git pull
-#mvn clean package
+#mvn clean package -Dmaven.test.skip=true
 #docker build -t tansci:v1 .
 #docker run -d --name=tansci -p 8005:8005  --restart=always --privileged=true tansci:v1

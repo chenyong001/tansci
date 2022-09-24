@@ -17,6 +17,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.9.3",
     "axios": "^0.24.0",
+    "babel-plugin-transform-remove-strict-mode": "^0.0.2",
     "sass": "^1.51.0",
     "vite": "^2.9.9"
   }

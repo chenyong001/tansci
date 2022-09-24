@@ -48,9 +48,9 @@ watch: {
   methods: {
     // 获取数据
     gettingData() {
-      var docId2 = this.$route.query.docId
-      this.searchForm.docId=docId2
-      this.searchForm.property="en"
+      var docId2 = this.$route.query.docId;
+      this.searchForm.docId=docId2;
+      this.searchForm.property="en";
     }
   }
 }

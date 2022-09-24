@@ -1,4 +1,5 @@
-FROM node:14.18.1-alpine as build-stage
+FROM node:16.17-alpine as build-stage
+# FROM node:14.18.1-alpine as build-stage
 # build stage
 RUN apk -U upgrade
 
