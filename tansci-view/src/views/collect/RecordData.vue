@@ -29,37 +29,37 @@
       
     </div>
 </template>
-<script>
-export default {
+// <script>
+// export default {
     
-    data () {
-      return {
-        // 保存传递过来的index
-        searchForm:{
-          docId: '',
-          property:''
-        }
+//     data () {
+//       return {
+//         // 保存传递过来的index
+//         searchForm:{
+//           docId: '',
+//           property:''
+//         }
         
         
-      }
-    }, 
-watch: {
-    '$route': 'gettingData'
-  },
-  created() {
-    this.gettingData()
+//       }
+//     }, 
+// watch: {
+//     '$route': 'gettingData'
+//   },
+//   created() {
+//     this.gettingData()
     
-  },
-  methods: {
-    // 获取数据
-    gettingData() {
-      var docId2 = this.$route.query.docId;
-      this.searchForm.docId=docId2;
-      this.searchForm.property="en";
-    }
-  }
-}
-</script>
+//   },
+//   methods: {
+//     // 获取数据
+//     gettingData() {
+//       var docId2 = this.$route.query.docId;
+//       this.searchForm.docId=docId2;
+//       this.searchForm.property="en";
+//     }
+//   }
+// }
+// </script>
 <script setup>
 
     import {onMounted, reactive, nextTick, ref, unref, toRefs} from 'vue'
@@ -67,14 +67,17 @@ watch: {
     import Table from '../../components/Table.vue'
     import {collectDataPage,exportTxt} from '../../api/systemApi.js'
     import {timeFormate2} from '../../utils/utils.js'
+import { useRoute } from "vue-router";
+const route = useRoute();
+    console.log(route.query.docId);  //通过query 传递过来的参数
 
 
     const addRuleForm = ref(null)
     const state = reactive({
         searchForm:{
-            docId: '',
+            docId: route.query.docId,
             // subtitle: '',
-            property: '',
+            property: 'en',
             //  timestamp: ''
         },
         loading: false,

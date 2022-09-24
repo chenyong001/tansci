@@ -12,7 +12,7 @@
                 </template>
          
                 <template #column="scope">
-                    <el-button @click="goDetail(scope)" type="success" >查看数据详情</el-button>
+                    <el-button @click="menuClick(scope)" type="success" >查看数据详情</el-button>
                 </template>
             </Table>
         </el-card>
@@ -65,28 +65,45 @@ docId填入：rdvPragueDocId_23b6a64a-e615-45d9-9b4d-54f26e783480_r3，提交
         </el-dialog>
     </div>
 </template>
-<script>
-export default {
-methods: {
-    // 跳转到传递参数页
-    goDetail(row) {
-      this.$router.push({
-        path: '/recordData',
-        query: {
-          docId: row.column.row.docId
-        }// 要传递的参数
-      })
-    }
-  }
-}
-</script>
+// <script>
+// export default {
+// methods: {
+//     // 跳转到传递参数页
+//     goDetail(row) {
+//       this.$router.push({
+//         path: '/recordData',
+//         query: {
+//           docId: row.column.row.docId
+//         }// 要传递的参数
+//       })
+//     }
+//   }
+// }
+// </script>
 
 <script setup>
     import {onMounted, reactive, nextTick, ref, unref, toRefs} from 'vue'
     import {ElMessage, ElMessageBox} from 'element-plus'
     import Table from '../../components/Table.vue'
     import {collectPage, collect} from '../../api/systemApi.js'
+import { useRouter } from 'vue-router'
 
+// 切换页面
+    const router = useRouter()
+
+    const menuClick = (val) => {
+      router.replace({
+        path: '/recordData',
+        query: {
+          docId:val.column.row.docId
+         
+        }
+      })
+    }
+
+    // return {
+    //   menuClick
+    // }
 
     const addRuleForm = ref(null)
     const state = reactive({
