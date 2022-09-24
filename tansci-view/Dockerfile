@@ -6,6 +6,7 @@ RUN apk -U upgrade
 WORKDIR /app
 
 COPY package*.json ./
+RUN npm install babel-plugin-transform-remove-strict-mode
 RUN npm install
 COPY . .
 RUN npm run build
