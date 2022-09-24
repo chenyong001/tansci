@@ -2,7 +2,7 @@
     <div class="record_data">
         <el-card>
               
-              <p>测试this.searchForm.docId=========={{ this.searchForm.docId }}</p>
+              <p>测试searchForm.docId=========={{ searchForm.docId }}</p>
             <Table :data="tableData" :column="tableTitle" :operation="false" :page="page" :loading="loading"
                 @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange">
                 <template #search>
