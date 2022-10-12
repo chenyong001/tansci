@@ -68,7 +68,8 @@ export function timeFormate2(timeStamp) {
     var hh = new Date(timeStamp).getHours() < 10 ? "0" + new Date(timeStamp).getHours() : new Date(timeStamp).getHours();
     var mm = new Date(timeStamp).getMinutes() < 10 ? "0" + new Date(timeStamp).getMinutes() : new Date(timeStamp).getMinutes();
     var ss = new Date(timeStamp).getSeconds() < 10 ? "0" + new Date(timeStamp).getSeconds() : new Date(timeStamp).getSeconds();
-    return year + month  + date + hh + mm  + ss ;
+    return year + "" + month + "" + date + "" + hh + "" + mm + '' + ss + '';
+    // return year + month  + date + hh + mm  + ss ;
 }
 
 /**

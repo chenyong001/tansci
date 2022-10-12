@@ -48,6 +48,9 @@ public class Record {
 
   @ApiModelProperty(value = "用户ID")
   private String userId;
+  //1:表示微软PPT语音采集，2：表示AZURE-API语音采集
+  @ApiModelProperty(value = "采集类型")
+  private Integer type;
 
   @ApiModelProperty(value = "创建时间")
   private Date createTime;
@@ -57,6 +60,5 @@ public class Record {
 
   @ApiModelProperty(value = "备注")
   private String remark;
-
 
 }

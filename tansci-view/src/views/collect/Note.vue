@@ -1,11 +1,11 @@
 <template>
-    <div class="collect">
+    <div class="note">
         <el-card>
             <Table :data="tableData" :column="tableTitle" :operation="true" :page="page" :loading="loading"
                 @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange">
                 <template #search>
                  
-                    <div><el-button type="primary" @click="onAddCollect">创建采集任务</el-button></div>
+                    <div><el-button type="primary" @click="onAddNote">创建采集任务1</el-button></div>
                     <div><el-input v-model="searchForm.docId" placeholder="请输入docId"></el-input></div>
                     <div><el-button @click="onRefresh" icon="RefreshRight" circle></el-button></div>
                     <div><el-button @click="onSearch" type="primary" icon="Search">查询</el-button></div>
@@ -91,15 +91,23 @@ import { useRouter } from 'vue-router'
 // 切换页面
     const router = useRouter()
 
-    const menuClick = (val) => {
+    const onAddNote = () => {
+        window.open('index.html' )
+    //   router.replace({
+    //     path: '/note/noteCreate'
+    //   })
+    }
+
+ const menuClick = (val) => {
       router.replace({
-        path: '/record/recordData',
+        path: '/note/noteDetail',
         query: {
           docId:val.column.row.docId
          
         }
       })
     }
+
 
     // return {
     //   menuClick
@@ -109,7 +117,7 @@ import { useRouter } from 'vue-router'
     const state = reactive({
         searchForm:{
             docId: null,
-             type:1
+            type:2
         },
         loading: false,
         page: {
@@ -182,17 +190,18 @@ import { useRouter } from 'vue-router'
     }
 
     // 添加
-    const onAddCollect = () =>{
-        state.taskTitle = "创建任务";
-        state.taskForm = {
-            id: '',
-            domain: '',
-            docId: '',
-            reamrk: ''
-        }
+    // const onAddNote = () =>{
+// window.open('index.html' )
+        // state.taskTitle = "创建任务";
+        // state.taskForm = {
+        //     id: '',
+        //     domain: '',
+        //     docId: '',
+        //     reamrk: ''
+        // }
 
-        state.taskVisible = true;
-    }
+    //     state.taskVisible = true;
+    // }
 
     // 编辑
     // const goDetail = (val) =>{

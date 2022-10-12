@@ -36,7 +36,7 @@ public class RecordDataServiceImpl extends ServiceImpl<RecordDataMapper, RecordD
     IPage<RecordData> iPage = this.baseMapper
         .selectPage(page, Wrappers.<RecordData>lambdaQuery().eq(RecordData::getDocId, dto.getDocId())
             //            .eq(RecordData::getSenderId, SecurityUserUtils.getUser().getUsername())
-            .eq(RecordData::getProperty, dto.getProperty())
+            .eq(StringUtils.isNotBlank(dto.getProperty()),RecordData::getProperty, dto.getProperty())
             //            todo 根据时间查询
             .orderByAsc(RecordData::getTimestamp));
     //    iPage.getRecords().forEach(item -> {
@@ -50,7 +50,7 @@ public class RecordDataServiceImpl extends ServiceImpl<RecordDataMapper, RecordD
   public List<RecordData> selectList(RecordData dto) {
     return this.baseMapper.selectList(Wrappers.<RecordData>lambdaQuery().eq(RecordData::getDocId, dto.getDocId())
         //            .eq(RecordData::getSenderId, SecurityUserUtils.getUser().getUsername())
-        .eq(RecordData::getProperty, dto.getProperty())
+        .eq(StringUtils.isNotBlank(dto.getProperty()),RecordData::getProperty, dto.getProperty())
         //            todo 根据时间查询
         .orderByAsc(RecordData::getTimestamp));
 

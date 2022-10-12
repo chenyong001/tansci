@@ -9,7 +9,7 @@ export const useUserStore = defineStore('user', {
     getters: {
         getUser(){
             if(!this.username){
-                let user = JSON.parse(sessionStorage.getItem('user'))
+                let user = JSON.parse(localStorage.getItem('user'))
                 this.username = user.username
                 this.loginTime = user.loginTime
             }
@@ -23,13 +23,13 @@ export const useUserStore = defineStore('user', {
         setUser (data) {
             this.username = data.username
             this.loginTime = data.loginTime
-            sessionStorage.setItem('user', JSON.stringify({
+            localStorage.setItem('user', JSON.stringify({
                 username: data.username,
                 loginTime: data.loginTime
             }))
         },
         delUser () {
-            sessionStorage.clear()
+            localStorage.clear()
         }
     }
 })
@@ -42,7 +42,7 @@ export const useTokenStore = defineStore('token', {
     getters: {
         getToken(){
             if(!this.token){
-                this.token = sessionStorage.getItem('token')
+                this.token = localStorage.getItem('token')
             }
             return this.token;
         }
@@ -50,10 +50,10 @@ export const useTokenStore = defineStore('token', {
     actions: {
         setToken (data) {
             this.token = data
-            sessionStorage.setItem('token', data)
+            localStorage.setItem('token', data)
         },
         delToken () {
-            sessionStorage.clear()
+            localStorage.clear()
         }
     }
 })
@@ -66,7 +66,7 @@ export const useMenuStore = defineStore('menu', {
     getters: {
         getMenu(){
             if(!this.menu){
-                this.menu = JSON.parse(sessionStorage.getItem('menu'))
+                this.menu = JSON.parse(localStorage.getItem('menu'))
             }
             return this.menu;
         }
@@ -74,10 +74,10 @@ export const useMenuStore = defineStore('menu', {
     actions: {
         setMenu (data) {
             this.menu = data
-            sessionStorage.setItem('menu', JSON.stringify(data))
+            localStorage.setItem('menu', JSON.stringify(data))
         },
         delMenu () {
-            sessionStorage.clear()
+            localStorage.clear()
         }
     }
 })

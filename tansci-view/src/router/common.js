@@ -34,9 +34,16 @@ export default[
         }]
     },
     {
-        path: '/recordData',
+        path: '/record/recordData',
         name: 'recordData',
         meta: {title: "详情"},
         component: () => import('@/views/collect/RecordData.vue')
+    }
+    ,
+    {
+        path: '/note/noteDetail',
+        name: 'noteDetail',
+        meta: {title: "创建"},
+        component: () => import('@/views/collect/NoteDetail.vue')
     }
 ]

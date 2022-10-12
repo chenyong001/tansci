@@ -30,7 +30,7 @@ router.beforeEach(async (to, from, next) => {
     NProgress.start()
 
     // 是否登陆
-    if (!sessionStorage.getItem('token') && to.path !== "/login") {
+    if (!localStorage.getItem('token') && to.path !== "/login") {
         return next({ path: "/login" });
     };
 
@@ -42,7 +42,7 @@ router.beforeEach(async (to, from, next) => {
     }
 
     // 动态添加路由
-    if(sessionStorage.getItem('token') && flag){
+    if(localStorage.getItem('token') && flag){
         const menuStore = useMenuStore();
         await menuList({types:'1,2,3', status: 1}).then((res)=>{
             let result = routerFilter(res.result)

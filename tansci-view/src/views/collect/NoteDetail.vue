@@ -2,19 +2,19 @@
     <div class="record_data">
         <el-card>
               
-              <p>测试searchForm.docId=========={{ searchForm.docId }}</p>
+              <p>noteDetail测试searchForm.docId=========={{ searchForm.docId }}</p>
             <Table :data="tableData" :column="tableTitle" :operation="false" :page="page" :loading="loading"
                 @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange">
                 <template #search>
                     <div><el-button type="primary" @click="onExportTxt">导出</el-button></div>
-                    <div><el-input v-model="searchForm.docId" type="hidden" ></el-input></div>
+                    <!-- <div><el-input v-model="searchForm.docId" type="hidden" ></el-input></div>
                        <div> <el-select v-model="searchForm.property" placeholder="请选择语言类型" style="width:70%" >
                             <el-option label="英语" value="en" ></el-option>
                             <el-option label="中文" value="zh-Hans"></el-option>
                              <el-option label="德语" value="de"></el-option>
                               <el-option label="法语" value="fr"></el-option>
                                <el-option label="日语" value="ja"></el-option>
-                        </el-select></div>
+                        </el-select></div> -->
                      <!-- <div><el-input v-model="searchForm.subtitle" type="text" placeholder="请输入内容" ></el-input></div> -->
                     <!-- <div><el-input v-model="searchForm.timestamp" type="text" placeholder="请输入时间" ></el-input></div> -->
                     <!-- <div><el-button @click="onRefresh" icon="RenfreshRight" circle></el-button></div> -->
@@ -77,7 +77,7 @@ const route = useRoute();
         searchForm:{
             docId: route.query.docId,
             // subtitle: '',
-            property: 'en',
+            // property: 'en',
             //  timestamp: ''
         },
         loading: false,
@@ -145,7 +145,7 @@ const route = useRoute();
       let link = document.createElement('a')
       link.style.display = 'none'
       link.href = url
-      let fileName='data_'+timeFormate2(new Date())+"_"+state.searchForm.property+".txt";
+      let fileName='data_'+timeFormate2(new Date())+".txt";
       link.setAttribute('download', fileName)
       document.body.appendChild(link)
       link.click()

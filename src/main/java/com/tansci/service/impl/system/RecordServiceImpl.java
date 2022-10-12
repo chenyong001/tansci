@@ -38,6 +38,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         Wrappers.<Record>lambdaQuery()
             .eq(StringUtils.isNotBlank(record.getDocId()),Record::getDocId, record.getDocId())
             .eq(Record::getUserId,SecurityUserUtils.getUser().getId())
+            .eq(Record::getType, record.getType())
             .like(StringUtils.isNotBlank(record.getRemark()), Record::getRemark, record.getRemark())
             .orderByDesc(Record::getCreateTime)
     );

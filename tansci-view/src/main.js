@@ -21,3 +21,30 @@ for(let icon in ElIcons){
 }
 
 app.mount('#app')
+
+export default {
+    components: {
+    //   "remote-css": {
+    //     render(createElement) {
+    //       return createElement("link", {
+    //         attrs: { rel: "stylesheet", href: this.href },
+    //       });
+    //     },
+    //     props: {
+    //       href: { type: String, required: true },
+    //     },
+    //   },
+      "remote-js": {
+        render(createElement) {
+          return createElement("script", {
+            attrs: { type: "text/javascript", src: this.src },
+          });
+        },
+        props: {
+          src: { type: String, required: true },
+        }
+      }
+    }
+  }
+  
+  

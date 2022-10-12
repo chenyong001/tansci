@@ -7,11 +7,16 @@ import com.beust.jcommander.internal.Lists;
 import com.tansci.domain.system.RecordData;
 import com.tansci.utils.DateUtil;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.time.OffsetTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -23,14 +28,46 @@ public class TestController {
   public static Map<String, String> dbMap = new ConcurrentHashMap();
 
   public static void main(String[] args) {
-    String dataStr="2022-09-23T07:04:46.3735361Z";
-    Date date = DateUtil.str2Date(dataStr, DateUtil.FORMAT_YYYYMMDDTHHMMSS);
-    Calendar cal = Calendar.getInstance();
-     cal.setTime(date);
-     cal.add(Calendar.HOUR_OF_DAY, 8);
-     // adds one hour cal.getTime(); // returns new date object, one hour in the future
-    Date time = cal.getTime();
-    System.out.println();
+    System.out.println(UUID.randomUUID().toString().replace("-",""));
+
+
+    //
+//    long stime=2500000L;
+//    Date date = new Date(stime);
+//    System.out.println(date);
+//    2500000/1000
+////    6100000
+//
+//    System.out.println(OffsetTime.now().getOffset());
+    //    try {
+//      System.out.println("start");
+//      String para1="time";
+//      String para2="sfdjk";
+//      String[] args1 = new String[]{"/home/huan/anaconda2/bin/python", "/home/huan/myfile/pythonfile/helloword.py",para1,para2};
+//      Process pr = Runtime.getRuntime().exec(args1);
+//
+//      BufferedReader in = new BufferedReader(new InputStreamReader(
+//          pr.getInputStream()));
+//      String line;
+//      while ((line = in.readLine()) != null) {
+//        System.out.println(line);
+//      }
+//      in.close();
+//      pr.waitFor();
+//      System.out.println("end");
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
+
+
+//    String dataStr="2022-09-23T07:04:46.3735361Z";
+//    Date date = DateUtil.str2Date(dataStr, DateUtil.FORMAT_YYYYMMDDTHHMMSS);
+//    Calendar cal = Calendar.getInstance();
+//     cal.setTime(date);
+//     cal.add(Calendar.HOUR_OF_DAY, 8);
+//     // adds one hour cal.getTime(); // returns new date object, one hour in the future
+//    Date time = cal.getTime();
+//    System.out.println();
 
     //    String result = HttpClientUtil.sendGetRequest(createZoomMeetingUrl, new HashMap(), new HashMap());
 

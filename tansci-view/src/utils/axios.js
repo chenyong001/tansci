@@ -12,7 +12,7 @@ NProgress.inc(0.2)
 NProgress.configure({ easing: 'ease', speed: 600, showSpinner: false })
 
 axios.interceptors.request.use(function (config) {
-    config.headers.Authorization = 'Bearer '+ sessionStorage.getItem('token') || ''
+    config.headers.Authorization = 'Bearer '+ localStorage.getItem('token') || ''
     // 启动进度条
     NProgress.start()
     return config

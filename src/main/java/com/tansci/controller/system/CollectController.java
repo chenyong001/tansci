@@ -1,7 +1,10 @@
 package com.tansci.controller.system;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.beust.jcommander.internal.Lists;
 import com.tansci.common.WrapMapper;
 import com.tansci.common.Wrapper;
 import com.tansci.common.annotation.Log;
@@ -9,8 +12,10 @@ import com.tansci.common.constant.Constants;
 import com.tansci.common.task.RecordTask;
 import com.tansci.domain.system.Record;
 import com.tansci.domain.system.RecordData;
+import com.tansci.enums.CollectTypeEnum;
 import com.tansci.service.system.RecordDataService;
 import com.tansci.service.system.RecordService;
+import com.tansci.utils.DateUtil;
 import com.tansci.utils.ExportUtil;
 import com.tansci.utils.SecurityUserUtils;
 
@@ -24,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -73,7 +79,7 @@ public class CollectController {
   @GetMapping("/exportTxt")
   public void exportTxt(RecordData recordData, HttpServletResponse response) {
     List<RecordData> recordDataList = recordDataService.selectList(recordData);
-    ExportUtil.exportTxt(response,recordDataList);
+    ExportUtil.exportTxt(response, recordDataList);
   }
 
   @ApiOperation(value = "列表", notes = "采集列表")
@@ -90,9 +96,11 @@ public class CollectController {
     record.setDocId(docId);
     record.setUserId(SecurityUserUtils.getUser().getId());
     record.setRemark(remark);
+
     if (Objects.isNull(recordService.selectOne(record))) {
       record.setCreateTime(new Date());
       record.setUpdateTime(new Date());
+      record.setType(CollectTypeEnum.COLLECT_TYPE_MICROSOFT_PPT.getType());
       recordService.save(record);
     } else {
       record.setUpdateTime(new Date());
@@ -100,7 +108,7 @@ public class CollectController {
     }
 
     //    添加采集数据到数据库中 netstat -ano|findstr "8005" tasklist|findstr "20516" taskkill /f /t /im java.exe
-//    recordTask.singleTask(docId, domain);
+    //    recordTask.singleTask(docId, domain);
     recordTask.addTask(docId, domain);
     return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
 
@@ -128,48 +136,46 @@ public class CollectController {
     //      log.info("export===========success,docId={},time={}", docId, System.currentTimeMillis());
     //    }
   }
-  //
-  //    @GetMapping("/t1")
-  //    public void down1(HttpServletResponse response) throws Exception {
-  //        response.reset();
-  //        response.setContentType("application/octet-stream;charset=utf-8");
-  //        response.setHeader(
-  //            "Content-disposition",
-  //            "attachment; filename=test.png");
-  //        try(
-  //            BufferedInputStream bis = new BufferedInputStream(new FileInputStream("D:\\test\\demodoc.pdf"));
-  //            // 输出流
-  //            BufferedOutputStream bos = new BufferedOutputStream(response.getOutputStream());
-  //        ){
-  //            byte[] buff = new byte[1024];
-  //            int len = 0;
-  //            while ((len = bis.read(buff)) > 0) {
-  //                bos.write(buff, 0, len);
-  //            }
-  //        }
-  //    }
 
-  //
-  //    @ApiOperation(value = "添加菜单", notes = "添加菜单")
-  //    @Log(modul = "菜单-添加菜单", type = Constants.INSERT, desc = "添加菜单")
-  //    @PostMapping("/save")
-  //    public Wrapper<Boolean> save(@RequestBody SysMenu sysMenu) {
-  //        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.save(sysMenu));
-  //    }
-  //
-  //    @ApiOperation(value = "修改菜单", notes = "修改菜单")
-  //    @Log(modul = "菜单-修改菜单", type = Constants.UPDATE, desc = "修改菜单")
-  //    @PostMapping("/update")
-  //    public Wrapper<Boolean> update(@RequestBody SysMenu sysMenu) {
-  //        sysMenu.setUpdateTime(LocalDateTime.now());
-  //        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.updateById(sysMenu));
-  //    }
-  //
-  //    @ApiOperation(value = "删除菜单", notes = "删除菜单")
-  //    @Log(modul = "菜单-删除菜单", type = Constants.DELETE, desc = "删除菜单")
-  //    @GetMapping("/del")
-  //    public Wrapper<Boolean> del(Integer id) {
-  //        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.del(id));
-  //    }
+  @ApiOperation(value = "列表", notes = "采集列表")
+  @Log(modul = "采集-采集列表", type = Constants.SELECT, desc = "采集列表")
+  @GetMapping("/sendNote")
+  @ResponseBody
+  public Wrapper<Boolean> sendNote(@RequestParam(name = "resultText", required = true) String resultText,
+      @RequestParam(name = "docId", required = true) String docId,
+      @RequestParam(name = "remark", required = false) String remark,
+      @RequestParam(name = "language", required = true) String language) {
+    //        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.list(null));
+    log.info("export===========,resultText={}", resultText);
+    //   新增或更新采集记录
+    Record record = new Record();
+    //    String docId = UUID.randomUUID().toString().replace("-", "");
+    record.setDocId(docId);
+    record.setUserId(SecurityUserUtils.getUser().getId());
+    record.setRemark(remark);
+    if (Objects.isNull(recordService.selectOne(record))) {
 
+      record.setType(CollectTypeEnum.COLLECT_TYPE_AZURE.getType());
+      record.setCreateTime(new Date());
+      record.setUpdateTime(new Date());
+      recordService.save(record);
+    }
+//    else {
+//      record.setUpdateTime(new Date());
+//      recordService.update(record);
+//    }
+    //    添加内容到数据库
+    List<RecordData> recordDataList = Lists.newArrayList();
+    RecordData recordData = new RecordData();
+    recordData.setDocId(docId);
+    recordData.setProperty(language);
+    recordData.setSubtitle(resultText);
+    recordData.setTimestamp(new Date());
+    recordDataList.add(recordData);
+    //           入库
+    if (!recordDataList.isEmpty()) {
+      recordDataService.saveBatch(recordDataList);
+    }
+    return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+  }
 }

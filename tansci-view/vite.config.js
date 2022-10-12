@@ -35,6 +35,9 @@ export default defineConfig({
                     '^/tansci': '/tansci'
                 }
             }
+        },
+        hmr:{
+            overlay:true
         }
     }
 
