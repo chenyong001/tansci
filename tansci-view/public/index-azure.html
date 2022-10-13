@@ -4,7 +4,7 @@
 <head>
     <title>ASR</title>
     <meta charset="utf-8" />
-    <script type="text/javascript" src="./difflib-browser.js"></script>
+    <!-- <script type="text/javascript" src="./difflib-browser.js"></script> -->
 </head>
 
 <body style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px;">
@@ -110,7 +110,7 @@
                         <!-- <option value="intentRecognizerRecognizeOnce">Single-shot intent recognition</option> -->
                         <option value="translationRecognizerContinuous">Continuous translation</option>
                         <!-- <option value="pronunciationAssessmentOnce">Single-shot pronunciation assessment</option> -->
-                        <option value="pronunciationAssessmentContinuous">Continuous pronunciation assessment</option>
+                        <!-- <option value="pronunciationAssessmentContinuous">Continuous pronunciation assessment</option> -->
                     </select>
                 </td>
             </tr>
@@ -263,24 +263,24 @@
         // An authorization token is a more secure method to authenticate for a browser deployment as
         // it allows the subscription keys to be kept secure on a server and a 10 minute use token to be
         // handed out to clients from an endpoint that can be protected from unauthorized access.
-        var authorizationEndpoint = "token.php";
+        // var authorizationEndpoint = "token.php";
 
-        function RequestAuthorizationToken() {
-            if (authorizationEndpoint) {
-                var a = new XMLHttpRequest();
-                a.open("GET", authorizationEndpoint);
-                a.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                a.send("");
-                a.onload = function () {
-                    var token = JSON.parse(atob(this.responseText.split(".")[1]));
-                    regionOptions.value = token.region;
-                    authorizationToken = this.responseText;
-                    key.disabled = true;
-                    key.value = "using authorization token (hit F5 to refresh)";
-                    console.log("Got an authorization token: " + token);
-                }
-            }
-        }
+        // function RequestAuthorizationToken() {
+        //     if (authorizationEndpoint) {
+        //         var a = new XMLHttpRequest();
+        //         a.open("GET", authorizationEndpoint);
+        //         a.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        //         a.send("");
+        //         a.onload = function () {
+        //             var token = JSON.parse(atob(this.responseText.split(".")[1]));
+        //             regionOptions.value = token.region;
+        //             authorizationToken = this.responseText;
+        //             key.disabled = true;
+        //             key.value = "using authorization token (hit F5 to refresh)";
+        //             console.log("Got an authorization token: " + token);
+        //         }
+        //     }
+        // }
     </script>
 
     <!-- Speech SDK presence check -->
@@ -450,6 +450,7 @@
                     case 'speechRecognizerContinuous':
                     case 'translationRecognizerContinuous':
                     case 'pronunciationAssessmentContinuous':
+                    if(reco!=undefined){
                         reco.stopContinuousRecognitionAsync(
                             function () {
                                 reco.close();
@@ -461,6 +462,7 @@
                             }
                         );
                         break;
+                    }
                 }
             });
 
@@ -526,9 +528,9 @@
                 SpeechSDK = speechSdk;
 
                 // in case we have a function for getting an authorization token, call it.
-                if (typeof RequestAuthorizationToken === "function") {
-                    RequestAuthorizationToken();
-                }
+                // if (typeof RequestAuthorizationToken === "function") {
+                //     RequestAuthorizationToken();
+                // }
             });
         });
     </script>
@@ -600,6 +602,7 @@
         }
 
         function onRecognizing(sender, recognitionEventArgs) {
+            console.log("onRecognizing============");
             var result = recognitionEventArgs.result;
             // statusDiv.innerHTML += `(recognizing) Reason: ${SpeechSDK.ResultReason[result.reason]}`
             //     + ` Text: ${result.text}\r\n`;
@@ -607,37 +610,7 @@
             phraseDiv.innerHTML = phraseDiv.innerHTML.replace(/(.*)(^|[\r\n]+).*\[\.\.\.\][\r\n]+/, '$1$2')
                 + `${result.text} [...]\r\n`;
             phraseDiv.scrollTop = phraseDiv.scrollHeight;
-            var token=localStorage.getItem('token');
-            // var params={"resultText":result.text};
-           //构造表单数据
-            // var formData = new FormData();
-            // formData.append('resultText', result.text);
-            // formData.append('token', token);
-            // 生产
-            var url="https://opencast.tsi.edu.sg/tansci/collect/sendNote?resultText="+result.text+"&language="+result.language+"&docId="+uuid;
-// 开发
-            // var url="http://localhost:8005/tansci/collect/sendNote?resultText="+result.text+"&language="+result.language+"&docId="+uuid;
-            
-
-            
-            var a = new XMLHttpRequest();
-                a.open("GET", url);
-                a.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                a.setRequestHeader("Authorization", 'Bearer '+token);
-
-                // a.send(formData);
-                a.send();
-                a.onload = function () {
-                    console.log("this.responseText: " + this.responseText);
-                    // alert("未记录到数据库")
-                    // var token = JSON.parse(atob(this.responseText.split(".")[1]));
-                    // regionOptions.value = token.region;
-                    // authorizationToken = this.responseText;
-                    // key.disabled = true;
-                    // key.value = "using authorization token (hit F5 to refresh)";
-                    // console.log("Got an authorization token: " + token);
-                }
-
+           
 
 
     //         new Vue(
@@ -752,6 +725,40 @@
                        Completeness: ${pronunciationAssessmentResult.completenessScore}.\n`;
                         pronunciationAssessmentResults.push(pronunciationAssessmentResult);
                     }
+
+// 入库数据
+                    var token=localStorage.getItem('token');
+var resultText;
+
+if (result.translations) {
+            var resultJson = JSON.parse(result.json);
+            resultText=   resultJson['privTranslationPhrase']['Translation']['Translations'][0].Text
+}else{
+     resultText=result.text;
+}
+
+
+
+// 生产
+var url="https://opencast.tsi.edu.sg/tansci/collect/sendNote?resultText="+resultText+"&language="+result.language+"&docId="+uuid;
+// 开发
+// var url="http://localhost:8005/tansci/collect/sendNote?resultText="+result.text+"&language="+result.language+"&docId="+uuid;
+
+
+
+var a = new XMLHttpRequest();
+    a.open("GET", url);
+    a.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    a.setRequestHeader("Authorization", 'Bearer '+token);
+
+    // a.send(formData);
+    a.send();
+    a.onload = function () {
+        console.log("this.responseText: " + this.responseText);
+        
+    }
+
+
                     break;
             }
         }
