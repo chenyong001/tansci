@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.Maps;
@@ -87,6 +88,15 @@ public class CollectController {
       cacheMap.put(tokenKey, result);
       log.info("==================getAzureToken={}", result);
     }
+    return cacheMap.get(tokenKey);
+  }
+  @ResponseBody
+  @PostMapping("/clearAzureToken")
+  public String clearAzureToken() {
+    String tokenKey = "token";
+    cacheMap.remove(tokenKey);
+    log.info("==================clearAzureToken=");
+    //    }
     return cacheMap.get(tokenKey);
   }
 
@@ -179,6 +189,10 @@ public class CollectController {
       @RequestParam(name = "language", required = true) String language) {
     //        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.list(null));
     log.info("export===========,resultText={}", resultText);
+    if (StringUtils.isBlank(resultText)) {
+      //      如果数据为空，则不处理，直接返回
+      return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+    }
     //   新增或更新采集记录
     Record record = new Record();
     //    String docId = UUID.randomUUID().toString().replace("-", "");
@@ -211,26 +225,25 @@ public class CollectController {
     return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
   }
 
-
   @GetMapping("/getMyData")
   @ResponseBody
   public Wrapper<List<MyData>> getMyData(RecordData recordData) {
     //        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.list(null));
     log.info("getMyData======================================");
     //   新增或更新采集记录
-    List<MyData> myDataList=Lists.newArrayList();
+    List<MyData> myDataList = Lists.newArrayList();
     List<RecordData> recordDataList = recordDataService.selectList(recordData);
     JSONArray recordDataJsonArray = JSONArray.parseArray(JSON.toJSONString(recordDataList));
-//    System.out.println(JSON.toJSONString(recordDataList));
-//    System.out.println("=========================");
-//    System.out.println(recordDataJsonArray.toJSONString());
-//    JSON.parseArray()
-//    String str = "[{\"docId\":\"rdvPragueDocId_ea41fe07-20b1-403e-afd8-183449a24bb0_r2\",\"subtitle\":\"Hello。 H22ello22。我爱你，时间\",\"property\":\"en\",\"userId\":\"bc3ac26e69731b617eb80274453f6dba\",\"timestamp\":\"2022-09-23 15:57:15\"},{\"docId\":\"rdvPragueDocId_ea41fe07-20b1-403e-afd8-183449a24bb0_r2\",\"subtitle\":\"Create an acquisition task.\",\"property\":\"en\",\"userId\":\"bc3ac26e69731b617eb80274453f6dba\",\"timestamp\":\"2022-09-23 15:57:27\"}]";
+    //    System.out.println(JSON.toJSONString(recordDataList));
+    //    System.out.println("=========================");
+    //    System.out.println(recordDataJsonArray.toJSONString());
+    //    JSON.parseArray()
+    //    String str = "[{\"docId\":\"rdvPragueDocId_ea41fe07-20b1-403e-afd8-183449a24bb0_r2\",\"subtitle\":\"Hello。 H22ello22。我爱你，时间\",\"property\":\"en\",\"userId\":\"bc3ac26e69731b617eb80274453f6dba\",\"timestamp\":\"2022-09-23 15:57:15\"},{\"docId\":\"rdvPragueDocId_ea41fe07-20b1-403e-afd8-183449a24bb0_r2\",\"subtitle\":\"Create an acquisition task.\",\"property\":\"en\",\"userId\":\"bc3ac26e69731b617eb80274453f6dba\",\"timestamp\":\"2022-09-23 15:57:27\"}]";
     //    PyList pyList = new PyList();
-//    JSONArray jsonArray = JSONArray.parseArray(str);
-//    System.out.println(jsonArray.toJSONString());
+    //    JSONArray jsonArray = JSONArray.parseArray(str);
+    //    System.out.println(jsonArray.toJSONString());
     Process proc;
-    String result= null;
+    String result = null;
     try {
         	/*
 			附加：
@@ -238,16 +251,16 @@ public class CollectController {
        还有就是可以看出，此方法可以满足我们python代码中调用第三方库的情况，简单实用。
        "E:\\tansci\\src\\main\\java\\com\\tansci\\controller/test_def.py"
 			*/
-//      String jsonStr=jsonArray.toJSONString();
-      String jsonStr=JSON.toJSONString(recordDataList);
-      jsonStr=jsonStr.replace("\"","\'");
+      //      String jsonStr=jsonArray.toJSONString();
+      String jsonStr = JSON.toJSONString(recordDataList);
+      jsonStr = jsonStr.replace("\"", "\'");
       //      "C:\\Python310/python.exe"
       String[] args1 = new String[0];
-      log.info("===============os.name={}",SystemUtil.getOsName());
-      if(SystemUtil.isWindows()){
-        args1 = new String[] { "python", "E:\\tansci\\py/analyseRecord.py", "--param1="+jsonStr };
-      }else {
-        args1 = new String[] { "python", "/analyseRecord.py", "--param1="+jsonStr };
+      log.info("===============os.name={}", SystemUtil.getOsName());
+      if (SystemUtil.isWindows()) {
+        args1 = new String[] { "python", "E:\\tansci\\py/analyseRecord.py", "--param1=" + jsonStr };
+      } else {
+        args1 = new String[] { "python", "/analyseRecord.py", "--param1=" + jsonStr };
       }
 
       proc = Runtime.getRuntime().exec(args1);
@@ -256,33 +269,32 @@ public class CollectController {
       while ((line = in.readLine()) != null) {
         //        {"hello": 1, "h": 1, "ello": 1, "create": 1, "an": 1, "acquisition": 1, "task": 1}
         System.out.println(line);
-        result=line;
+        result = line;
       }
 
       JSONObject jsonInfo = JSON.parseObject(result);
       Iterator iter = jsonInfo.entrySet().iterator();
       while (iter.hasNext()) {
         Map.Entry entry = (Map.Entry) iter.next();
-        myDataList.add(new MyData(entry.getKey().toString(),entry.getValue().toString()));
-//        System.out.println(entry.getKey().toString());
-//        System.out.println(entry.getValue().toString());
+        myDataList.add(new MyData(entry.getKey().toString(), entry.getValue().toString()));
+        //        System.out.println(entry.getKey().toString());
+        //        System.out.println(entry.getValue().toString());
       }
-//      myDataList.add(new MyData("指标1","143"));
-//      myDataList.add(new MyData("指标2","243"));
-//      myDataList.add(new MyData("指标3","343"));
-//      myDataList.add(new MyData("指标4","443"));
-//      myDataList.add(new MyData("指标5","543"));
+      //      myDataList.add(new MyData("指标1","143"));
+      //      myDataList.add(new MyData("指标2","243"));
+      //      myDataList.add(new MyData("指标3","343"));
+      //      myDataList.add(new MyData("指标4","443"));
+      //      myDataList.add(new MyData("指标5","543"));
       in.close();
       proc.waitFor();
     } catch (IOException e) {
       e.printStackTrace();
     } catch (InterruptedException e) {
       e.printStackTrace();
-    }finally {
+    } finally {
       return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, myDataList);
     }
   }
-
 
   @Data
   class MyData implements Serializable {

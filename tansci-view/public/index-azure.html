@@ -729,7 +729,7 @@
                         pronunciationAssessmentResults.push(pronunciationAssessmentResult);
                     }
 
-                    if(!resultText.text){
+          
 
                         // 入库数据
                         var token=localStorage.getItem('token');
@@ -742,7 +742,7 @@
                             resultText=result.text;
                         }
 
-
+                        if( resultText!== null  && resultText !== '' ){
 
                         // 生产
                         var url="https://opencast.tsi.edu.sg/tansci/collect/sendNote?resultText="+resultText+"&language="+result.language+"&docId="+uuid;
