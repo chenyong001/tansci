@@ -77,7 +77,7 @@ public class CollectController {
     String subscriptionKey = "de4e9ac5168843c2b74a9b1477376668";
 
     String tokenKey = "token";
-    if (!cacheMap.containsKey(tokenKey)) {
+//    if (!cacheMap.containsKey(tokenKey)) {
       //    发送请求
       String url = "https://" + region + ".api.cognitive.microsoft.com/sts/v1.0/issueToken";
       Map<String, String> headerParams = Maps.newHashMap();
@@ -87,7 +87,7 @@ public class CollectController {
       String result = HttpClientUtil.sendPostRequest(url, headerParams, bodyParams);
       cacheMap.put(tokenKey, result);
       log.info("==================getAzureToken={}", result);
-    }
+//    }
     return cacheMap.get(tokenKey);
   }
   @ResponseBody
