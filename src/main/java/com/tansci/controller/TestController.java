@@ -1,37 +1,17 @@
 package com.tansci.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.beust.jcommander.internal.Lists;
-import com.google.common.collect.Maps;
-import com.tansci.domain.system.RecordData;
 import com.tansci.utils.DateUtil;
-import com.tansci.utils.HttpClientUtil;
 import com.tansci.utils.SystemUtil;
-
-import org.python.core.Py;
-import org.python.core.PyArray;
-import org.python.core.PyFunction;
-import org.python.core.PyInteger;
-import org.python.core.PyList;
-import org.python.core.PyObject;
-import org.python.util.PythonInterpreter;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.OffsetTime;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.extern.slf4j.Slf4j;
