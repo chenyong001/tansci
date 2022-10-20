@@ -44,7 +44,7 @@ router.beforeEach(async (to, from, next) => {
     // 动态添加路由
     if(localStorage.getItem('token') && flag){
         const menuStore = useMenuStore();
-        await menuList({types:'1,2,3', status: 1}).then((res)=>{
+        await  menuList({types:'1,2,3', status: 1}).then((res)=>{
             let result = routerFilter(res.result)
             result.push({path:'/:pathMatch(.*)*', redirect:'/404'})
             result.forEach((item) => {
@@ -53,7 +53,18 @@ router.beforeEach(async (to, from, next) => {
             menuStore.setMenu([...result])
             flag = false
             next({ ...to, replace: true })
-        })
+        }
+        ,error=>{
+            // token 过期
+            // localStorage.removeItem("token")
+            // localStorage.setItem("token","")
+            localStorage.clear();
+            router.push({path: 'login'})
+            console.log("token 过期,error="+error)
+            // next({ ...to, replace: true })
+            // next()
+        }
+        )
     } else{
         next()
     }

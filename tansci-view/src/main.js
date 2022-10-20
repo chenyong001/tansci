@@ -7,6 +7,7 @@ import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import * as ElIcons from '@element-plus/icons-vue'
 import './styles/index.scss'
+import ECharts from 'vue-echarts';
 
 const app = createApp(App)
 app.use(store)
@@ -19,6 +20,7 @@ app.use(ElementPlus, {
 for(let icon in ElIcons){
     app.component(icon,ElIcons[icon])
 }
+app.component('VChart', ECharts);
 
 app.mount('#app')
 

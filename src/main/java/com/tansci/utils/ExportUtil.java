@@ -1,14 +1,11 @@
 package com.tansci.utils;
 
 import com.tansci.common.constant.Constants;
-import com.tansci.domain.system.Record;
 import com.tansci.domain.system.RecordData;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -57,6 +54,37 @@ public class ExportUtil {
         sb.append(DateUtil.date2Str(recordData.getTimestamp(),DateUtil.FORMAT_YYYY_MM_DD_HH_MM_SS)).append("===>")
             .append(recordData.getSubtitle()).append(Constants.OS_LINE_SPERATOR);
       });
+      writer.write(sb.toString());
+      writer.flush();
+    } catch (Exception var12) {
+    } finally {
+      ResourcesUtil.multiClose(writer);
+    }
+
+  }
+
+
+  public static void exportSrt(HttpServletResponse response, List<RecordData> recordDataList) {
+    response.reset();
+    response.setCharacterEncoding("utf-8");
+    response.setContentType("application/octet-stream;charset=utf-8");
+    response.addHeader("Content-Disposition", "attachment;filename=data_" + System.currentTimeMillis() + ".srt");
+    PrintWriter writer = null;
+
+    try {
+      writer = response.getWriter();
+      StringBuffer sb = new StringBuffer();
+      for (int i=0;i<recordDataList.size();i++) {
+        String startTime = DateUtil.date2Str(recordDataList.get(i).getTimestamp(),DateUtil.FORMAT_HH_MM_SS_SSS);
+        String endTime = DateUtil.date2Str(recordDataList.get(i).getTimestamp(),DateUtil.FORMAT_HH_MM_SS_SSS);
+        String msg = recordDataList.get(i).getSubtitle();
+        sb.append(i + 1).append("\n").append(startTime).append(" --> ").append(endTime).append("\n").append(msg).append("\n").append("\n");
+        //        sb.append(DateUtil.date2Str(recordData.getTimestamp(),DateUtil.FORMAT_YYYY_MM_DD_HH_MM_SS)).append("===>")
+        //            .append(recordData.getSubtitle()).append(Constants.OS_LINE_SPERATOR);
+      }
+//      recordDataList.stream().forEach(recordData -> {
+//
+//      });
       writer.write(sb.toString());
       writer.flush();
     } catch (Exception var12) {

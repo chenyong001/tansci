@@ -453,3 +453,20 @@ export function sendNote(params) {
     //     params: params
     //   });
 }
+
+/**
+ * 采集管理
+ * @param {*} params 
+ * @returns 
+ */
+export function getMyData(params) {
+    // return axios.get('/tansci/collect/record', params);
+    // return axios.post('/tansci/taskConfig/save', params);
+
+    return axios.get('/tansci/collect/getMyData', { params: params });
+    // return axios({
+    //     method: 'get',
+    //     url: '/tansci/collect/record',
+    //     params: params
+    //   });
+}

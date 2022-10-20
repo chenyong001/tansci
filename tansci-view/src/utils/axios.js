@@ -25,7 +25,7 @@ axios.interceptors.response.use(res => {
     }
 
     // 下载文件特殊处理
-    if(res.config.responseType == 'blob'){
+    if(res.config.responseType&&res.config.responseType == 'blob'){
         // 关闭进度条
         NProgress.done();
         return res;

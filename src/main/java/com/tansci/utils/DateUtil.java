@@ -24,6 +24,7 @@ public class DateUtil {
   public static final String FORMAT_YYYYMM = "yyyyMM";
   public static final String FORMAT_YYYYMMDDHHMMSS = "yyyyMMddHHmmss";
   public static final String FORMAT_YYYYMMDDTHHMMSS = "yyyy-MM-dd'T'HH:mm:ss";
+  public static final String FORMAT_HH_MM_SS_SSS = "HH:mm:ss,SSS";
 
   public static final DateTimeFormatter FORMATTER_YYYY = DateTimeFormatter.ofPattern("yyyy");
   public static final DateTimeFormatter FORMATTER_YYYYMM = DateTimeFormatter.ofPattern("yyyyMM");

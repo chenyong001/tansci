@@ -93,6 +93,8 @@ import { useRouter } from 'vue-router'
 
     const onAddNote = () => {
         window.open('/index-azure.html' )
+        // window.open('/index.html' )
+
     //   router.replace({
     //     path: '/note/noteCreate'
     //   })

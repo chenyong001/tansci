@@ -263,24 +263,27 @@
         // An authorization token is a more secure method to authenticate for a browser deployment as
         // it allows the subscription keys to be kept secure on a server and a 10 minute use token to be
         // handed out to clients from an endpoint that can be protected from unauthorized access.
-        // var authorizationEndpoint = "token.php";
+        // var authorizationEndpoint = "https://opencast.tsi.edu.sg/tansci/collect/getAzureToken";
+        var authorizationEndpoint = "http://localhost:8005/tansci/collect/getAzureToken";
 
-        // function RequestAuthorizationToken() {
-        //     if (authorizationEndpoint) {
-        //         var a = new XMLHttpRequest();
-        //         a.open("GET", authorizationEndpoint);
-        //         a.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        //         a.send("");
-        //         a.onload = function () {
-        //             var token = JSON.parse(atob(this.responseText.split(".")[1]));
-        //             regionOptions.value = token.region;
-        //             authorizationToken = this.responseText;
-        //             key.disabled = true;
-        //             key.value = "using authorization token (hit F5 to refresh)";
-        //             console.log("Got an authorization token: " + token);
-        //         }
-        //     }
-        // }
+        function RequestAuthorizationToken() {
+            if (authorizationEndpoint) {
+                var token=localStorage.getItem('token');
+                var a = new XMLHttpRequest();
+                a.open("POST", authorizationEndpoint);
+                a.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                a.setRequestHeader("Authorization", 'Bearer '+token);
+                a.send();
+                a.onload = function () {
+                    // var token = JSON.parse(atob(this.responseText.split(".")[1]));
+                    regionOptions.value = "eastasia";
+                    authorizationToken = this.responseText;
+                    key.disabled = true;
+                    key.value = "using authorization token (hit F5 to refresh)";
+                    // console.log("Got an authorization token: " + token);
+                }
+            }
+        }
     </script>
 
     <!-- Speech SDK presence check -->
@@ -528,9 +531,9 @@
                 SpeechSDK = speechSdk;
 
                 // in case we have a function for getting an authorization token, call it.
-                // if (typeof RequestAuthorizationToken === "function") {
-                //     RequestAuthorizationToken();
-                // }
+                if (typeof RequestAuthorizationToken === "function") {
+                    RequestAuthorizationToken();
+                }
             });
         });
     </script>
@@ -726,37 +729,41 @@
                         pronunciationAssessmentResults.push(pronunciationAssessmentResult);
                     }
 
-// 入库数据
-                    var token=localStorage.getItem('token');
-var resultText;
+                    if(!resultText.text){
 
-if (result.translations) {
-            var resultJson = JSON.parse(result.json);
-            resultText=   resultJson['privTranslationPhrase']['Translation']['Translations'][0].Text
-}else{
-     resultText=result.text;
-}
+                        // 入库数据
+                        var token=localStorage.getItem('token');
+                        var resultText;
 
-
-
-// 生产
-var url="https://opencast.tsi.edu.sg/tansci/collect/sendNote?resultText="+resultText+"&language="+result.language+"&docId="+uuid;
-// 开发
-// var url="http://localhost:8005/tansci/collect/sendNote?resultText="+result.text+"&language="+result.language+"&docId="+uuid;
+                        if (result.translations) {
+                                    var resultJson = JSON.parse(result.json);
+                                    resultText=   resultJson['privTranslationPhrase']['Translation']['Translations'][0].Text
+                        }else{
+                            resultText=result.text;
+                        }
 
 
 
-var a = new XMLHttpRequest();
-    a.open("GET", url);
-    a.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    a.setRequestHeader("Authorization", 'Bearer '+token);
+                        // 生产
+                        var url="https://opencast.tsi.edu.sg/tansci/collect/sendNote?resultText="+resultText+"&language="+result.language+"&docId="+uuid;
+                        // 开发
+                        // var url="http://localhost:8005/tansci/collect/sendNote?resultText="+result.text+"&language="+result.language+"&docId="+uuid;
 
-    // a.send(formData);
-    a.send();
-    a.onload = function () {
-        console.log("this.responseText: " + this.responseText);
-        
-    }
+
+
+                        var a = new XMLHttpRequest();
+                            a.open("GET", url);
+                            a.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                            a.setRequestHeader("Authorization", 'Bearer '+token);
+
+                            // a.send(formData);
+                            a.send();
+                            a.onload = function () {
+                                console.log("this.responseText: " + this.responseText);
+                                
+                            }
+                                            }
+
 
 
                     break;
