@@ -245,7 +245,7 @@ public class CollectController {
       String[] args1 = new String[0];
       log.info("===============os.name={}",SystemUtil.getOsName());
       if(SystemUtil.isWindows()){
-        args1 = new String[] { "python", "E:\\tansci\\src\\main\\java\\com\\tansci\\controller/analyseRecord.py", "--param1="+jsonStr };
+        args1 = new String[] { "python", "E:\\tansci\\py/analyseRecord.py", "--param1="+jsonStr };
       }else {
         args1 = new String[] { "python", "/analyseRecord.py", "--param1="+jsonStr };
       }

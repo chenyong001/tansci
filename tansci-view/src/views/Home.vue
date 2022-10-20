@@ -145,8 +145,6 @@
 
 	const onPie = () =>{
 		let myPie = echarts.init(document.getElementById("myPie"));
-		const { myData } = await getHistogramApi()
-      console.log(myData)
 		myPie.setOption({
 			title: {},
 			legend: {},
@@ -175,16 +173,15 @@
 					labelLine: {
 						show:false
 					},
-					data: myData
-					// data: [
-					// 	{value: 335, name: '指标一2'},
-					// 	{value: 310, name: '指标二'},
-					// 	{value: 274, name: '指标三'},
-					// ].sort(function (a, b) {
-					// 	return a.value - b.value;
-					// }
+					data: [
+						{value: 335, name: '指标一2'},
+						{value: 310, name: '指标二'},
+						{value: 274, name: '指标三'},
+					].sort(function (a, b) {
+						return a.value - b.value;
+					}
 					
-					// )
+					)
 				}
 			]
 		});
