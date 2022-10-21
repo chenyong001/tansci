@@ -7,16 +7,13 @@ WORKDIR /app
 #加入jar包
 ADD  target/*.jar /app/tansci.jar
 #添加py脚本文件
-ADD py/analyseRecorcat
+ADD py/analyseRecord.py /
 #创建日志目录
 RUN mkdir /logs
 #暴露端口
 EXPOSE 8005
 # 运行jar包
 ENTRYPOINT ["nohup","java","-jar","/app/tansci.jar","&"]
-
-
-
 
 #com/my/python-java 所执行的命令
 #pip install nltk
