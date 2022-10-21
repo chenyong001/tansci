@@ -12,8 +12,7 @@ sql：
 #cd /home/ubuntu/tansci/tansci-view
 #git pull
 #docker build -t tansci-view:v1 .
-#docker stop tansci-view
-#docker rm tansci-view
+#docker stop tansci-view && docker rm tansci-view
 #docker run -p 8001:80 --name=tansci-view -d tansci-view:v1
 
 #后端部署
@@ -22,6 +21,5 @@ sql：
 #git pull
 #mvn clean package -Dmaven.test.skip=true
 #docker build -t tansci:v1 .
-#docker stop tansci
-#docker rm tansci
+#docker stop tansci && docker rm tansci
 #docker run -d --name=tansci -p 8005:8005  --restart=always --privileged=true tansci:v1
