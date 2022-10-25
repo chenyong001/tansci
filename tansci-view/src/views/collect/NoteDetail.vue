@@ -1,12 +1,10 @@
 <template>
-  <div class="record_data">
+  <div class="record_data" style="display: flex;
+  justify-content: space-between;">
     <!-- <v-chart class="chart" :option="option2" /> -->
-
-    <el-card>
-      <div id="myPie" style="height:300px;width:400px;display:table-cell"></div>
-      <div id="tlrealtimewordcloud" style="height:300px;width:400px;display:table-cell"></div>
-    </el-card>
-    <el-card>
+  <div style="width:60%;">
+    <!-- border: 1px solid red; -->
+    <el-card >
       <!-- <p>noteDetail测试searchForm.docId=========={{ searchForm.docId }}</p> -->
       <Table
         :data="tableData"
@@ -16,6 +14,8 @@
         :loading="loading"
         @onSizeChange="onSizeChange"
         @onCurrentChange="onCurrentChange"
+
+
       >
         <template #search>
           <div>
@@ -42,6 +42,13 @@
         </template>-->
       </Table>
     </el-card>
+    </div>
+    <div style="width:40%;">
+    <el-card >
+      <div id="myPie" style="height:500px"></div>
+      <div id="tlrealtimewordcloud"  style="height:500px" ></div>
+    </el-card>
+    </div>
   </div>
 </template>
 
@@ -67,12 +74,12 @@ const state = reactive({
   loading: false,
   page: {
     current: 1,
-    size: 10,
+    size: 100,
     total: 1
   },
   tableTitle: [
-    { prop: "id", label: "ID" },
-    { prop: "docId", label: "文档ID" },
+    { prop: "id", label: "ID",width:100 },
+    // { prop: "docId", label: "文档ID" },
     // {prop:'status',alias:'statusName',label:'状态',
     //     type:'switch',
     //     option:{
@@ -82,7 +89,7 @@ const state = reactive({
     // },
     // {prop:'creater',label:'创建人'},
     { prop: "subtitle", label: "内容" },
-    { prop: "timestamp", label: "创建时间" }
+    { prop: "timestamp", label: "创建时间",width:200 }
   ],
   tableData: [],
   taskVisible: false,
@@ -229,7 +236,7 @@ const   onPie = async  () => {
     legend: {},
     tooltip: {
       trigger: "item",
-      formatter: "{a} <br/>{b} : {c}￥ ({d}%)"
+      formatter: "{a} <br/>{b} : {c} ({d}%)"
     },
     // color: ["#94716B", "#6C5B7B", "#355C7D"],
     series: [
@@ -280,7 +287,7 @@ const onLtrealtimewordcloud = async () => {
     // legend: {},
     // tooltip: {
     // 	trigger: 'item',
-    //     formatter: '{a} <br/>{b} : {c}￥ ({d}%)'
+    //     formatter: '{a} <br/>{b} : {c} ({d}%)'
     // },
     // color: ['#94716B', '#6C5B7B', '#355C7D'],
     series: [

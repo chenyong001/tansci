@@ -29,8 +29,8 @@
                     <el-input v-model="addMenuForm.url" placeholder="请输入路由" style="width:50%"></el-input>
                 </el-form-item>
                 <el-form-item label="中文名称" prop="chineseName" :rules="[
-                    {required: true, message: '中文名称不能为空', trigger: 'blur'},
-                    {pattern: /^[\u4e00-\u9fa5]{0,}$/, message: '必须是汉字', trigger: 'blur'}]">
+                    {required: true, message: '中文名称不能为空', trigger: 'blur'}
+                    ]">
                     <el-input v-model="addMenuForm.chineseName" placeholder="请输入中文名称" style="width:50%"></el-input>
                 </el-form-item>
                 <el-form-item label="英文名称" prop="englishName">

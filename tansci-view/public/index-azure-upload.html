@@ -44,7 +44,7 @@
                     </select>
                 </td>
             </tr>
-            <tr>
+            <tr >
                 <td align="right">Recognition language:</td>
                 <td align="left">
                     <!-- For the full list of supported languages see:
@@ -83,21 +83,22 @@
                     </select>
                 </td>
             </tr>
-            <tr style="display:none">
-                <td align="right">Audio Input:</td>
-                <td align="left">
-                    <input type="radio"
+            <tr>
+                <td align="right"></td>
+             <td align="left">
+                  <!-- <input type="radio"
                         name="inputSourceOption"
                         checked="checked"
                         id="inputSourceMicrophoneRadio"
                         value="Microphone"/>
-                    <select id="microphoneSources" disabled="true"/>
+                    <select id="microphoneSources" disabled="true"/> -->
                     <input type="radio"
                         name="inputSourceOption"
+                        checked="checked"
                         id="inputSourceFileRadio"
                         value="File"/>
                     <label id="inputSourceFileLabel" for="inputSourceFileRadio">Audio file</label>
-                    <button id="inputSourceChooseFileButton" disabled="true">...</button>
+                    <button id="inputSourceChooseFileButton">...</button>
                     <input type="file" id="filePicker" accept=".wav" style="display:none" />
                 </td>
             </tr>
@@ -114,7 +115,7 @@
                     </select>
                 </td>
             </tr>
-            <tr id="formatOptionRow" style="display:none">
+            <tr id="formatOptionRow"  style="display:none">
                 <td align="right">Result Format:</td>
                 <td align="left">
                     <input type="radio"
@@ -131,9 +132,9 @@
                 </td>
             </tr>
             <tr id="translationOptionsRow">
-                <td align="right">Target language:</td>
+                <td align="right">Translation:</td>
                 <td>
-                    <!-- <label for="languageTargetOptions"></label> -->
+                    <label for="languageTargetOptions">Target language</label>
                     <!-- For a full list of supported languages see:
                         https://docs.microsoft.com/azure/cognitive-services/speech-service/language-support#text-to-speech-->
                     <select id="languageTargetOptions">
@@ -142,7 +143,7 @@
                         </option>
                         <option value="Microsoft Server Speech Text to Speech Voice (da-DK, HelleRUS)">Danish - DK
                         </option>
-                        <option value="Microsoft Server Speech Text to Speech Voice (de-DE, Hedda)" >
+                        <option value="Microsoft Server Speech Text to Speech Voice (de-DE, Hedda)" selected="selected">
                             German - DE</option>
                         <option value="Microsoft Server Speech Text to Speech Voice (en-AU, Catherine)">English - AU
                         </option>
@@ -152,7 +153,7 @@
                         </option>
                         <option value="Microsoft Server Speech Text to Speech Voice (en-IN, Heera, Apollo)">English - IN
                         </option>
-                        <option value="Microsoft Server Speech Text to Speech Voice (en-US, ZiraRUS)" selected="selected">English - US
+                        <option value="Microsoft Server Speech Text to Speech Voice (en-US, ZiraRUS)">English - US
                         </option>
                         <option value="Microsoft Server Speech Text to Speech Voice (es-ES, Laura, Apollo)">Spanish - ES
                         </option>
@@ -192,8 +193,8 @@
                         <option value="Microsoft Server Speech Text to Speech Voice (zh-TW, Yating, Apollo)">Chinese -
                             TW</option>
                     </select>
-                    <!-- <input id="voiceOutput" type="checkbox" checked>
-                    <label for="voiceOutput">voice output</label> -->
+                    <input id="voiceOutput" type="checkbox" checked>
+                    <label for="voiceOutput">voice output</label>
                 </td>
             </tr>
             <tr id="languageUnderstandingAppIdRow">
@@ -255,7 +256,6 @@
     <!-- Speech SDK REFERENCE -->
     <!-- <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script> -->
     <script  type="module" src="/src/SpeechSDK-JavaScript-1.24.0/microsoft.cognitiveservices.speech.sdk.bundle.js"></script>
-
     <!-- Speech Speech SDK Authorization token -->
     <script>
         // Note: Replace the URL with a valid endpoint to retrieve
@@ -361,7 +361,7 @@
             filePicker = document.getElementById('filePicker');
             microphoneSources = document.getElementById("microphoneSources");
             inputSourceFileRadio = document.getElementById('inputSourceFileRadio');
-            inputSourceMicrophoneRadio = document.getElementById('inputSourceMicrophoneRadio');
+            // inputSourceMicrophoneRadio = document.getElementById('inputSourceMicrophoneRadio');
             formatSimpleRadio = document.getElementById('formatSimpleRadio');
             formatDetailedRadio = document.getElementById('formatDetailedRadio');
             referenceText = document.getElementById('referenceText');
@@ -370,7 +370,7 @@
                 // key,
                 // regionOptions,
                 languageOptions,
-                inputSourceMicrophoneRadio,
+                // inputSourceMicrophoneRadio,
                 inputSourceFileRadio,
                 scenarioSelection,
                 formatSimpleRadio,
@@ -506,10 +506,10 @@
                 });
             }
 
-            inputSourceMicrophoneRadio.addEventListener("click", function () {
-                enumerateMicrophones();
-                document.getElementById('inputSourceChooseFileButton').disabled = true;
-            });
+            // inputSourceMicrophoneRadio.addEventListener("click", function () {
+            //     enumerateMicrophones();
+            //     document.getElementById('inputSourceChooseFileButton').disabled = true;
+            // });
 
             inputSourceFileRadio.addEventListener("click", function() {
                 document.getElementById('inputSourceChooseFileButton').disabled = false;
@@ -526,7 +526,7 @@
                 document.getElementById('inputSourceFileLabel').innerHTML = audioFile.name;
             });
 
-            enumerateMicrophones();
+            // enumerateMicrophones();
 
             Initialize(function (speechSdk) {
                 SpeechSDK = speechSdk;

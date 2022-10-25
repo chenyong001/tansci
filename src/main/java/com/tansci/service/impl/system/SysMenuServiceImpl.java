@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -65,7 +66,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
             }
         }
 
-        list = list.stream().distinct().collect(Collectors.toList());
+        list = list.stream().distinct().sorted(Comparator.comparing(SysMenu::getSort)).collect(Collectors.toList());
         Map<Integer, List<SysMenu>> map = list.stream().collect(Collectors.groupingBy(SysMenu::getParentId, Collectors.toList()));
         list.stream().forEach(item -> item.setChildren(map.get(item.getId())));
         return map.get(0);

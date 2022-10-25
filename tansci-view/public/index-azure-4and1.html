@@ -28,7 +28,7 @@
                     </td>
                 <td><input id="key" type="hidden" size="60" placeholder="required: speech subscription key" value="de4e9ac5168843c2b74a9b1477376668"></td>
             </tr>
-            <tr style="display:none">
+            <tr>
                 <td align="right">Region:</td>
                 <td align="left">
                     <select id="regionOptions" disabled="disabled">
@@ -83,7 +83,7 @@
                     </select>
                 </td>
             </tr>
-            <tr style="display:none">
+            <tr>
                 <td align="right">Audio Input:</td>
                 <td align="left">
                     <input type="radio"
@@ -101,20 +101,20 @@
                     <input type="file" id="filePicker" accept=".wav" style="display:none" />
                 </td>
             </tr>
-            <tr  style="display:none">
+            <tr>
                 <td align="right">Scenario:</td>
                 <td align="left">
                     <select id="scenarioSelection">
                         <!-- <option value="speechRecognizerRecognizeOnce">Single-shot speech-to-text</option> -->
                         <option value="speechRecognizerContinuous">Continuous speech-to-text</option>
                         <!-- <option value="intentRecognizerRecognizeOnce">Single-shot intent recognition</option> -->
-                        <!-- <option value="translationRecognizerContinuous">Continuous translation</option> -->
+                        <option value="translationRecognizerContinuous">Continuous translation</option>
                         <!-- <option value="pronunciationAssessmentOnce">Single-shot pronunciation assessment</option> -->
                         <!-- <option value="pronunciationAssessmentContinuous">Continuous pronunciation assessment</option> -->
                     </select>
                 </td>
             </tr>
-            <tr id="formatOptionRow" style="display:none">
+            <tr id="formatOptionRow">
                 <td align="right">Result Format:</td>
                 <td align="left">
                     <input type="radio"
@@ -131,9 +131,9 @@
                 </td>
             </tr>
             <tr id="translationOptionsRow">
-                <td align="right">Target language:</td>
+                <td align="right">Translation:</td>
                 <td>
-                    <!-- <label for="languageTargetOptions"></label> -->
+                    <label for="languageTargetOptions">Target language</label>
                     <!-- For a full list of supported languages see:
                         https://docs.microsoft.com/azure/cognitive-services/speech-service/language-support#text-to-speech-->
                     <select id="languageTargetOptions">
@@ -192,8 +192,8 @@
                         <option value="Microsoft Server Speech Text to Speech Voice (zh-TW, Yating, Apollo)">Chinese -
                             TW</option>
                     </select>
-                    <!-- <input id="voiceOutput" type="checkbox" checked>
-                    <label for="voiceOutput">voice output</label> -->
+                    <input id="voiceOutput" type="checkbox" checked>
+                    <label for="voiceOutput">voice output</label>
                 </td>
             </tr>
             <tr id="languageUnderstandingAppIdRow">
@@ -202,7 +202,7 @@
                     <input id="appId" type="text" size="60" placeholder="required: appId for the Language Understanding service"/>
                 </td>
             </tr>
-            <tr  style="display:none">
+            <tr>
                 <td align="right">
                     <a href="https://docs.microsoft.com/azure/cognitive-services/speech-service/get-started-speech-to-text#improve-recognition-accuracy">
                         Phrase List Values:
@@ -398,10 +398,10 @@
                 document.getElementById('languageUnderstandingAppIdRow').style.display =
                     scenarioSelection.value === 'intentRecognizerRecognizeOnce' ? '' : 'none';
 
-                // var detailedResultsSupported = 
-                //     (scenarioSelection.value === "speechRecognizerRecognizeOnce"
-                //     || scenarioSelection.value === "speechRecognizerContinuous");
-                // document.getElementById('formatOptionRow').style.display = detailedResultsSupported ? '' : 'none';
+                var detailedResultsSupported = 
+                    (scenarioSelection.value === "speechRecognizerRecognizeOnce"
+                    || scenarioSelection.value === "speechRecognizerContinuous");
+                document.getElementById('formatOptionRow').style.display = detailedResultsSupported ? '' : 'none';
 
                 document.getElementById('translationOptionsRow').style.display =
                     scenarioSelection.value == 'translationRecognizerContinuous' ? '' : 'none';

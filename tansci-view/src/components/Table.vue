@@ -11,7 +11,7 @@
                     <el-table-column v-if="!item.prop && !item.label" :fixed="item.fixed" type="selection" width="45"></el-table-column>
                     <!-- el-tag -->
                     <el-table-column v-else-if="item.type == 'tag'" show-overflow-tooltip
-                        :label="item.label" :align="item.align != null ? item.align : 'center'" :width="item.width">
+                        :label="item.label" :align="item.align != null ? item.align : 'left'" :width="item.width">
                         <template #default="scope">
                             <el-tag :size="item.option.size" 
                                 :effect="item.option.effect" 
@@ -50,16 +50,16 @@
                         </template>
                     </el-table-column>
                     <!-- 其他数据列 -->
-                    <el-table-column v-else show-overflow-tooltip 
+                    <el-table-column v-else 
                         :prop="item.alias==null?item.prop:item.alias" 
                         :label="item.label" 
-                        :align="item.align != null ? item.align : 'center'" 
+                        :align="item.align != null ? item.align : 'left'" 
                         :width="item.width"
                         :fixed="item.fixed">
                     </el-table-column>
                 </template>
                 <!-- 自定义插槽  -->
-                <el-table-column v-if="operation" fixed="right" label="操作" align="center" width="220">
+                <el-table-column v-if="operation" fixed="right" label="操作" align="left" width="220">
                     <template #default="scope">
                         <slot name="column" v-bind:column="scope"></slot>
                     </template>

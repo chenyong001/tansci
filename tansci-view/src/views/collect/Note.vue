@@ -5,7 +5,11 @@
                 @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange">
                 <template #search>
                  
-                    <div><el-button type="primary" @click="onAddNote">创建采集任务1</el-button></div>
+                    <div><el-button type="primary" @click="onAddNote">实时语音识别</el-button></div>
+                      <div><el-button type="primary" @click="onAddNoteTranslate">实时语音翻译</el-button></div>
+                        <div><el-button type="primary" @click="onAddNoteUpload">上传音频语音识别</el-button></div>
+                          <div><el-button type="primary" @click="onAddNoteUploadTranslate">上传音频识别翻译</el-button></div>
+                    <div><el-button type="primary" @click="onAddNote4and1">4合1</el-button></div>
                     <div><el-input v-model="searchForm.docId" placeholder="请输入docId"></el-input></div>
                     <div><el-button @click="onRefresh" icon="RefreshRight" circle></el-button></div>
                     <div><el-button @click="onSearch" type="primary" icon="Search">查询</el-button></div>
@@ -99,6 +103,18 @@ import { useRouter } from 'vue-router'
     //     path: '/note/noteCreate'
     //   })
     }
+       const onAddNoteTranslate = () => {
+        window.open('/index-azure-translate.html' )
+    }
+           const onAddNoteUpload = () => {
+        window.open('/index-azure-upload.html' )
+    }
+           const onAddNoteUploadTranslate = () => {
+        window.open('/index-azure-upload-translate.html' )
+    }
+               const onAddNote4and1 = () => {
+        window.open('/index-azure-4and1.html' )
+    }
 
  const menuClick = (val) => {
       router.replace({
@@ -129,7 +145,6 @@ import { useRouter } from 'vue-router'
         },
         tableTitle: [
             {prop:'id',label:'ID',width:100},
-            {prop:'docId',label:'会话文档ID',width:450},
             // {prop:'status',alias:'statusName',label:'状态',
             //     type:'switch',
             //     option:{
@@ -140,6 +155,7 @@ import { useRouter } from 'vue-router'
             // {prop:'creater',label:'创建人'},
             // {prop:'updateTime',label:'更新时间'},
             {prop:'createTime',label:'创建时间'},
+            {prop:'docId',label:'会话文档ID'},
             {prop:'remark',label:'备注'}
         ],
         tableData:[],

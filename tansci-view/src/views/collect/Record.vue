@@ -119,7 +119,7 @@ import { useRouter } from 'vue-router'
         },
         tableTitle: [
             {prop:'id',label:'ID',width:100},
-            {prop:'docId',label:'会话文档ID',width:450},
+     
             // {prop:'status',alias:'statusName',label:'状态',
             //     type:'switch',
             //     option:{
@@ -130,6 +130,7 @@ import { useRouter } from 'vue-router'
             // {prop:'creater',label:'创建人'},
             // {prop:'updateTime',label:'更新时间'},
             {prop:'createTime',label:'创建时间'},
+             {prop:'docId',label:'会话文档ID'},
             {prop:'remark',label:'备注'}
         ],
         tableData:[],
