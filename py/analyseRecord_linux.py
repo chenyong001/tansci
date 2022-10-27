@@ -150,14 +150,14 @@ class TextAnalysis:
 
 
 
+
 parser = argparse.ArgumentParser(description='manual to this script')
-parser.add_argument('--fileName', type=str, default = None)
+parser.add_argument('--filePath', type=str, default = None)
 # parser.add_argument('--batch-size', type=int, default=32)
 args = parser.parse_args()
 # print 'hello'
 # print(args.param1)
-filePath="/temp/"+args.fileName
-file=open(filePath,'r',encoding='utf-8')
+file=open(args.filePath,'r',encoding='utf-8')
 text=file.read()
 file.close()
 # data=data.replace('\'','\"')
@@ -172,4 +172,3 @@ file.close()
 # solution=TextAnalysis('[{"docId":"rdvPragueDocId_ea41fe07-20b1-403e-afd8-183449a24bb0_r2","subtitle":"Hello。 Hello。","property":"en","userId":"bc3ac26e69731b617eb80274453f6dba","timestamp":"2022-09-23 15:57:15"},{"docId":"rdvPragueDocId_ea41fe07-20b1-403e-afd8-183449a24bb0_r2","subtitle":"Create an acquisition task.","property":"en","userId":"bc3ac26e69731b617eb80274453f6dba","timestamp":"2022-09-23 15:57:27"}]')
 solution=TextAnalysis(text)
 print(solution.Get_total_json())#调用获得对话内容词频函数
-# print(solution.Get_person_proportion())#调用获得说话人的谈话时长比例
