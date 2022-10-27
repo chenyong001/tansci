@@ -1,5 +1,6 @@
 package com.tansci.controller.system;
 
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -23,6 +24,7 @@ import com.tansci.utils.HttpClientUtil;
 import com.tansci.utils.SecurityUserUtils;
 import com.tansci.utils.SystemUtil;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
@@ -244,6 +247,7 @@ public class CollectController {
     //    System.out.println(jsonArray.toJSONString());
     Process proc;
     String result = null;
+    String filePath = null;
     try {
         	/*
 			附加：
@@ -253,14 +257,21 @@ public class CollectController {
 			*/
       //      String jsonStr=jsonArray.toJSONString();
       String jsonStr = JSON.toJSONString(recordDataList);
-      jsonStr = jsonStr.replace("\"", "\'");
+//      jsonStr = jsonStr.replace("\"", "\'");
       //      "C:\\Python310/python.exe"
-      String[] args1 = new String[0];
       log.info("===============os.name={}", SystemUtil.getOsName());
+      String fileName =recordData.getDocId()+"_"+System.currentTimeMillis()+"_"+(int) (Math.random()*100)+".txt";
+
+//      jsonStr写入文件，由py文件读取
+      String[] args1 ;
       if (SystemUtil.isWindows()) {
-        args1 = new String[] { "python", "E:\\tansci\\py/analyseRecord.py", "--param1=" + jsonStr };
+        filePath="E:\\tansci\\py/"+fileName;
+        FileUtils.write(new File(filePath),jsonStr,"utf-8");
+        args1 = new String[] { "python", "E:\\tansci\\py/analyseRecord_windows.py", "--filePath=" + filePath };
       } else {
-        args1 = new String[] { "python", "/analyseRecord.py", "--param1=" + jsonStr };
+        filePath="/temp/"+fileName;
+        FileUtils.write(new File(filePath),jsonStr,"utf-8");
+        args1 = new String[] { "python", "/analyseRecord_linux.py", "--filePath=" + filePath };
       }
 
       proc = Runtime.getRuntime().exec(args1);
@@ -292,6 +303,10 @@ public class CollectController {
     } catch (InterruptedException e) {
       e.printStackTrace();
     } finally {
+//      删除临时文件
+      if(StringUtils.isNotBlank(filePath)){
+        FileUtils.deleteQuietly(new File(filePath));
+      }
       return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, myDataList);
     }
   }

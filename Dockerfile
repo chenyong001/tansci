@@ -9,7 +9,10 @@ ENV TZ Asia/Shanghai
 #加入jar包
 ADD  target/*.jar /app/tansci.jar
 #添加py脚本文件
-ADD py/analyseRecord.py /
+ADD py/analyseRecord_linux.py /
+ADD py/stopword.txt /
+#用于存放py文件参数数据目录
+RUN mkdir /temp
 #创建日志目录
 RUN mkdir /logs
 #暴露端口

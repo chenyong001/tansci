@@ -556,7 +556,7 @@
             // Depending on browser security settings, the user may be prompted to allow microphone use. Using
             // continuous recognition allows multiple phrases to be recognized from a single use authorization.
             if (audioFile) {
-                return SpeechSDK.AudioConfig.fromWavFileInput(audioFile);SpeechSDK.AudioConfig.input
+                return SpeechSDK.AudioConfig.fromWavFileInput(audioFile);
             } else if (inputSourceFileRadio.checked) {
                 alert('Please choose a file when selecting file input as your audio source.');
                 return;

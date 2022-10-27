@@ -26,52 +26,56 @@ public class TestController {
   public static Map<String, String> dbMap = new ConcurrentHashMap();
 
   public static void main(String[] args) throws IOException {
-//    System.out.println(Date.before(new Date()));
-    System.out.println(System.getProperty("os.name"));
-    System.out.println(SystemUtil.getOsName());
-    System.out.println(SystemUtil.isLinux());
 
-    String str = "[{\"docId\":\"rdvPragueDocId_ea41fe07-20b1-403e-afd8-183449a24bb0_r2\",\"subtitle\":\"Hello。 H22ello22。我爱你，时间\",\"property\":\"en\",\"userId\":\"bc3ac26e69731b617eb80274453f6dba\",\"timestamp\":\"2022-09-23 15:57:15\"},{\"docId\":\"rdvPragueDocId_ea41fe07-20b1-403e-afd8-183449a24bb0_r2\",\"subtitle\":\"Create an acquisition task.\",\"property\":\"en\",\"userId\":\"bc3ac26e69731b617eb80274453f6dba\",\"timestamp\":\"2022-09-23 15:57:27\"}]";
-        //    PyList pyList = new PyList();
-        JSONArray jsonArray = JSONArray.parseArray(str);
-    System.out.println(jsonArray.toJSONString());
+    System.out.println((int) (Math.random()*100));
+
+
+//    System.out.println(Date.before(new Date()));
+//    System.out.println(System.getProperty("os.name"));
+//    System.out.println(SystemUtil.getOsName());
+//    System.out.println(SystemUtil.isLinux());
+//
+//    String str = "[{\"docId\":\"rdvPragueDocId_ea41fe07-20b1-403e-afd8-183449a24bb0_r2\",\"subtitle\":\"Hello。 H22ello22。我爱你，时间\",\"property\":\"en\",\"userId\":\"bc3ac26e69731b617eb80274453f6dba\",\"timestamp\":\"2022-09-23 15:57:15\"},{\"docId\":\"rdvPragueDocId_ea41fe07-20b1-403e-afd8-183449a24bb0_r2\",\"subtitle\":\"Create an acquisition task.\",\"property\":\"en\",\"userId\":\"bc3ac26e69731b617eb80274453f6dba\",\"timestamp\":\"2022-09-23 15:57:27\"}]";
+//        //    PyList pyList = new PyList();
+//        JSONArray jsonArray = JSONArray.parseArray(str);
+//    System.out.println(jsonArray.toJSONString());
 
 //    https://www.likecs.com/show-204036559.html?sc=100
-    Process proc;
-    try {
-        	/*
-			附加：
-			String[] args1=new String[]{"/home/huan/anaconda2/bin/python","/home/huan/myfile/pythonfile/helloword.py"};
-            Process pr=Runtime.getRuntime().exec(args1);
-			String数组里的那一行很重要
-			首先一定要设置好你所使用的python的位置，切记不要直接使用python，因为系统会默认使用自带的python，所以一定要设置好你所使用的python的位置，否则可能会出现意想不到的问题（比如说我使用的是anaconda中的python，而ubuntu系统会默认调用自带的python，而我自带的python中并没有numpy库，所以会造成相应的代码不会执行的问题，所以设置好python的位置是很重要的）。还有就是要设置好py文件的位置，使用绝对路径。在这里插入代码片
-
-       还有就是可以看出，此方法可以满足我们python代码中调用第三方库的情况，简单实用。
-
-       "E:\\tansci\\src\\main\\java\\com\\tansci\\controller/test_def.py"
-			*/
-
-      String jsonStr=jsonArray.toJSONString();
-      jsonStr=jsonStr.replace("\"","\'");
-//      System.out.println(jsonStr);
-//      wordcloud
-//      "C:\\Python310/python.exe"
-      String[] args1 = new String[] { "python", "E:\\tansci\\src\\main\\java\\com\\tansci\\controller/analyseRecord.py", "--param1="+jsonStr };
-
-      proc = Runtime.getRuntime().exec(args1);
-      BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-      String line = null;
-      while ((line = in.readLine()) != null) {
-//        {"hello": 1, "h": 1, "ello": 1, "create": 1, "an": 1, "acquisition": 1, "task": 1}
-        System.out.println(line);
-      }
-      in.close();
-      proc.waitFor();
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+//    Process proc;
+//    try {
+//        	/*
+//			附加：
+//			String[] args1=new String[]{"/home/huan/anaconda2/bin/python","/home/huan/myfile/pythonfile/helloword.py"};
+//            Process pr=Runtime.getRuntime().exec(args1);
+//			String数组里的那一行很重要
+//			首先一定要设置好你所使用的python的位置，切记不要直接使用python，因为系统会默认使用自带的python，所以一定要设置好你所使用的python的位置，否则可能会出现意想不到的问题（比如说我使用的是anaconda中的python，而ubuntu系统会默认调用自带的python，而我自带的python中并没有numpy库，所以会造成相应的代码不会执行的问题，所以设置好python的位置是很重要的）。还有就是要设置好py文件的位置，使用绝对路径。在这里插入代码片
+//
+//       还有就是可以看出，此方法可以满足我们python代码中调用第三方库的情况，简单实用。
+//
+//       "E:\\tansci\\src\\main\\java\\com\\tansci\\controller/test_def.py"
+//			*/
+//
+//      String jsonStr=jsonArray.toJSONString();
+//      jsonStr=jsonStr.replace("\"","\'");
+////      System.out.println(jsonStr);
+////      wordcloud
+////      "C:\\Python310/python.exe"
+//      String[] args1 = new String[] { "python", "E:\\tansci\\src\\main\\java\\com\\tansci\\controller/analyseRecord.py", "--param1="+jsonStr };
+//
+//      proc = Runtime.getRuntime().exec(args1);
+//      BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+//      String line = null;
+//      while ((line = in.readLine()) != null) {
+////        {"hello": 1, "h": 1, "ello": 1, "create": 1, "an": 1, "acquisition": 1, "task": 1}
+//        System.out.println(line);
+//      }
+//      in.close();
+//      proc.waitFor();
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    } catch (InterruptedException e) {
+//      e.printStackTrace();
+//    }
 
 
     //    String region = "eastasia";

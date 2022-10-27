@@ -124,7 +124,7 @@ public class RecordTask implements SchedulingConfigurer {
             recordData.setProperty(json2Str(jsonObject.get("property")));
             JSONObject subJsonObject = JSON.parseObject(String.valueOf(jsonObject.get("value")));
             recordData.setSubtitle(json2Str(subJsonObject.get("subtitle")));
-            recordData.setTimestamp(DateUtil.str2Date(json2Str(subJsonObject.get("timestamp")), DateUtil.FORMAT_YYYYMMDDTHHMMSS));
+            recordData.setTimestamp(dateAfter8Hour(DateUtil.str2Date(json2Str(subJsonObject.get("timestamp")), DateUtil.FORMAT_YYYYMMDDTHHMMSS)));
             recordDataList.add(recordData);
 
           }
