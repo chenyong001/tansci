@@ -26,7 +26,7 @@
                     <!-- <a href="https://www.microsoft.com/cognitive-services/sign-up"
                         target="_blank">Subscription</a>: -->
                     </td>
-                <td><input id="key" type="hidden" size="60" placeholder="required: speech subscription key" value="de4e9ac5168843c2b74a9b1477376668"></td>
+                <td><input id="key" type="hidden" size="60" placeholder="required: speech subscription key" ></td>
             </tr>
             <tr>
                 <td align="right">Region:</td>
@@ -264,8 +264,8 @@
         // An authorization token is a more secure method to authenticate for a browser deployment as
         // it allows the subscription keys to be kept secure on a server and a 10 minute use token to be
         // handed out to clients from an endpoint that can be protected from unauthorized access.
-        // var authorizationEndpoint = "https://opencast.tsi.edu.sg/tansci/collect/getAzureToken";
-        var authorizationEndpoint = "http://localhost:8005/tansci/collect/getAzureToken";
+        var authorizationEndpoint = "https://opencast.tsi.edu.sg/tansci/collect/getAzureToken";
+        // var authorizationEndpoint = "http://localhost:8005/tansci/collect/getAzureToken";
 
         function RequestAuthorizationToken() {
             if (authorizationEndpoint) {
