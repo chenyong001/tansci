@@ -77,7 +77,10 @@ public class CollectController {
   @PostMapping("/getAzureToken")
   public String getAzureToken() {
     String region = "eastasia";
-    String subscriptionKey = "de4e9ac5168843c2b74a9b1477376668";
+//    F0
+//    String subscriptionKey = "de4e9ac5168843c2b74a9b1477376668";
+//    S0
+    String subscriptionKey = "65e6b6a78c5d4326a57366de1c51c872";
 
     String tokenKey = "token";
 //    if (!cacheMap.containsKey(tokenKey)) {
