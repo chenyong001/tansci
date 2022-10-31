@@ -70,7 +70,7 @@
             <el-pagination @size-change="onSizeChange" @current-change="onCurrentChange"
             layout="total, sizes, prev, pager, next, jumper"
             :current-page="page.current"
-            :page-sizes="[10, 20, 50, 100]"
+            :page-sizes="[10, 20, 50, 100,150,200,500]"
             :page-size="page.size"
             :total="page.total"/>
         </div>

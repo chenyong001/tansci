@@ -61,6 +61,12 @@ public class RecordData {
   @ApiModelProperty(value = "时间")
   private Date timestamp;
 
+  @ApiModelProperty(value = "偏移量")
+  private String offset;
+
+  @ApiModelProperty(value = "持续时间")
+  private String duration;
+
   public RecordData(String docId, String property) {
     this.docId = docId;
     this.property = property;

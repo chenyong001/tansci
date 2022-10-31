@@ -192,6 +192,8 @@ public class CollectController {
   public Wrapper<Boolean> sendNote(@RequestParam(name = "resultText", required = true) String resultText,
       @RequestParam(name = "docId", required = true) String docId,
       @RequestParam(name = "remark", required = false) String remark,
+      @RequestParam(name = "offset", required = true) String offset,
+      @RequestParam(name = "duration", required = true) String duration,
       @RequestParam(name = "language", required = true) String language) {
     //        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.list(null));
     log.info("export===========,resultText={}", resultText);
@@ -223,6 +225,8 @@ public class CollectController {
     recordData.setProperty(language);
     recordData.setSubtitle(resultText);
     recordData.setTimestamp(new Date());
+    recordData.setOffset(offset);
+    recordData.setDuration(duration);
     recordDataList.add(recordData);
     //           入库
     if (!recordDataList.isEmpty()) {

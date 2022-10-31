@@ -571,7 +571,8 @@
             var speechConfig;
             if (authorizationToken) {
                 speechConfig = sdkConfigType.fromAuthorizationToken(authorizationToken, regionOptions.value);
-            } else if (!key.value) {
+            } else
+             if (!key.value) {
                 alert("Please enter your Cognitive Services Speech subscription key!");
                 return undefined;
             } else {
@@ -742,13 +743,15 @@
                         }else{
                             resultText=result.text;
                         }
+                         var offset=  result.offset;
+                         var duration=   result.duration;
 
                         if( resultText!== null  && resultText !== '' ){
 
                         // 生产
-                        var url="https://opencast.tsi.edu.sg/tansci/collect/sendNote?resultText="+resultText+"&language="+result.language+"&docId="+uuid;
+                        var url="https://opencast.tsi.edu.sg/tansci/collect/sendNote?resultText="+resultText+"&language="+result.language+"&docId="+uuid+"&offset="+offset+"&duration="+duration;
                         // 开发
-                        // var url="http://localhost:8005/tansci/collect/sendNote?resultText="+result.text+"&language="+result.language+"&docId="+uuid;
+                        // var url="http://localhost:8005/tansci/collect/sendNote?resultText="+result.text+"&language="+result.language+"&docId="+uuid+"&offset="+offset+"&duration="+duration;
 
 
 

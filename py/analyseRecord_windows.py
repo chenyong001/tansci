@@ -36,7 +36,7 @@ class TextAnalysis:
         # print("pre_processing_GetContent()函数获取的是：",self.pre_processing_GetContent())
         text_test=self.pre_processing_GetContent()
         # print("text_test是：",text_test)
-        text_English = "".join([word for word in re.findall(r'[\x00-\xff]+', text_test) if word.lower() not in stopwords1])
+        text_English = " ".join([word for word in re.findall(r'[\x00-\xff]+', text_test) if word.lower() not in stopwords1])
         text_English = re.sub("\,|\.|\?", " ", text_English)
         # print("text_English是",text_English)
         tokens = word_tokenize(text_English)

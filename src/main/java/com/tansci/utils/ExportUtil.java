@@ -51,7 +51,7 @@ public class ExportUtil {
       writer = response.getWriter();
       StringBuffer sb = new StringBuffer();
       recordDataList.stream().forEach(recordData -> {
-        sb.append(DateUtil.date2Str(recordData.getTimestamp(),DateUtil.FORMAT_YYYY_MM_DD_HH_MM_SS)).append("===>")
+        sb.append(DateUtil.date2Str(recordData.getTimestamp(), DateUtil.FORMAT_YYYY_MM_DD_HH_MM_SS)).append("===>")
             .append(recordData.getSubtitle()).append(Constants.OS_LINE_SPERATOR);
       });
       writer.write(sb.toString());
@@ -63,7 +63,6 @@ public class ExportUtil {
 
   }
 
-
   public static void exportSrt(HttpServletResponse response, List<RecordData> recordDataList) {
     response.reset();
     response.setCharacterEncoding("utf-8");
@@ -73,18 +72,20 @@ public class ExportUtil {
 
     try {
       writer = response.getWriter();
-      StringBuffer sb = new StringBuffer();
-      for (int i=0;i<recordDataList.size();i++) {
-        String startTime = DateUtil.date2Str(recordDataList.get(i).getTimestamp(),DateUtil.FORMAT_HH_MM_SS_SSS);
-        String endTime = DateUtil.date2Str(recordDataList.get(i).getTimestamp(),DateUtil.FORMAT_HH_MM_SS_SSS);
-        String msg = recordDataList.get(i).getSubtitle();
-        sb.append(i + 1).append("\n").append(startTime).append(" --> ").append(endTime).append("\n").append(msg).append("\n").append("\n");
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < recordDataList.size(); i++) {
+        int index = i + 1;
+        String offset = recordDataList.get(i).getOffset();
+        String duration = recordDataList.get(i).getDuration();
+        String text = recordDataList.get(i).getSubtitle();
+        SrtUtil.StringFromCaption(sb, index, offset, duration, text);
+        //        sb.append(i + 1).append("\n").append(startTime).append(" --> ").append(endTime).append("\n").append(msg).append("\n").append("\n");
         //        sb.append(DateUtil.date2Str(recordData.getTimestamp(),DateUtil.FORMAT_YYYY_MM_DD_HH_MM_SS)).append("===>")
         //            .append(recordData.getSubtitle()).append(Constants.OS_LINE_SPERATOR);
       }
-//      recordDataList.stream().forEach(recordData -> {
-//
-//      });
+      //      recordDataList.stream().forEach(recordData -> {
+      //
+      //      });
       writer.write(sb.toString());
       writer.flush();
     } catch (Exception var12) {
@@ -160,10 +161,10 @@ public class ExportUtil {
   //
   //  }
   //
-    public static void main(String[] args) {
+  public static void main(String[] args) {
 
-      System.out.println("aaaaaaaaaa"+System.getProperty("line.separator")+"bbbbbbbbb");
-    }
+    System.out.println("aaaaaaaaaa" + System.getProperty("line.separator") + "bbbbbbbbb");
+  }
   //    Map<String, String> resultMap = new HashMap();
   //    resultMap.put("a1", "a111111111111111111111111111111111111111");
   //    resultMap.put("b1", "b111111111111111111111111111111111111111");

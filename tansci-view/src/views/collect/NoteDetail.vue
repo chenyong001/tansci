@@ -74,7 +74,7 @@ const state = reactive({
   loading: false,
   page: {
     current: 1,
-    size: 100,
+    size: 500,
     total: 1
   },
   tableTitle: [
