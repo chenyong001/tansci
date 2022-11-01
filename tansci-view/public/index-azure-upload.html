@@ -26,7 +26,7 @@
                     <!-- <a href="https://www.microsoft.com/cognitive-services/sign-up"
                         target="_blank">Subscription</a>: -->
                     </td>
-                <td><input id="key" type="hidden" size="60" placeholder="required: speech subscription key" ></td>
+                <td><input id="key" type="hidden" size="60" placeholder="required: speech subscription key" value="65e6b6a78c5d4326a57366de1c51c872"></td>
             </tr>
             <tr style="display:none">
                 <td align="right">Region:</td>
@@ -242,14 +242,14 @@
                     <textarea id="phraseDiv" style="display: inline-block;width:500px;height:200px"></textarea>
                 </td>
             </tr>
-            <!-- <tr>
+            <tr  >
                 <td align="right">Events:</td>
                 <td align="left">
                     <textarea id="statusDiv"
                         style="display: inline-block;width:500px;height:200px;overflow: scroll;white-space: nowrap;">
                     </textarea>
                 </td>
-            </tr> -->
+            </tr>
         </table>
     </div>
 
@@ -320,6 +320,7 @@
 
         var thingsToDisableDuringSession;
         var uuid;
+        var thisSessionId;
 
         var soundContext = undefined;
         try {
@@ -338,7 +339,7 @@
 
         function resetUiForScenarioStart() {
             phraseDiv.innerHTML = "";
-            // statusDiv.innerHTML = "";
+            statusDiv.innerHTML = "";
             useDetailedResults = document.querySelector('input[name="formatOption"]:checked').value === "Detailed";
             pronunciationAssessmentResults = [];
         }
@@ -350,7 +351,7 @@
             scenarioSelection = document.getElementById('scenarioSelection');
 
             phraseDiv = document.getElementById("phraseDiv");
-            // statusDiv = document.getElementById("statusDiv");
+            statusDiv = document.getElementById("statusDiv");
             key = document.getElementById("key");
             appId = document.getElementById("appId");
             phrases = document.getElementById("phrases");
@@ -532,9 +533,9 @@
                 SpeechSDK = speechSdk;
 
                 // in case we have a function for getting an authorization token, call it.
-                if (typeof RequestAuthorizationToken === "function") {
-                    RequestAuthorizationToken();
-                }
+                // if (typeof RequestAuthorizationToken === "function") {
+                //     RequestAuthorizationToken();
+                // }
             });
         });
     </script>
@@ -665,7 +666,7 @@
         function onRecognizedResult(result) {
             phraseDiv.scrollTop = phraseDiv.scrollHeight;
 
-            // statusDiv.innerHTML += `(recognized)  Reason: ${SpeechSDK.ResultReason[result.reason]}`;
+            statusDiv.innerHTML += `(recognized)  Reason: ${SpeechSDK.ResultReason[result.reason]}`;
             if (scenarioSelection.value === 'speechRecognizerRecognizeOnce'
                 || scenarioSelection.value === 'intentRecognizerRecognizeOnce') {
                 // Clear the final results view for single-shot scenarios
@@ -678,19 +679,19 @@
             switch (result.reason) {
                 case SpeechSDK.ResultReason.NoMatch:
                     var noMatchDetail = SpeechSDK.NoMatchDetails.fromResult(result);
-                    // statusDiv.innerHTML += ` NoMatchReason: ${SpeechSDK.NoMatchReason[noMatchDetail.reason]}\r\n`;
+                    statusDiv.innerHTML += ` NoMatchReason: ${SpeechSDK.NoMatchReason[noMatchDetail.reason]}\r\n`;
                     break;
                 case SpeechSDK.ResultReason.Canceled:
                     var cancelDetails = SpeechSDK.CancellationDetails.fromResult(result);
-                    // statusDiv.innerHTML += ` CancellationReason: ${SpeechSDK.CancellationReason[cancelDetails.reason]}`;
-                    //     + (cancelDetails.reason === SpeechSDK.CancellationReason.Error 
-                    //         ? `: ${cancelDetails.errorDetails}` : ``)
-                    //     + `\r\n`;
+                    statusDiv.innerHTML += ` CancellationReason: ${SpeechSDK.CancellationReason[cancelDetails.reason]}`;
+                        + (cancelDetails.reason === SpeechSDK.CancellationReason.Error 
+                            ? `: ${cancelDetails.errorDetails}` : ``)
+                        + `\r\n`;
                     break;
                 case SpeechSDK.ResultReason.RecognizedSpeech:
                 case SpeechSDK.ResultReason.TranslatedSpeech:
                 case SpeechSDK.ResultReason.RecognizedIntent:
-                    // statusDiv.innerHTML += `\r\n`;
+                    statusDiv.innerHTML += ` Text: ${result.text}\r\n`;
 
                     if (useDetailedResults) {
                         var detailedResultJson = JSON.parse(result.json);
@@ -744,12 +745,13 @@
                         }
                         var offset=  result.offset;
                          var duration=   result.duration;
+                         console.log("thisSessionId="+thisSessionId);
                         if( resultText!== null  && resultText !== '' ){
 
                         // 生产
-                        var url="https://opencast.tsi.edu.sg/tansci/collect/sendNote?resultText="+resultText+"&language="+result.language+"&docId="+uuid+"&offset="+offset+"&duration="+duration;
+                        var url="https://opencast.tsi.edu.sg/tansci/collect/sendNote?resultText="+resultText+"&language="+result.language+"&docId="+thisSessionId+"&offset="+offset+"&duration="+duration;
                         // 开发
-                        // var url="http://localhost:8005/tansci/collect/sendNote?resultText="+result.text+"&language="+result.language+"&docId="+uuid+"&offset="+offset+"&duration="+duration;
+                        // var url="http://localhost:8005/tansci/collect/sendNote?resultText="+result.text+"&language="+result.language+"&docId="+thisSessionId+"&offset="+offset+"&duration="+duration;
 
 
 
@@ -773,8 +775,8 @@
         }
 
         function onSessionStarted(sender, sessionEventArgs) {
-            // statusDiv.innerHTML += `(sessionStarted) SessionId: ${sessionEventArgs.sessionId}\r\n`;
-
+            statusDiv.innerHTML += `(sessionStarted) SessionId: ${sessionEventArgs.sessionId}\r\n`;
+            thisSessionId=sessionEventArgs.sessionId;
             for (const thingToDisableDuringSession of thingsToDisableDuringSession) {
                 thingToDisableDuringSession.disabled = true;
             }
@@ -784,7 +786,7 @@
         }
 
         function onSessionStopped(sender, sessionEventArgs) {
-            // statusDiv.innerHTML += `(sessionStopped) SessionId: ${sessionEventArgs.sessionId}\r\n`;
+            statusDiv.innerHTML += `(sessionStopped) SessionId: ${sessionEventArgs.sessionId}\r\n`;
 
             if (scenarioSelection.value == 'pronunciationAssessmentContinuous') {
                 // calculateOverallPronunciationScore();
@@ -801,11 +803,11 @@
         function onCanceled (sender, cancellationEventArgs) {
             window.console.log(e);
 
-            // statusDiv.innerHTML += "(cancel) Reason: " + SpeechSDK.CancellationReason[e.reason];
-            // if (e.reason === SpeechSDK.CancellationReason.Error) {
-            //     statusDiv.innerHTML += ": " + e.errorDetails;
-            // }
-            // statusDiv.innerHTML += "\r\n";
+            statusDiv.innerHTML += "(cancel) Reason: " + SpeechSDK.CancellationReason[e.reason];
+            if (e.reason === SpeechSDK.CancellationReason.Error) {
+                statusDiv.innerHTML += ": " + e.errorDetails;
+            }
+            statusDiv.innerHTML += "\r\n";
         }
 
         function applyCommonConfigurationTo(recognizer) {
@@ -1004,8 +1006,8 @@
             reco.synthesizing = function (s, e) {
                 var audioSize = e.result.audio === undefined ? 0 : e.result.audio.byteLength;
 
-                // statusDiv.innerHTML += `(synthesizing) Reason: ${SpeechSDK.ResultReason[e.result.reason]}`
-                //     + ` ${audioSize} bytes\r\n`;
+                statusDiv.innerHTML += `(synthesizing) Reason: ${SpeechSDK.ResultReason[e.result.reason]}`
+                    + ` ${audioSize} bytes\r\n`;
 
                 if (e.result.audio && soundContext) {
                     var source = soundContext.createBufferSource();
