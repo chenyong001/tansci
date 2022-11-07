@@ -1,9 +1,16 @@
 package com.tansci.utils;
 
 import com.tansci.common.constant.Constants;
+import com.tansci.domain.system.Record;
 import com.tansci.domain.system.RecordData;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.List;
@@ -91,6 +98,42 @@ public class ExportUtil {
     } catch (Exception var12) {
     } finally {
       ResourcesUtil.multiClose(writer);
+    }
+
+  }
+
+  public static void exportWav(HttpServletResponse response, Record record) {
+    response.reset();
+    response.setCharacterEncoding("utf-8");
+    response.setContentType("application/octet-stream;charset=utf-8");
+    String filePath = record.getFilePath();
+    String fileName = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
+    response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
+    PrintWriter writer = null;
+    OutputStream toClient = null;
+    InputStream fis = null;
+
+    try {
+//      writer = response.getWriter();
+      //      StringBuilder sb = new StringBuilder();
+      //      File file = new File(filePath);
+      // 以流的形式下载文件。
+      fis = new BufferedInputStream(new FileInputStream(filePath));
+      byte[] buffer = new byte[fis.available()];
+      fis.read(buffer);
+      fis.close();
+      // 清空response
+      response.reset();
+      toClient = new BufferedOutputStream(response.getOutputStream());
+      toClient.write(buffer);
+      toClient.flush();
+      toClient.close();
+      //
+      //      writer.print(new OutputStream(file));
+      //      writer.flush();
+    } catch (Exception var12) {
+    } finally {
+      ResourcesUtil.multiClose(toClient,fis);
     }
 
   }

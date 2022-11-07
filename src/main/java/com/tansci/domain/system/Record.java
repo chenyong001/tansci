@@ -52,6 +52,9 @@ public class Record {
   @ApiModelProperty(value = "采集类型")
   private Integer type;
 
+  @ApiModelProperty(value = "录音地址")
+  private String filePath;
+
   @ApiModelProperty(value = "创建时间")
   private Date createTime;
 

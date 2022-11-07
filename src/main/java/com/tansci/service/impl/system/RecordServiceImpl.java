@@ -9,6 +9,7 @@ import com.tansci.common.constant.Enums;
 import com.tansci.domain.system.Record;
 import com.tansci.domain.system.RecordData;
 import com.tansci.domain.system.TaskConfig;
+import com.tansci.domain.system.dto.TaskConfigDto;
 import com.tansci.mapper.system.RecordMapper;
 import com.tansci.service.system.RecordService;
 import com.tansci.utils.SecurityUserUtils;
@@ -68,6 +69,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     this.baseMapper.update(record, Wrappers.<Record>lambdaQuery().eq(Record::getDocId, record.getDocId()));
   }
 
+
   //    @Override
   //    public boolean update(TaskConfig taskConfig) {
   //        taskConfig.setUpdateTime(LocalDateTime.now());
@@ -79,14 +81,13 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
   //        return false;
   //    }
   //
-  //    @Override
-  //    public boolean del(TaskConfigDto dto) {
-  //        int row = this.baseMapper.deleteById(dto.getId());
-  //        if (row > 0) {
-  //            scheduledTask.refreshTask(this.list(Wrappers.<TaskConfig>lambdaQuery().eq(TaskConfig::getStatus, 1)));
-  //            return true;
-  //        }
-  //        return false;
-  //    }
+      @Override
+      public boolean del(Record record) {
+          int row = this.baseMapper.deleteById(record.getId());
+          if (row > 0) {
+              return true;
+          }
+          return false;
+      }
 
 }

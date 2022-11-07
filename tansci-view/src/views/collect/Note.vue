@@ -9,14 +9,17 @@
                       <div><el-button type="primary" @click="onAddNoteTranslate">实时语音翻译</el-button></div>
                         <div><el-button type="primary" @click="onAddNoteUpload">上传音频语音识别</el-button></div>
                           <div><el-button type="primary" @click="onAddNoteUploadTranslate">上传音频识别翻译</el-button></div>
-                    <div><el-button type="primary" @click="onAddNote4and1">4合1</el-button></div>
+                           <!-- <div><el-button type="primary" @click="onAddNoteMp3">MP3</el-button></div> -->
+                    <!-- <div><el-button type="primary" @click="onAddNote4and1">4合1</el-button></div> -->
                     <div><el-input v-model="searchForm.docId" placeholder="请输入docId"></el-input></div>
                     <div><el-button @click="onRefresh" icon="RefreshRight" circle></el-button></div>
                     <div><el-button @click="onSearch" type="primary" icon="Search">查询</el-button></div>
                 </template>
          
-                <template #column="scope">
-                    <el-button @click="menuClick(scope)" type="success" >查看数据详情</el-button>
+                <template #column="scope" style="width:1000" >
+                    <el-button @click="menuClick(scope)" type="success" >详情</el-button>
+                    <el-button @click="onDelete(scope)" type="warning" >删除</el-button>
+                    <el-button @click="download(scope)" type="primary" >下载</el-button>
                 </template>
             </Table>
         </el-card>
@@ -89,7 +92,7 @@ docId填入：rdvPragueDocId_23b6a64a-e615-45d9-9b4d-54f26e783480_r3，提交
     import {onMounted, reactive, nextTick, ref, unref, toRefs} from 'vue'
     import {ElMessage, ElMessageBox} from 'element-plus'
     import Table from '../../components/Table.vue'
-    import {collectPage, collect} from '../../api/systemApi.js'
+    import {collectPage, collect,deleteNote,exportWAV} from '../../api/systemApi.js'
 import { useRouter } from 'vue-router'
 
 // 切换页面
@@ -115,6 +118,10 @@ import { useRouter } from 'vue-router'
                const onAddNote4and1 = () => {
         window.open('/index-azure-4and1.html' )
     }
+                   const onAddNoteMp3 = () => {
+        window.open('/mp3test.html' )
+    }
+    
 
  const menuClick = (val) => {
       router.replace({
@@ -262,26 +269,60 @@ import { useRouter } from 'vue-router'
 
     }
 
-    // // 删除
-    // const onDelete = (val) =>{
-    //     ElMessageBox.confirm('此操作将永久删除, 是否继续?', '提示', {
-    //         confirmButtonText: '确定',
-    //         cancelButtonText: '取消',
-    //         type: 'warning'
-    //     }).then(() => {
-    //         let param = {
-    //             id: val.column.row.id
-    //         }
-    //         delTask(param).then(res=>{
-    //             if(res){
-    //                 ElMessage.success('删除成功!');
-    //                 onCollectPage();
-    //             }
-    //         })
-    //     }).catch(e=>{
-    //         console.log(e)
-    //     })
-    // }
+    // 删除
+    const onDelete = (val) =>{
+        ElMessageBox.confirm('此操作将永久删除, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            let param = {
+                docId: val.column.row.docId
+            }
+            deleteNote(param).then(res=>{
+                if(res){
+                    ElMessage.success('删除成功!');
+                    onCollectPage();
+                }
+            })
+        }).catch(e=>{
+            console.log(e)
+        })
+    }
+    
+    const download = async (val) =>{
+        // const form = unref(addRuleForm);
+        // if(!form) return;
+        // await form.validate();
+         let param = {
+                docId: val.column.row.docId
+            }
+            exportWAV(param).then(res => {
+                if (!res.data) {
+                return;
+                }
+                let url = window.URL.createObjectURL(new Blob([res.data]));
+                let link = document.createElement("a");
+                link.style.display = "none";
+                link.href = url;
+                let filePath = val.column.row.filePath;
+                var fileName = filePath.substring(filePath.indexOf('/')+1,filePath.length);
+
+                link.setAttribute("download", fileName);
+                document.body.appendChild(link);
+                link.click();
+                // 释放URL对象所占资源
+                window.URL.revokeObjectURL(url);
+                // 用完即删
+                document.body.removeChild(link);
+                // 刷新页面
+                 onCollectPage();
+               
+            });
+       
+
+    }
+    
 
     // const onSwitchChange = (row) =>{
     //     updateTask({id:row.id, status: row.status}).then(res=>{

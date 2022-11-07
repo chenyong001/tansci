@@ -233,6 +233,8 @@
                 <td>
                     <button id="scenarioStartButton">Start</button>
                     <button id="scenarioStopButton" disabled="disabled">Stop</button>
+                    <button id="scenarioPauseButton" disabled="disabled">暂停识别</button>
+                    <button id="scenarioResumeButton" disabled="disabled">继续识别</button>
                 </td>
             </tr>
             <tr>
@@ -255,7 +257,8 @@
     <!-- Speech SDK REFERENCE -->
     <!-- <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script> -->
     <script   src="/SpeechSDK-JavaScript-1.24.0/microsoft.cognitiveservices.speech.sdk.bundle.js"></script>
-    <script   src="/SpeechSDK-JavaScript-1.24.0/recorder3.js"></script>
+    <!-- <script   src="/SpeechSDK-JavaScript-1.24.0/recorder3.js"></script> -->
+    <script src="js/recordmp3.js"></script>
 
     <!-- Speech Speech SDK Authorization token -->
     <script>
@@ -322,16 +325,31 @@
         var thingsToDisableDuringSession;
         var uuid;
         var thisSessionId;
+        var scenarioPauseButton,scenarioResumeButton;
 
         var soundContext = undefined;
 
-        let recorder = new Recorder({
-        sampleBits: 16,                 // 采样位数，支持 8 或 16，默认是16
-        sampleRate: 16000,              // 采样率，支持 11025、16000、22050、24000、44100、48000，根据浏览器默认值，
-        numChannels: 1,                 // 声道，支持 1 或 2， 默认是1
-        // compiling: false,(0.x版本中生效,1.x增加中)  // 是否边录边转换，默认是false
-        compiling: true
-    });
+        var recorder = new MP3Recorder({
+            debug:true,
+            funOk: function () {
+                // btnStart.disabled = false;
+                console.log('初始化成功');
+            },
+            funCancel: function (msg) {
+                console.log(msg);
+                recorder = null;
+            }
+        });
+        var mp3Blob;
+
+    //     var wavBlob;
+    //     let recorder = new Recorder({
+    //     sampleBits: 16,                 // 采样位数，支持 8 或 16，默认是16
+    //     sampleRate: 16000,              // 采样率，支持 11025、16000、22050、24000、44100、48000，根据浏览器默认值，
+    //     numChannels: 1,                 // 声道，支持 1 或 2， 默认是1
+    //     // compiling: false,(0.x版本中生效,1.x增加中)  // 是否边录边转换，默认是false
+    //     compiling: true
+    // });
     
         try {
             var AudioContext = window.AudioContext // our preferred impl
@@ -359,6 +377,8 @@
             scenarioStartButton = document.getElementById('scenarioStartButton');
             scenarioStopButton = document.getElementById('scenarioStopButton');
             scenarioSelection = document.getElementById('scenarioSelection');
+            scenarioPauseButton = document.getElementById('scenarioPauseButton');
+            scenarioResumeButton = document.getElementById('scenarioResumeButton');
 
             phraseDiv = document.getElementById("phraseDiv");
             statusDiv = document.getElementById("statusDiv");
@@ -467,9 +487,16 @@
                     case 'pronunciationAssessmentContinuous':
                         // 停止录音
                     recorder.stop();
-                    recorder.destroy();
-                    recorder.downloadWAV('audio_recording_' + new Date().toLocaleString());
+                    var fileName='audio_recording_' + new Date().toLocaleString();
+                    // recorder.downloadWAV(fileName);
+                    
                 //  todo 上传到服务器
+                // wavBlob=recorder.getWAVBlob();
+                 recorder.getMp3Blob(function (blob) {
+                mp3Blob = blob;
+                funUpload(fileName);
+                
+            });
 
                     if(reco!=undefined){
                         reco.stopContinuousRecognitionAsync(
@@ -488,6 +515,31 @@
                 }
             });
 
+              
+            function funUpload(fileName) {
+            var fd = new FormData();
+            var mp3Name = encodeURIComponent(fileName + '.mp3');
+            fd.append('fileName', mp3Name);
+            fd.append('file', mp3Blob);
+            fd.append('docId', thisSessionId);
+            var token=localStorage.getItem('token');
+
+            // var url="https://opencast.tsi.edu.sg/tansci/collect/upload";
+                        // 开发
+            var url="http://localhost:8005/tansci/collect/upload";
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    console.log('上传响应：'+xhr.responseText);
+                }
+            };
+            xhr.open('POST', url);
+            xhr.setRequestHeader("Authorization", 'Bearer '+token);
+            xhr.send(fd);
+        }
+
+        
             function enumerateMicrophones() {
                 if (!navigator || !navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
                     console.log(`Unable to query for audio input devices. Default will be used.\r\n`);

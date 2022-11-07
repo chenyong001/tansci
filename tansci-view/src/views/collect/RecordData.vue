@@ -167,6 +167,7 @@ const route = useRoute();
       window.URL.revokeObjectURL(url)
       // 用完即删
       document.body.removeChild(link)
+      onCollectPage();
             
             });
     }

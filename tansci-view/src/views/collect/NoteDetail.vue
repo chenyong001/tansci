@@ -154,6 +154,7 @@ const onExportTxt = () => {
     window.URL.revokeObjectURL(url);
     // 用完即删
     document.body.removeChild(link);
+     onCollectPage();
   });
 };
 
@@ -178,6 +179,7 @@ const onExportSrt = () => {
     window.URL.revokeObjectURL(url);
     // 用完即删
     document.body.removeChild(link);
+     onCollectPage();
   });
 };
 

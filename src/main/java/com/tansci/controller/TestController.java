@@ -6,9 +6,12 @@ import com.tansci.utils.SystemUtil;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -26,8 +29,14 @@ public class TestController {
   public static Map<String, String> dbMap = new ConcurrentHashMap();
 
   public static void main(String[] args) throws IOException {
-
-    System.out.println((int) (Math.random()*100));
+    String filePath="E://test\\ss.txt";
+    System.out.println(filePath.lastIndexOf(File.separator));
+    System.out.println(filePath.substring(filePath.lastIndexOf(File.separator)+1));
+//    System.out.println(File);
+//    Path path = Paths.get("").toAbsolutePath().resolve("tempAudio");
+//    String filePath = path.toAbsolutePath().toString() + File.separator;
+//    System.out.println(filePath);
+    //    System.out.println((int) (Math.random()*100));
 
 
 //    System.out.println(Date.before(new Date()));

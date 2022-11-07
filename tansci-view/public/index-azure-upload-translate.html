@@ -320,6 +320,7 @@
 
         var thingsToDisableDuringSession;
         var uuid;
+        var thisSessionId;
 
         var soundContext = undefined;
         try {
@@ -747,9 +748,9 @@
                         if( resultText!== null  && resultText !== '' ){
 
                         // 生产
-                        var url="https://opencast.tsi.edu.sg/tansci/collect/sendNote?resultText="+resultText+"&language="+result.language+"&docId="+uuid+"&offset="+offset+"&duration="+duration;
+                        var url="https://opencast.tsi.edu.sg/tansci/collect/sendNote?resultText="+resultText+"&language="+result.language+"&docId="+thisSessionId+"&offset="+offset+"&duration="+duration;
                         // 开发
-                        // var url="http://localhost:8005/tansci/collect/sendNote?resultText="+result.text+"&language="+result.language+"&docId="+uuid+"&offset="+offset+"&duration="+duration;
+                        // var url="http://localhost:8005/tansci/collect/sendNote?resultText="+result.text+"&language="+result.language+"&docId="+thisSessionId+"&offset="+offset+"&duration="+duration;
 
 
 
@@ -774,7 +775,7 @@
 
         function onSessionStarted(sender, sessionEventArgs) {
             // statusDiv.innerHTML += `(sessionStarted) SessionId: ${sessionEventArgs.sessionId}\r\n`;
-
+         thisSessionId=sessionEventArgs.sessionId;
             for (const thingToDisableDuringSession of thingsToDisableDuringSession) {
                 thingToDisableDuringSession.disabled = true;
             }

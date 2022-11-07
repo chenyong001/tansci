@@ -421,6 +421,15 @@ export function exportTxt(params) {
       });
 
 }
+export function exportWAV(params) {
+    return axios({
+        method: 'get',
+        url: '/tansci/collect/exportWAV',
+        responseType: 'blob',
+        params: params
+      });
+
+}
 /**
  * 采集管理
  * @param {*} params 
@@ -447,6 +456,23 @@ export function sendNote(params) {
     // return axios.post('/tansci/taskConfig/save', params);
 
     return axios.get('/tansci/collect/sendNote', { params: params });
+    // return axios({
+    //     method: 'get',
+    //     url: '/tansci/collect/record',
+    //     params: params
+    //   });
+}
+
+/**
+ * 删除管理
+ * @param {*} params 
+ * @returns 
+ */
+export function deleteNote(params) {
+    // return axios.get('/tansci/collect/record', params);
+    // return axios.post('/tansci/taskConfig/save', params);
+
+    return axios.post('/tansci/collect/deleteNote', params);
     // return axios({
     //     method: 'get',
     //     url: '/tansci/collect/record',

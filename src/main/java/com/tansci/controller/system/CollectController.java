@@ -1,6 +1,5 @@
 package com.tansci.controller.system;
 
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -21,6 +20,7 @@ import com.tansci.service.system.RecordDataService;
 import com.tansci.service.system.RecordService;
 import com.tansci.utils.ExportUtil;
 import com.tansci.utils.HttpClientUtil;
+import com.tansci.utils.ResourcesUtil;
 import com.tansci.utils.SecurityUserUtils;
 import com.tansci.utils.SystemUtil;
 
@@ -29,15 +29,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -77,25 +85,26 @@ public class CollectController {
   @PostMapping("/getAzureToken")
   public String getAzureToken() {
     String region = "eastasia";
-//    F0
-//    String subscriptionKey = "de4e9ac5168843c2b74a9b1477376668";
-//    S0
+    //    F0
+    //    String subscriptionKey = "de4e9ac5168843c2b74a9b1477376668";
+    //    S0
     String subscriptionKey = "65e6b6a78c5d4326a57366de1c51c872";
 
     String tokenKey = "token";
-//    if (!cacheMap.containsKey(tokenKey)) {
-      //    发送请求
-      String url = "https://" + region + ".api.cognitive.microsoft.com/sts/v1.0/issueToken";
-      Map<String, String> headerParams = Maps.newHashMap();
-      headerParams.put("Content-Type", "application/json");
-      headerParams.put("Ocp-Apim-Subscription-Key", subscriptionKey);
-      Map<String, String> bodyParams = Maps.newHashMap();
-      String result = HttpClientUtil.sendPostRequest(url, headerParams, bodyParams);
-      cacheMap.put(tokenKey, result);
-      log.info("==================getAzureToken={}", result);
-//    }
+    //    if (!cacheMap.containsKey(tokenKey)) {
+    //    发送请求
+    String url = "https://" + region + ".api.cognitive.microsoft.com/sts/v1.0/issueToken";
+    Map<String, String> headerParams = Maps.newHashMap();
+    headerParams.put("Content-Type", "application/json");
+    headerParams.put("Ocp-Apim-Subscription-Key", subscriptionKey);
+    Map<String, String> bodyParams = Maps.newHashMap();
+    String result = HttpClientUtil.sendPostRequest(url, headerParams, bodyParams);
+    cacheMap.put(tokenKey, result);
+    log.info("==================getAzureToken={}", result);
+    //    }
     return cacheMap.get(tokenKey);
   }
+
   @ResponseBody
   @PostMapping("/clearAzureToken")
   public String clearAzureToken() {
@@ -128,6 +137,14 @@ public class CollectController {
   public void exportTxt(RecordData recordData, HttpServletResponse response) {
     List<RecordData> recordDataList = recordDataService.selectList(recordData);
     ExportUtil.exportSrt(response, recordDataList);
+  }
+
+  @ApiOperation(value = "导出音频文件", notes = "导出音频文件")
+  @Log(modul = "导出音频文件", type = Constants.SELECT, desc = "导出音频文件")
+  @GetMapping("/exportWAV")
+  public void exportWAV(Record record, HttpServletResponse response) {
+    Record record1 = recordService.selectOne(record);
+    ExportUtil.exportWav(response, record1);
   }
 
   @ApiOperation(value = "列表", notes = "采集列表")
@@ -235,6 +252,28 @@ public class CollectController {
     return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
   }
 
+  @PostMapping("/deleteNote")
+  @ResponseBody
+  public Wrapper<Boolean> deleteNote(@RequestBody Record record) {
+    log.info("deleteNote===========,resultText={}");
+    if (StringUtils.isBlank(record.getDocId())) {
+      //      如果数据为空，则不处理，直接返回
+      return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+    }
+    Record record1 = recordService.selectOne(record);
+    //    删除文件
+    String filePath = record1.getFilePath();
+    if (StringUtils.isNotBlank(filePath)) {
+      File file = new File(filePath);
+      if (file.exists()) {
+        file.delete();
+      }
+    }
+
+    recordService.del(record1);
+    return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+  }
+
   @GetMapping("/getMyData")
   @ResponseBody
   public Wrapper<List<MyData>> getMyData(RecordData recordData) {
@@ -264,20 +303,21 @@ public class CollectController {
 			*/
       //      String jsonStr=jsonArray.toJSONString();
       String jsonStr = JSON.toJSONString(recordDataList);
-//      jsonStr = jsonStr.replace("\"", "\'");
+      //      jsonStr = jsonStr.replace("\"", "\'");
       //      "C:\\Python310/python.exe"
       log.info("===============os.name={}", SystemUtil.getOsName());
-      String fileName =recordData.getDocId()+"_"+System.currentTimeMillis()+"_"+(int) (Math.random()*100)+".txt";
+      String fileName =
+          recordData.getDocId() + "_" + System.currentTimeMillis() + "_" + (int) (Math.random() * 100) + ".txt";
 
-//      jsonStr写入文件，由py文件读取
-      String[] args1 ;
+      //      jsonStr写入文件，由py文件读取
+      String[] args1;
       if (SystemUtil.isWindows()) {
-        filePath="E:\\tansci\\py/"+fileName;
-        FileUtils.write(new File(filePath),jsonStr,"utf-8");
+        filePath = "E:\\tansci\\py/" + fileName;
+        FileUtils.write(new File(filePath), jsonStr, "utf-8");
         args1 = new String[] { "python", "E:\\tansci\\py/analyseRecord_windows.py", "--filePath=" + filePath };
       } else {
-        filePath="/temp/"+fileName;
-        FileUtils.write(new File(filePath),jsonStr,"utf-8");
+        filePath = "/temp/" + fileName;
+        FileUtils.write(new File(filePath), jsonStr, "utf-8");
         args1 = new String[] { "python", "/analyseRecord_linux.py", "--filePath=" + filePath };
       }
 
@@ -310,12 +350,52 @@ public class CollectController {
     } catch (InterruptedException e) {
       e.printStackTrace();
     } finally {
-//      删除临时文件
-      if(StringUtils.isNotBlank(filePath)){
+      //      删除临时文件
+      if (StringUtils.isNotBlank(filePath)) {
         FileUtils.deleteQuietly(new File(filePath));
       }
       return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, myDataList);
     }
+  }
+
+  @ResponseBody
+  @PostMapping("/upload")
+  public String upload(@RequestParam(name = "file") MultipartFile file, String fileName, String docId) {
+
+    log.info("==================upload=fileName={},docId={}", fileName, docId);
+    //    file.getBytes()
+    Path path = Paths.get("").toAbsolutePath().resolve("tempAudio");
+    String parentPath = path.toAbsolutePath().toString() + File.separator;
+    log.info("====================parentPath={}", parentPath);
+    //    new File(parentPath).mkdirs();
+    //    FileOutputStream fileOutputStream = null;
+    InputStream inputStream = null;
+    String filePath = parentPath + fileName;
+    try {
+      inputStream = file.getInputStream();
+      //      fileOutputStream = new FileOutputStream(new File(parentPath + fileName));
+      FileUtils.copyInputStreamToFile(inputStream, new File(filePath));
+      //      IoUtil.copy(new ByteArrayInputStream(tempStream.toByteArray()), fileOutputStream);
+      //   入库，保存地址
+      Record record = new Record();
+      record.setDocId(docId);
+      //      record.setUserId(SecurityUserUtils.getUser().getId());
+      //      record.setRemark(remark);
+      Record record1 = recordService.selectOne(record);
+      //        record.setType(CollectTypeEnum.COLLECT_TYPE_AZURE.getType());
+      //        record.setCreateTime(new Date());
+      record1.setUpdateTime(new Date());
+      record1.setFilePath(filePath);
+      recordService.update(record1);
+
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      ResourcesUtil.multiClose(inputStream);
+    }
+    return "upload success";
   }
 
   @Data
