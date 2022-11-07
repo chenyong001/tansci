@@ -144,7 +144,9 @@ public class CollectController {
   @GetMapping("/exportWAV")
   public void exportWAV(Record record, HttpServletResponse response) {
     Record record1 = recordService.selectOne(record);
-    ExportUtil.exportWav(response, record1);
+    if(StringUtils.isNotBlank(record1.getFilePath())){
+      ExportUtil.exportWav(response, record1);
+    }
   }
 
   @ApiOperation(value = "列表", notes = "采集列表")
@@ -202,6 +204,29 @@ public class CollectController {
     //    }
   }
 
+
+
+  @GetMapping("/createNote")
+  @ResponseBody
+  public Wrapper<Boolean> createNote(
+      @RequestParam(name = "docId", required = true) String docId,
+      @RequestParam(name = "remark", required = false) String remark) {
+    log.info("export===========,docId={},remark={}", docId,remark);
+    //   新增或更新采集记录
+    Record record = new Record();
+    record.setDocId(docId);
+    record.setUserId(SecurityUserUtils.getUser().getId());
+    record.setRemark(remark);
+    if (Objects.isNull(recordService.selectOne(record))) {
+      record.setType(CollectTypeEnum.COLLECT_TYPE_AZURE.getType());
+      record.setCreateTime(new Date());
+      record.setUpdateTime(new Date());
+      recordService.save(record);
+    }
+    return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+  }
+
+
   @ApiOperation(value = "列表", notes = "采集列表")
   @Log(modul = "采集-采集列表", type = Constants.SELECT, desc = "采集列表")
   @GetMapping("/sendNote")
@@ -219,18 +244,18 @@ public class CollectController {
       return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
     }
     //   新增或更新采集记录
-    Record record = new Record();
-    //    String docId = UUID.randomUUID().toString().replace("-", "");
-    record.setDocId(docId);
-    record.setUserId(SecurityUserUtils.getUser().getId());
-    record.setRemark(remark);
-    if (Objects.isNull(recordService.selectOne(record))) {
-
-      record.setType(CollectTypeEnum.COLLECT_TYPE_AZURE.getType());
-      record.setCreateTime(new Date());
-      record.setUpdateTime(new Date());
-      recordService.save(record);
-    }
+//    Record record = new Record();
+//    //    String docId = UUID.randomUUID().toString().replace("-", "");
+//    record.setDocId(docId);
+//    record.setUserId(SecurityUserUtils.getUser().getId());
+//    record.setRemark(remark);
+//    if (Objects.isNull(recordService.selectOne(record))) {
+//
+//      record.setType(CollectTypeEnum.COLLECT_TYPE_AZURE.getType());
+//      record.setCreateTime(new Date());
+//      record.setUpdateTime(new Date());
+//      recordService.save(record);
+//    }
     //    else {
     //      record.setUpdateTime(new Date());
     //      recordService.update(record);

@@ -510,9 +510,9 @@
             fd.append('docId', thisSessionId);
             var token=localStorage.getItem('token');
 
-            // var url="https://opencast.tsi.edu.sg/tansci/collect/upload";
+            var url="https://opencast.tsi.edu.sg/tansci/collect/upload";
                         // 开发
-            var url="http://localhost:8005/tansci/collect/upload";
+            // var url="http://localhost:8005/tansci/collect/upload";
 
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
@@ -839,6 +839,30 @@
 
             scenarioStartButton.disabled = true;
             scenarioStopButton.disabled = false;
+
+                        // 入库数据
+                        var token=localStorage.getItem('token');
+                        if( thisSessionId!== null  && thisSessionId !== '' ){
+                        // 生产 +"&remark="+remark
+                        var url="https://opencast.tsi.edu.sg/tansci/collect/createNote?docId="+thisSessionId;
+                        // 开发
+                        // var url="http://localhost:8005/tansci/collect/createNote?docId="+thisSessionId;
+
+
+
+                        var a = new XMLHttpRequest();
+                            a.open("GET", url);
+                            a.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                            a.setRequestHeader("Authorization", 'Bearer '+token);
+
+                            // a.send(formData);
+                            a.send();
+                            a.onload = function () {
+                                console.log("this.responseText: " + this.responseText);
+                                
+                            }
+        }
+
         }
 
         function onSessionStopped(sender, sessionEventArgs) {
