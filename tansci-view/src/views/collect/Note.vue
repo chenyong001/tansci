@@ -94,6 +94,7 @@ docId填入：rdvPragueDocId_23b6a64a-e615-45d9-9b4d-54f26e783480_r3，提交
     import Table from '../../components/Table.vue'
     import {collectPage, collect,deleteNote,exportWAV} from '../../api/systemApi.js'
 import { useRouter } from 'vue-router'
+import { timeFormate2 } from "../../utils/utils.js";
 
 // 切换页面
     const router = useRouter()
@@ -298,14 +299,15 @@ import { useRouter } from 'vue-router'
                 docId: val.column.row.docId
             }
             exportWAV(param).then(res => {
-                if (!res.data) {
+                if (res.data.size==0) {
                 return;
                 }
                 let url = window.URL.createObjectURL(new Blob([res.data]));
                 let link = document.createElement("a");
                 link.style.display = "none";
                 link.href = url;
-                let filePath = val.column.row.filePath;
+
+                let filePath = 'audio_recording_' +val.column.row.docId+"_"+timeFormate2(new Date())+".mp3";
                 var fileName = filePath.substring(filePath.indexOf('/')+1,filePath.length);
 
                 link.setAttribute("download", fileName);

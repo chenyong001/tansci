@@ -474,7 +474,17 @@
                                                 // 停止录音
                     recorder.stop();
                     // recorder.destroy();
-                    var fileName='audio_recording_' + new Date().toLocaleString();
+                    var date = new Date();
+                    Y = date.getFullYear() ;
+                    M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) ;
+                    D =String(date.getDate()).padStart(2, '0');
+                    h = String(date.getHours()).padStart(2, '0');
+                    m = String(date.getMinutes()).padStart(2, '0');
+                    s = String(date.getSeconds()).padStart(2, '0');
+                   
+                    console.log(Y+M+D+h+m+s); 
+                    
+                    var fileName='audio_recording_' + thisSessionId+"_"+Y+M+D+h+m+s;
                     // recorder.downloadWAV(fileName);
                 //   上传到服务器
             //    wavBlob=recorder.getWAVBlob();
