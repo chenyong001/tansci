@@ -3,7 +3,9 @@
   justify-content: space-between;">
     <!-- <v-chart class="chart" :option="option2" /> -->
   <div style="width:60%;">
-    <!-- border: 1px solid red; -->
+    <el-tabs v-model="activeName" model-value="first" type="card" >
+    <el-tab-pane label="数据详情" name="first">
+<!-- border: 1px solid red; -->
     <el-card >
       <!-- <p>noteDetail测试searchForm.docId=========={{ searchForm.docId }}</p> -->
       <Table
@@ -42,6 +44,25 @@
         </template>-->
       </Table>
     </el-card>
+
+    </el-tab-pane>
+    <el-tab-pane label="词频列表" name="second">
+
+  <Table
+        :data="fqcTableData"
+        :column="fqcTableTitle"
+        :operation="false"
+        :page="page"
+        :loading="loading"
+        @onSizeChange="onSizeChange"
+        @onCurrentChange="onCurrentChange"
+      >
+   
+      </Table>
+    </el-tab-pane>
+  </el-tabs>
+
+    
     </div>
     <div style="width:40%;">
     <el-card >
@@ -79,15 +100,6 @@ const state = reactive({
   },
   tableTitle: [
     { prop: "id", label: "ID",width:100 },
-    // { prop: "docId", label: "文档ID" },
-    // {prop:'status',alias:'statusName',label:'状态',
-    //     type:'switch',
-    //     option:{
-    //         activeValue:1,activeColor:'#13ce66',activeText:'启用',
-    //         inactiveValue:0,inactiveColor:'#ff4949',inactiveText:'禁用'
-    //     }
-    // },
-    // {prop:'creater',label:'创建人'},
     { prop: "subtitle", label: "内容" },
     { prop: "timestamp", label: "创建时间",width:200 }
   ],
@@ -98,9 +110,16 @@ const state = reactive({
     domain: "",
     docId: "",
     reamrk: ""
-  }
+  },
+  activeName: 'first',
+    fqcTableTitle: [
+    { prop: "name", label: "单词"},
+    { prop: "value", label: "次数" }
+  ],
+  fqcTableData: [],
 });
 
+let myResult;
 const {
   searchForm,
   loading,
@@ -110,7 +129,9 @@ const {
   tableData,
   taskVisible,
   taskTitle,
-  taskForm
+  taskForm,
+    fqcTableTitle,
+  fqcTableData
 } = toRefs(state);
 
 onMounted(() => {
@@ -118,7 +139,13 @@ onMounted(() => {
   // noColumnar();
   onPie();
   onLtrealtimewordcloud();
+  // onFqcPage();
 });
+
+// // 初始化数据
+// const handleClick = () => {
+//   console.log(tab, event);
+// };
 
 // 初始化数据
 const onCollectPage = () => {
@@ -132,6 +159,20 @@ const onCollectPage = () => {
     state.page.size = res.result.size;
     state.page.total = res.result.total;
   });
+};
+
+// 初始化数据
+const onFqcPage = () => {
+  state.loading = true;
+  // state.searchForm.docId=this.$route.params.id;
+  // state.searchForm.docId=this.docId;
+  // fqcDataPage(Object.assign(state.page, state.searchForm)).then(res => {
+    state.loading = false;
+    state.fqcTableData = myResult;
+    // state.page.current = res.result.current;
+    // state.page.size = res.result.size;
+    // state.page.total = myResult.size;
+  // });
 };
 // 初始化数据
 const onExportTxt = () => {
@@ -228,10 +269,14 @@ const onSubmit = async () => {
   onCollectPage();
 };
 
-const   onPie = async  () => {
+const   onPie =  async () => {
   let myPie = echarts.init(document.getElementById("myPie"));
   const { result } = await getMyData(Object.assign(state.searchForm))
-      console.log(result)
+    myResult=result;
+  onFqcPage();
+  // exportTxt(Object.assign(state.searchForm)).then(res => {
+
+      // console.log(result)
 
   myPie.setOption({
     title: {},
@@ -283,7 +328,7 @@ const onLtrealtimewordcloud = async () => {
   );
 
       const { result } = await getMyData(Object.assign(state.searchForm))
-      console.log(result)
+      // console.log(result)
   tlrealtimewordcloud.setOption({
     // title: {},
     // legend: {},

@@ -36,10 +36,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -51,6 +49,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -76,6 +75,7 @@ public class CollectController {
   private RecordDataService recordDataService;
   @Autowired
   private RecordService recordService;
+
 
   @Autowired
   private RecordTask recordTask;
@@ -115,6 +115,13 @@ public class CollectController {
     return cacheMap.get(tokenKey);
   }
 
+  //  @ApiOperation(value = "采集列表", notes = "采集列表")
+  //  @Log(modul = "采集-采集列表", type = Constants.SELECT, desc = "采集列表")
+  //  @ResponseBody
+  //  @GetMapping("/page")
+  //  public Wrapper<IPage<Record>> page(Page page, Record record) {
+  //    return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, recordService.page(page, record));
+  //  }
   @ApiOperation(value = "采集列表", notes = "采集列表")
   @Log(modul = "采集-采集列表", type = Constants.SELECT, desc = "采集列表")
   @ResponseBody
@@ -144,7 +151,7 @@ public class CollectController {
   @GetMapping("/exportWAV")
   public void exportWAV(Record record, HttpServletResponse response) {
     Record record1 = recordService.selectOne(record);
-    if(StringUtils.isNotBlank(record1.getFilePath())){
+    if (StringUtils.isNotBlank(record1.getFilePath())) {
       ExportUtil.exportWav(response, record1);
     }
   }
@@ -204,14 +211,11 @@ public class CollectController {
     //    }
   }
 
-
-
   @GetMapping("/createNote")
   @ResponseBody
-  public Wrapper<Boolean> createNote(
-      @RequestParam(name = "docId", required = true) String docId,
+  public Wrapper<Boolean> createNote(@RequestParam(name = "docId", required = true) String docId,
       @RequestParam(name = "remark", required = false) String remark) {
-    log.info("export===========,docId={},remark={}", docId,remark);
+    log.info("export===========,docId={},remark={}", docId, remark);
     //   新增或更新采集记录
     Record record = new Record();
     record.setDocId(docId);
@@ -225,7 +229,6 @@ public class CollectController {
     }
     return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
   }
-
 
   @ApiOperation(value = "列表", notes = "采集列表")
   @Log(modul = "采集-采集列表", type = Constants.SELECT, desc = "采集列表")
@@ -244,18 +247,18 @@ public class CollectController {
       return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
     }
     //   新增或更新采集记录
-//    Record record = new Record();
-//    //    String docId = UUID.randomUUID().toString().replace("-", "");
-//    record.setDocId(docId);
-//    record.setUserId(SecurityUserUtils.getUser().getId());
-//    record.setRemark(remark);
-//    if (Objects.isNull(recordService.selectOne(record))) {
-//
-//      record.setType(CollectTypeEnum.COLLECT_TYPE_AZURE.getType());
-//      record.setCreateTime(new Date());
-//      record.setUpdateTime(new Date());
-//      recordService.save(record);
-//    }
+    //    Record record = new Record();
+    //    //    String docId = UUID.randomUUID().toString().replace("-", "");
+    //    record.setDocId(docId);
+    //    record.setUserId(SecurityUserUtils.getUser().getId());
+    //    record.setRemark(remark);
+    //    if (Objects.isNull(recordService.selectOne(record))) {
+    //
+    //      record.setType(CollectTypeEnum.COLLECT_TYPE_AZURE.getType());
+    //      record.setCreateTime(new Date());
+    //      record.setUpdateTime(new Date());
+    //      recordService.save(record);
+    //    }
     //    else {
     //      record.setUpdateTime(new Date());
     //      recordService.update(record);
@@ -359,15 +362,15 @@ public class CollectController {
       Iterator iter = jsonInfo.entrySet().iterator();
       while (iter.hasNext()) {
         Map.Entry entry = (Map.Entry) iter.next();
-        myDataList.add(new MyData(entry.getKey().toString(), entry.getValue().toString()));
-        //        System.out.println(entry.getKey().toString());
-        //        System.out.println(entry.getValue().toString());
+        myDataList.add(new MyData(entry.getKey().toString(), Integer.parseInt(entry.getValue().toString())));
       }
-      //      myDataList.add(new MyData("指标1","143"));
-      //      myDataList.add(new MyData("指标2","243"));
-      //      myDataList.add(new MyData("指标3","343"));
-      //      myDataList.add(new MyData("指标4","443"));
-      //      myDataList.add(new MyData("指标5","543"));
+
+      myDataList = myDataList.stream().sorted((e1, e2) -> {
+        //        if(e2.getValue() == e1.getValue()){
+        //          return e1.getName().compareTo(e2.getName());
+        //        }
+        return Integer.compare(e2.getValue(), e1.getValue());
+      }).collect(Collectors.toList());
       in.close();
       proc.waitFor();
     } catch (IOException e) {
@@ -427,9 +430,9 @@ public class CollectController {
   class MyData implements Serializable {
     private static final long serialVersionUID = 6686838756389384302L;
     private String name;
-    private String value;
+    private Integer value;
 
-    public MyData(String name, String value) {
+    public MyData(String name, Integer value) {
       this.name = name;
       this.value = value;
     }

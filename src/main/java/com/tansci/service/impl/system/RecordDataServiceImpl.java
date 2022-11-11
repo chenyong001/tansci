@@ -72,7 +72,7 @@ public class RecordDataServiceImpl extends ServiceImpl<RecordDataMapper, RecordD
   public Integer countRecord(RecordData recordData) {
     return this.baseMapper.selectCount(
         Wrappers.<RecordData>lambdaQuery().eq(RecordData::getDocId, recordData.getDocId())
-            .eq(RecordData::getProperty, recordData.getProperty()));
+            .eq(StringUtils.isNotBlank(recordData.getProperty()),RecordData::getProperty, recordData.getProperty()));
   }
 
   //    @Override

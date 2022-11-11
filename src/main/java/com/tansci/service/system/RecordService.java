@@ -4,9 +4,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.tansci.domain.system.Record;
-import com.tansci.domain.system.dto.TaskConfigDto;
-
-import java.util.List;
 
 /**
  * @ClassName： TaskConfigService.java
@@ -18,7 +15,6 @@ import java.util.List;
 public interface RecordService extends IService<Record> {
 
   IPage<Record> page(Page page, Record record);
-
   //    @Override
   @Override
   boolean save(Record record);

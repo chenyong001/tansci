@@ -1,13 +1,12 @@
 package com.tansci.domain.system;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import java.beans.Transient;
 import java.util.Date;
-
-import javax.annotation.PropertyKey;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -63,5 +62,17 @@ public class Record {
 
   @ApiModelProperty(value = "备注")
   private String remark;
+
+
+  @ApiModelProperty(value = "数据记录量，用于判断是否有新的记录，便于是否需要重新统计数据")
+  @TableField(exist = false)
+  private long recordNum;
+  @ApiModelProperty(value = "时长(s)")
+  @TableField(exist = false)
+  private long duration;
+
+  @ApiModelProperty(value = "字符量")
+  @TableField(exist = false)
+  private long charactersCount;
 
 }

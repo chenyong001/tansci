@@ -2,9 +2,11 @@
     <div class="record_data" style="display: flex;
   justify-content: space-between;">
   <div style="width:60%;">
+        <el-tabs v-model="activeName" model-value="first" type="card" >
+    <el-tab-pane label="数据详情" name="first">
         <el-card>
               
-              <p>PPT直播测试searchForm.docId=========={{ searchForm.docId }}</p>
+              <!-- <p>PPT直播测试searchForm.docId=========={{ searchForm.docId }}</p> -->
             <Table :data="tableData" :column="tableTitle" :operation="false" :page="page" :loading="loading"
                 @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange">
                 <template #search>
@@ -28,6 +30,23 @@
                 </template> -->
             </Table>
         </el-card>
+        
+    </el-tab-pane>
+    <el-tab-pane label="词频列表" name="second">
+
+  <Table
+        :data="fqcTableData"
+        :column="fqcTableTitle"
+        :operation="false"
+        :page="page"
+        :loading="loading"
+        @onSizeChange="onSizeChange"
+        @onCurrentChange="onCurrentChange"
+      >
+   
+      </Table>
+    </el-tab-pane>
+  </el-tabs>
        </div>
     <div style="width:40%;">
     <el-card >
@@ -119,12 +138,20 @@ const route = useRoute();
             domain: '',
             docId: '',
             reamrk: ''
-        }
+        },
+        activeName: 'first',
+          fqcTableTitle: [
+          { prop: "name", label: "单词"},
+          { prop: "value", label: "次数" }
+        ],
+        fqcTableData: [],
     })
-
+let myResult;
     const {
         searchForm,loading,page,tableHeight,tableTitle,tableData,
-        taskVisible,taskTitle,taskForm
+        taskVisible,taskTitle,taskForm,
+        fqcTableTitle,
+        fqcTableData
     } = toRefs(state)
 
     onMounted(() => {
@@ -146,6 +173,13 @@ const route = useRoute();
             state.page.total = res.result.total;
         })
     }
+    
+// 初始化数据
+const onFqcPage = () => {
+  state.loading = true;
+    state.loading = false;
+    state.fqcTableData = myResult;
+};
         // 初始化数据
     const onExportTxt = () =>{
         state.loading = true;
@@ -281,6 +315,8 @@ const   onPie = async  () => {
   let myPie = echarts.init(document.getElementById("myPie"));
   const { result } = await getMyData(Object.assign(state.searchForm))
       console.log(result)
+       myResult=result;
+  onFqcPage();
 
   myPie.setOption({
     title: {},
