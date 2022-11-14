@@ -4,7 +4,7 @@
             <el-card v-show="!isCollapse" shadow="always">
                 <div>
                     <el-icon :size="26" style="vertical-align: middle;"><OfficeBuilding/></el-icon>
-                    <span style="vertical-align: middle;padding-left:1rem;">TANSCI</span>
+                    <span style="vertical-align: middle;padding-left:1rem;">Touchstone AI</span>
                 </div>
             </el-card>
             <el-menu router :default-active="$route.path" :collapse="isCollapse" @select="onSelect"

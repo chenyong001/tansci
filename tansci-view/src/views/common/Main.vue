@@ -14,7 +14,7 @@
 </script>
 <template>
     <div class="main-container">
-        欢迎使用 Tansci 
+        欢迎使用 Touchstone Cognitive AI Platform  点睛堂人工智能线上服务！
     </div>
 </template>
 <style lang="scss" scoped>

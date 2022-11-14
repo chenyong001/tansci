@@ -366,11 +366,8 @@ public class CollectController {
       }
 
       myDataList = myDataList.stream().sorted((e1, e2) -> {
-        //        if(e2.getValue() == e1.getValue()){
-        //          return e1.getName().compareTo(e2.getName());
-        //        }
         return Integer.compare(e2.getValue(), e1.getValue());
-      }).collect(Collectors.toList());
+      }).collect(Collectors.toList()).subList(0,30);
       in.close();
       proc.waitFor();
     } catch (IOException e) {

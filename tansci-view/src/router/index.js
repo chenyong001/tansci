@@ -38,7 +38,7 @@ router.beforeEach(async (to, from, next) => {
     if (to.meta.title) {
         document.title = to.meta.title
     } else {
-        document.title = "tansci"
+        document.title = "Touchstone AI"
     }
 
     // 动态添加路由

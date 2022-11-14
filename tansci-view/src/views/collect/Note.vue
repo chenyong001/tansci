@@ -163,7 +163,7 @@ import { timeFormate2 } from "../../utils/utils.js";
             // {prop:'creater',label:'创建人'},
             // {prop:'updateTime',label:'更新时间'},
             {prop:'createTime',label:'创建时间'},
-            {prop:'duration',label:'总时长(s)'},
+            {prop:'durationStr',label:'总时长'},
             {prop:'charactersCount',label:'总字符量'},
             {prop:'docId',label:'会话文档ID'},
             {prop:'remark',label:'备注'}

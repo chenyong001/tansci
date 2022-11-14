@@ -67,9 +67,12 @@ public class Record {
   @ApiModelProperty(value = "数据记录量，用于判断是否有新的记录，便于是否需要重新统计数据")
   @TableField(exist = false)
   private long recordNum;
-  @ApiModelProperty(value = "时长(s)")
+  @ApiModelProperty(value = "时长")
   @TableField(exist = false)
   private long duration;
+  @ApiModelProperty(value = "时长,xx天xx小时xx分钟xx秒")
+  @TableField(exist = false)
+  private String durationStr;
 
   @ApiModelProperty(value = "字符量")
   @TableField(exist = false)

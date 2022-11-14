@@ -37,6 +37,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
   private RecordDataService recordDataService;
   @Autowired
   private RecordStatService recordStatService;
+
   //
   //  @Override
   //  public IPage<Record> page(Page page, Record record) {
@@ -51,6 +52,25 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
   //    //    });
   //    return iPage;
   //  }
+  public static void main(String[] args) {
+    //    long duration=3119000;
+    long duration = 7480000;
+    //    52*60=3120
+    long s = duration / 1000;
+    long hh = s / (60 * 60) % 24;
+    long mm = s / 60 % 60;
+    long ss = s % 60;
+    System.out.println(String.format("%s:%s:%s", hh, mm, ss));
+
+    System.out.println(s);
+    System.out.println(hh);
+    System.out.println(mm);
+    System.out.println(ss);
+
+    //    String durationStr = new RecordServiceImpl().getDurationStr(duration);
+    //    System.out.println(durationStr);
+
+  }
 
   @Override
   public IPage<Record> page(Page page, Record record) {
@@ -61,11 +81,13 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
         .orderByDesc(Record::getCreateTime));
 
     iPage.getRecords().forEach(item -> {
+
       RecordStat recordStat = new RecordStat();
       recordStat.setDocId(item.getDocId());
       RecordStat recordStat1 = recordStatService.selectOne(recordStat);
       long recordNum = recordStat1 != null ? recordStat1.getRecordNum() : 0;
       long duration = recordStat1 != null ? recordStat1.getDuration() : 0; //持续时长
+      String durationStr = getDurationStr(duration);
       long charactersCount = recordStat1 != null ? recordStat1.getCharactersCount() : 0;//字面量
 
       RecordData dto = new RecordData();
@@ -74,7 +96,6 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
       dto.setProperty(property);
 
       Integer total = recordDataService.countRecord(dto);
-
 
       if (total != recordNum && total != 0) {
         //        1、统计时长， 2、统计字符量，3、更新时长、字符量、total到record_stat表中
@@ -94,10 +115,9 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
               endTime = recordData.getTimestamp().getTime();
             }
           }
-
-          //        单位s
-          duration = (endTime - startTime) / 1000L;
-          charactersCount=tempCharactersCount;
+          duration = endTime - startTime;
+          durationStr = getDurationStr(duration);
+          charactersCount = tempCharactersCount;
 
           //        3、更新时长、字符量、total到record_stat表中
 
@@ -115,9 +135,29 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
       }
       item.setRecordNum(recordNum);
       item.setDuration(duration);
+      item.setDurationStr(durationStr);
+
       item.setCharactersCount(charactersCount);
     });
     return iPage;
+  }
+
+  /**
+   * 获取时长字符串
+   *
+   * @param duration
+   * @return
+   */
+  private String getDurationStr(long duration) {
+    //    秒
+    long s = duration / 1000;
+    //    小时
+    long hh = s / (60 * 60) % 24;
+    //    分钟
+    long mm = s / 60 % 60;
+    //    秒钟
+    long ss = s % 60;
+    return String.format("%s:%s:%s", hh, mm, ss);
   }
 
   @Override

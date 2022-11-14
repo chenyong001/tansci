@@ -39,7 +39,7 @@ public class RecordStat {
 
   @ApiModelProperty(value = "数据记录量，用于判断是否有新的记录，便于是否需要重新统计数据")
   private long recordNum;
-  @ApiModelProperty(value = "时长(s)")
+  @ApiModelProperty(value = "时长(毫秒)")
   private long duration;
 
   @ApiModelProperty(value = "字符量")
