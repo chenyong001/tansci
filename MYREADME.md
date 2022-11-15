@@ -25,4 +25,5 @@ sql：
 #mvn clean package -Dmaven.test.skip=true
 #docker build -t tansci:v1 .
 #docker stop tansci && docker rm tansci
-#docker run -d --name=tansci -p 8005:8005  --restart=always --privileged=true -v /app/tempAudio:/app/tempAudio tansci:v1
+#docker run -d --name=tansci -p 8005:8005  --restart=always --privileged=true \
+-v /app/tempAudio:/app/tempAudio tansci:v1

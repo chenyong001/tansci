@@ -279,6 +279,9 @@
                     // var token = JSON.parse(atob(this.responseText.split(".")[1]));
                     regionOptions.value = "eastasia";
                     authorizationToken = this.responseText;
+                    if(reco){
+                        reco.authorizationToken=authorizationToken;
+                    }
                     key.disabled = true;
                     key.value = "using authorization token (hit F5 to refresh)";
                     // console.log("Got an authorization token: " + token);
@@ -323,6 +326,8 @@
         var thisSessionId;
 
         var soundContext = undefined;
+        var timeID;
+
         try {
             var AudioContext = window.AudioContext // our preferred impl
                 || window.webkitAudioContext       // fallback, mostly when on Safari
@@ -455,6 +460,7 @@
                     case 'speechRecognizerContinuous':
                     case 'translationRecognizerContinuous':
                     case 'pronunciationAssessmentContinuous':
+                    clearTimeout(timeID);
                     if(reco!=undefined){
                         reco.stopContinuousRecognitionAsync(
                             function () {
@@ -1008,7 +1014,11 @@
             // Start the intent recognition. Results will arrive on the appropriate event handlers.
             reco.recognizeOnceAsync();
         }
-
+        const renewToken = () => {
+                RequestAuthorizationToken();
+                // timeID =setTimeout( renewToken, 5*1000);
+                timeID =setTimeout( renewToken, 9*60*1000);
+                };
         function doContinuousTranslation() {
             resetUiForScenarioStart();
 
@@ -1043,6 +1053,7 @@
 
             // Start the continuous recognition/translation operation.
             reco.startContinuousRecognitionAsync();
+            renewToken();
         }
 
         function doPronunciationAssessmentOnceAsync() {

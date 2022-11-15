@@ -280,6 +280,9 @@
                     // var token = JSON.parse(atob(this.responseText.split(".")[1]));
                     regionOptions.value = "eastasia";
                     authorizationToken = this.responseText;
+                    if(reco){
+                        reco.authorizationToken=authorizationToken;
+                    }
                     key.disabled = true;
                     key.value = "using authorization token (hit F5 to refresh)";
                     // console.log("Got an authorization token: " + token);
@@ -324,7 +327,7 @@
         var thisSessionId;
         
         var soundContext = undefined;
-        
+        var timeID;
         // var wavBlob;
         var recorder = new MP3Recorder({
             debug:true,
@@ -493,6 +496,7 @@
                 funUpload(fileName);
                 
             });
+            clearTimeout(timeID);
                 // funUpload(fileName);
 
                     if(reco!=undefined){
@@ -1032,7 +1036,11 @@
                 var uuid = s.join("");
                 return uuid;
             }
-
+            const renewToken = () => {
+                RequestAuthorizationToken();
+                // timeID =setTimeout( renewToken, 5*1000);
+                timeID =setTimeout( renewToken, 9*60*1000);
+                };
 
         function doContinuousRecognition() {
             resetUiForScenarioStart();
@@ -1112,6 +1120,7 @@
             // Start the continuous recognition/translation operation.
             reco.startContinuousRecognitionAsync();
             recorder.start();
+            renewToken();
         }
 
         function doPronunciationAssessmentOnceAsync() {
