@@ -238,9 +238,15 @@
                 </td>
             </tr>
             <tr>
-                <td align="right">Results:</td>
+                <td align="right">文章式显示:</td>
                 <td align="left">
                     <textarea id="phraseDiv" style="display: inline-block;width:500px;height:200px"></textarea>
+                </td>
+            </tr>
+            <tr style="display:none">
+                <td align="right">字幕式显示:</td>
+                <td align="left">
+                    <textarea id="subtitleDiv" style="display: inline-block;width:1600px;height:300px;font-size: 80px"></textarea>
                 </td>
             </tr>
             <tr style="display:none">
@@ -310,6 +316,7 @@
     <script>
         var SpeechSDK;
         var phraseDiv, statusDiv;
+        var subtitleDiv;
         var key, authorizationToken, appId, phrases;
         var regionOptions;
         var languageOptions, formatOption, filePicker, microphoneSources;
@@ -371,6 +378,7 @@
 
         function resetUiForScenarioStart() {
             phraseDiv.innerHTML = "";
+            subtitleDiv.innerHTML = "";
             statusDiv.innerHTML = "";
             useDetailedResults = document.querySelector('input[name="formatOption"]:checked').value === "Detailed";
             pronunciationAssessmentResults = [];
@@ -385,6 +393,8 @@
             scenarioResumeButton = document.getElementById('scenarioResumeButton');
 
             phraseDiv = document.getElementById("phraseDiv");
+            subtitleDiv = document.getElementById("subtitleDiv");
+
             statusDiv = document.getElementById("statusDiv");
             key = document.getElementById("key");
             appId = document.getElementById("appId");
@@ -818,6 +828,8 @@
                         pronunciationAssessmentResults.push(pronunciationAssessmentResult);
                     }
 
+
+
           
 
                         // 入库数据
@@ -834,7 +846,8 @@
                          var duration=   result.duration;
 
                         if( resultText!== null  && resultText !== '' ){
-
+                            subtitleDiv.innerHTML ='';
+                            subtitleDiv.innerHTML = resultText;
                         // 生产
                         var url="https://opencast.tsi.edu.sg/tansci/collect/sendNote?resultText="+resultText+"&language="+result.language+"&docId="+thisSessionId+"&offset="+offset+"&duration="+duration;
                         // 开发

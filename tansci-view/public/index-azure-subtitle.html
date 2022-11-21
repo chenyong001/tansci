@@ -106,9 +106,9 @@
                 <td align="left">
                     <select id="scenarioSelection">
                         <!-- <option value="speechRecognizerRecognizeOnce">Single-shot speech-to-text</option> -->
-                        <!-- <option value="speechRecognizerContinuous">Continuous speech-to-text</option> -->
+                        <option value="speechRecognizerContinuous">Continuous speech-to-text</option>
                         <!-- <option value="intentRecognizerRecognizeOnce">Single-shot intent recognition</option> -->
-                        <option value="translationRecognizerContinuous">Continuous translation</option>
+                        <!-- <option value="translationRecognizerContinuous">Continuous translation</option> -->
                         <!-- <option value="pronunciationAssessmentOnce">Single-shot pronunciation assessment</option> -->
                         <!-- <option value="pronunciationAssessmentContinuous">Continuous pronunciation assessment</option> -->
                     </select>
@@ -233,15 +233,17 @@
                 <td>
                     <button id="scenarioStartButton">Start</button>
                     <button id="scenarioStopButton" disabled="disabled">Stop</button>
+                    <button id="scenarioPauseButton" disabled="disabled">暂停识别</button>
+                    <button id="scenarioResumeButton" disabled="disabled">继续识别</button>
                 </td>
             </tr>
-            <tr>
+            <tr style="display:none">
                 <td align="right">文章式显示:</td>
                 <td align="left">
                     <textarea id="phraseDiv" style="display: inline-block;width:500px;height:200px"></textarea>
                 </td>
             </tr>
-            <tr style="display:none">
+            <tr>
                 <td align="right">字幕式显示:</td>
                 <td align="left">
                     <textarea id="subtitleDiv" style="display: inline-block;width:1600px;height:300px;font-size: 80px"></textarea>
@@ -263,6 +265,7 @@
     <script   src="/SpeechSDK-JavaScript-1.24.0/microsoft.cognitiveservices.speech.sdk.bundle.js"></script>
     <!-- <script   src="/SpeechSDK-JavaScript-1.24.0/recorder3.js"></script> -->
     <script src="js/recordmp3.js"></script>
+
     <!-- Speech Speech SDK Authorization token -->
     <script>
         // Note: Replace the URL with a valid endpoint to retrieve
@@ -332,10 +335,11 @@
         var thingsToDisableDuringSession;
         var uuid;
         var thisSessionId;
-        
+        var scenarioPauseButton,scenarioResumeButton;
+
         var soundContext = undefined;
         var timeID;
-        // var wavBlob;
+
         var recorder = new MP3Recorder({
             debug:true,
             funOk: function () {
@@ -349,6 +353,15 @@
         });
         var mp3Blob;
 
+    //     var wavBlob;
+    //     let recorder = new Recorder({
+    //     sampleBits: 16,                 // 采样位数，支持 8 或 16，默认是16
+    //     sampleRate: 16000,              // 采样率，支持 11025、16000、22050、24000、44100、48000，根据浏览器默认值，
+    //     numChannels: 1,                 // 声道，支持 1 或 2， 默认是1
+    //     // compiling: false,(0.x版本中生效,1.x增加中)  // 是否边录边转换，默认是false
+    //     compiling: true
+    // });
+    
         try {
             var AudioContext = window.AudioContext // our preferred impl
                 || window.webkitAudioContext       // fallback, mostly when on Safari
@@ -366,7 +379,7 @@
         function resetUiForScenarioStart() {
             phraseDiv.innerHTML = "";
             subtitleDiv.innerHTML = "";
-            // statusDiv.innerHTML = "";
+            statusDiv.innerHTML = "";
             useDetailedResults = document.querySelector('input[name="formatOption"]:checked').value === "Detailed";
             pronunciationAssessmentResults = [];
         }
@@ -376,10 +389,13 @@
             scenarioStartButton = document.getElementById('scenarioStartButton');
             scenarioStopButton = document.getElementById('scenarioStopButton');
             scenarioSelection = document.getElementById('scenarioSelection');
+            scenarioPauseButton = document.getElementById('scenarioPauseButton');
+            scenarioResumeButton = document.getElementById('scenarioResumeButton');
 
             phraseDiv = document.getElementById("phraseDiv");
             subtitleDiv = document.getElementById("subtitleDiv");
-            // statusDiv = document.getElementById("statusDiv");
+
+            statusDiv = document.getElementById("statusDiv");
             key = document.getElementById("key");
             appId = document.getElementById("appId");
             phrases = document.getElementById("phrases");
@@ -483,9 +499,8 @@
                     case 'speechRecognizerContinuous':
                     case 'translationRecognizerContinuous':
                     case 'pronunciationAssessmentContinuous':
-                                                // 停止录音
+                        // 停止录音
                     recorder.stop();
-                    // recorder.destroy();
                     var date = new Date();
                     Y = date.getFullYear() ;
                     M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) ;
@@ -498,16 +513,16 @@
                     
                     var fileName='audio_recording_' + thisSessionId+"_"+Y+M+D+h+m+s;
                     // recorder.downloadWAV(fileName);
-                //   上传到服务器
-            //    wavBlob=recorder.getWAVBlob();
-               recorder.getMp3Blob(function (blob) {
+                    
+                //  todo 上传到服务器
+                // wavBlob=recorder.getWAVBlob();
+                 recorder.getMp3Blob(function (blob) {
                 mp3Blob = blob;
                 funUpload(fileName);
+
                 
             });
             clearTimeout(timeID);
-                // funUpload(fileName);
-
                     if(reco!=undefined){
                         reco.stopContinuousRecognitionAsync(
                             function () {
@@ -521,10 +536,13 @@
                         );
                         break;
                     }
+
+                  
+                 
                 }
             });
 
-            
+              
             function funUpload(fileName) {
             var fd = new FormData();
             var mp3Name = encodeURIComponent(fileName + '.mp3');
@@ -541,16 +559,14 @@
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     console.log('上传响应：'+xhr.responseText);
-                   
                 }
             };
-
             xhr.open('POST', url);
-            // xhr.setRequestHeader("Content-Type", "multipart/form-data");
             xhr.setRequestHeader("Authorization", 'Bearer '+token);
             xhr.send(fd);
         }
 
+        
             function enumerateMicrophones() {
                 if (!navigator || !navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
                     console.log(`Unable to query for audio input devices. Default will be used.\r\n`);
@@ -652,7 +668,8 @@
             var speechConfig;
             if (authorizationToken) {
                 speechConfig = sdkConfigType.fromAuthorizationToken(authorizationToken, regionOptions.value);
-            } else if (!key.value) {
+            } else
+             if (!key.value) {
                 alert("Please enter your Cognitive Services Speech subscription key!");
                 return undefined;
             } else {
@@ -746,7 +763,7 @@
         function onRecognizedResult(result) {
             phraseDiv.scrollTop = phraseDiv.scrollHeight;
 
-            // statusDiv.innerHTML += `(recognized)  Reason: ${SpeechSDK.ResultReason[result.reason]}`;
+            statusDiv.innerHTML += `(recognized)  Reason: ${SpeechSDK.ResultReason[result.reason]}`;
             if (scenarioSelection.value === 'speechRecognizerRecognizeOnce'
                 || scenarioSelection.value === 'intentRecognizerRecognizeOnce') {
                 // Clear the final results view for single-shot scenarios
@@ -759,19 +776,19 @@
             switch (result.reason) {
                 case SpeechSDK.ResultReason.NoMatch:
                     var noMatchDetail = SpeechSDK.NoMatchDetails.fromResult(result);
-                    // statusDiv.innerHTML += ` NoMatchReason: ${SpeechSDK.NoMatchReason[noMatchDetail.reason]}\r\n`;
+                    statusDiv.innerHTML += ` NoMatchReason: ${SpeechSDK.NoMatchReason[noMatchDetail.reason]}\r\n`;
                     break;
                 case SpeechSDK.ResultReason.Canceled:
                     var cancelDetails = SpeechSDK.CancellationDetails.fromResult(result);
-                    // statusDiv.innerHTML += ` CancellationReason: ${SpeechSDK.CancellationReason[cancelDetails.reason]}`;
-                    //     + (cancelDetails.reason === SpeechSDK.CancellationReason.Error 
-                    //         ? `: ${cancelDetails.errorDetails}` : ``)
-                    //     + `\r\n`;
+                    statusDiv.innerHTML += ` CancellationReason: ${SpeechSDK.CancellationReason[cancelDetails.reason]}`;
+                        + (cancelDetails.reason === SpeechSDK.CancellationReason.Error 
+                            ? `: ${cancelDetails.errorDetails}` : ``)
+                        + `\r\n`;
                     break;
                 case SpeechSDK.ResultReason.RecognizedSpeech:
                 case SpeechSDK.ResultReason.TranslatedSpeech:
                 case SpeechSDK.ResultReason.RecognizedIntent:
-                    // statusDiv.innerHTML += `\r\n`;
+                    statusDiv.innerHTML += ` Text: ${result.text}\r\n`;
 
                     if (useDetailedResults) {
                         var detailedResultJson = JSON.parse(result.json);
@@ -811,6 +828,8 @@
                         pronunciationAssessmentResults.push(pronunciationAssessmentResult);
                     }
 
+
+
           
 
                         // 入库数据
@@ -823,8 +842,9 @@
                         }else{
                             resultText=result.text;
                         }
-                        var offset=  result.offset;
+                         var offset=  result.offset;
                          var duration=   result.duration;
+
                         if( resultText!== null  && resultText !== '' ){
                             subtitleDiv.innerHTML ='';
                             subtitleDiv.innerHTML = resultText;
@@ -855,7 +875,7 @@
         }
 
         function onSessionStarted(sender, sessionEventArgs) {
-            // statusDiv.innerHTML += `(sessionStarted) SessionId: ${sessionEventArgs.sessionId}\r\n`;
+            statusDiv.innerHTML += `(sessionStarted) SessionId: ${sessionEventArgs.sessionId}\r\n`;
             thisSessionId=sessionEventArgs.sessionId;
             for (const thingToDisableDuringSession of thingsToDisableDuringSession) {
                 thingToDisableDuringSession.disabled = true;
@@ -863,12 +883,10 @@
 
             scenarioStartButton.disabled = true;
             scenarioStopButton.disabled = false;
-
+            
                         // 入库数据
                         var token=localStorage.getItem('token');
                         if( thisSessionId!== null  && thisSessionId !== '' ){
-
-
                         // 生产 +"&remark="+remark
                         var url="https://opencast.tsi.edu.sg/tansci/collect/createNote?docId="+thisSessionId;
                         // 开发
@@ -888,11 +906,10 @@
                                 
                             }
         }
-
-        }
+    }
 
         function onSessionStopped(sender, sessionEventArgs) {
-            // statusDiv.innerHTML += `(sessionStopped) SessionId: ${sessionEventArgs.sessionId}\r\n`;
+            statusDiv.innerHTML += `(sessionStopped) SessionId: ${sessionEventArgs.sessionId}\r\n`;
 
             if (scenarioSelection.value == 'pronunciationAssessmentContinuous') {
                 // calculateOverallPronunciationScore();
@@ -909,11 +926,11 @@
         function onCanceled (sender, cancellationEventArgs) {
             window.console.log(e);
 
-            // statusDiv.innerHTML += "(cancel) Reason: " + SpeechSDK.CancellationReason[e.reason];
-            // if (e.reason === SpeechSDK.CancellationReason.Error) {
-            //     statusDiv.innerHTML += ": " + e.errorDetails;
-            // }
-            // statusDiv.innerHTML += "\r\n";
+            statusDiv.innerHTML += "(cancel) Reason: " + SpeechSDK.CancellationReason[e.reason];
+            if (e.reason === SpeechSDK.CancellationReason.Error) {
+                statusDiv.innerHTML += ": " + e.errorDetails;
+            }
+            statusDiv.innerHTML += "\r\n";
         }
 
         function applyCommonConfigurationTo(recognizer) {
@@ -1070,7 +1087,14 @@
             // single result.
             reco.startContinuousRecognitionAsync();
 
+            recorder.start();
+
+
+            // scenarioStopButton.disabled = false;
+            renewToken();
+
         }
+
 
         function doRecognizeIntentOnceAsync() {
             resetUiForScenarioStart();
@@ -1116,8 +1140,8 @@
             reco.synthesizing = function (s, e) {
                 var audioSize = e.result.audio === undefined ? 0 : e.result.audio.byteLength;
 
-                // statusDiv.innerHTML += `(synthesizing) Reason: ${SpeechSDK.ResultReason[e.result.reason]}`
-                //     + ` ${audioSize} bytes\r\n`;
+                statusDiv.innerHTML += `(synthesizing) Reason: ${SpeechSDK.ResultReason[e.result.reason]}`
+                    + ` ${audioSize} bytes\r\n`;
 
                 if (e.result.audio && soundContext) {
                     var source = soundContext.createBufferSource();
@@ -1131,8 +1155,6 @@
 
             // Start the continuous recognition/translation operation.
             reco.startContinuousRecognitionAsync();
-            recorder.start();
-            renewToken();
         }
 
         function doPronunciationAssessmentOnceAsync() {
