@@ -8,7 +8,7 @@
                     <div><el-button type="primary" @click="onAddNote">实时语音识别(篇章式)</el-button></div>
                       <div><el-button type="primary" @click="onAddNoteTranslate">实时语音翻译(篇章式)</el-button></div>
                         <div><el-button type="primary" @click="onAddNoteUpload">上传音频语音识别</el-button></div>
-                          <div><el-button type="primary" @click="onAddNoteUploadTranslate">上传音频识别翻译</el-button></div>
+                          <div><el-button type="primary" @click="onAddNoteUploadTranslate">上传音频语音翻译</el-button></div>
                        <div><el-button type="primary" @click="onAddNoteSubtitle">实时语音识别(字幕式)</el-button></div>
                       <div><el-button type="primary" @click="onAddNoteTranslateSubtitle">实时语音翻译(字幕式)</el-button></div>
                            <!-- <div><el-button type="primary" @click="onAddNoteMp3">MP3</el-button></div> -->
@@ -19,6 +19,7 @@
                 </template>
          
                 <template #column="scope" style="width:1000" >
+                    <el-button @click="onEdit(scope)" type="success">编辑</el-button>
                     <el-button @click="menuClick(scope)" type="success" >详情</el-button>
                     <el-button @click="onDelete(scope)" type="warning" >删除</el-button>
                     <el-button @click="download(scope)" type="primary" >下载</el-button>
@@ -26,42 +27,8 @@
             </Table>
         </el-card>
         <el-dialog :title="taskTitle" v-model="taskVisible" width="80%" :show-close="false">
-               <div>
-                      
-docId可在分享链接页面按F12，切换到network TAB页面,输入StateServiceHandler过滤出的接口中，存在docId参数，复制粘贴到输入框
-<br>
-示列链接：https://wus.pptservicescast.officeapps.live.com/<nobr style="color:red;font-size:20px;word-break:keep-all;">StateServiceHandler</nobr>.ashx?action=deltas&<nobr style="color:red;font-size:20px;">docId=rdvPragueDocId_23b6a64a-e615-45d9-9b4d-54f26e783480_r3</nobr>&cid=7e1d31dd-40b0-45b1-9176-f358dcc38d29&objectId=finalSubtitles&property=en
-<br>
-示列：
-<br>
-domain填入：wus.pptservicescast.officeapps.live.com
-<br>
-docId填入：rdvPragueDocId_23b6a64a-e615-45d9-9b4d-54f26e783480_r3，提交
-<br>
-每30s记录一次
-<br>
-微软的数据特性：
-<br>
-//  英文(en)、中文(zh-Hans)、德语(de)、法语(fr)、日语(ja)
-<br>
-//  全量采集：切换语言之前的没有数据，只有按照具体的方言才有对应的数据，不能全量采集有数据缺失。
-<br>
-//  单个方言采集：请求连接必须制定特定的方言类型，目前采用上述5种方言采集，如
-<br>
-//  https://inc-dc.pptservicescast.officeapps.live.com/StateServiceHandler.ashx?action=deltas&docId=rdvPragueDocId_0f742155-7c0f-4fd5-8029-1ca7b1e8ef1e_r5&objectId=finalSubtitles&property=ja
-<br>
-//  存储时，根据docId_方言作为key，如
-<br>
-//  导出时，先获取数据，再导出到文件中
-                    </div>
             <el-form :model="taskForm" :rules="rules" ref="addRuleForm" label-position="left" label-width="100px">
-                <el-form-item label="域名" prop="domain" :rules="[{required: true, message: '域名不能为空', trigger: 'blur'}]">
-                    <el-input v-model="taskForm.domain" placeholder="请输入域名" style="width:100%" />
-                </el-form-item>
-                <el-form-item label="docId" prop="docId" :rules="[{required: true, message: 'docId不能为空', trigger: 'blur'}]">
-                    <el-input v-model="taskForm.docId" placeholder="请输入docId" style="width:100%" />
-                </el-form-item>
-                <el-form-item label="remark" prop="remark" >
+                <el-form-item label="备注" prop="备注" >
                     <el-input v-model="taskForm.remark" placeholder="请输入备注说明" style="width:100%" />
                 </el-form-item>
             </el-form>
@@ -94,7 +61,7 @@ docId填入：rdvPragueDocId_23b6a64a-e615-45d9-9b4d-54f26e783480_r3，提交
     import {onMounted, reactive, nextTick, ref, unref, toRefs} from 'vue'
     import {ElMessage, ElMessageBox} from 'element-plus'
     import Table from '../../components/Table.vue'
-    import {collectPage, collect,deleteNote,exportWAV} from '../../api/systemApi.js'
+    import {collectPage, collect,deleteNote,exportWAV,createNote} from '../../api/systemApi.js'
 import { useRouter } from 'vue-router'
 import { timeFormate2 } from "../../utils/utils.js";
 
@@ -263,19 +230,41 @@ import { timeFormate2 } from "../../utils/utils.js";
         // state.taskVisible = true;
     // }
 
-
+    // 编辑
+    const onEdit = (val) =>{
+        state.taskTitle = "编辑";
+        state.taskForm = {
+            id: val.column.row.id,
+            docId: val.column.row.docId,
+            remark: val.column.row.remark
+        }
+        state.taskVisible = true;
+    }
 
     const onSubmit = async () =>{
         const form = unref(addRuleForm);
         if(!form) return;
         await form.validate();
+          if (state.taskForm.id == null || state.taskForm.id == '') {
             collect(state.taskForm).then(res => {
                 if (res) {
                     ElMessage.success('添加成功!');
                      state.taskVisible = false;
-                    onCollectPage();
                 }
+                onCollectPage();
             });
+        } else {
+            // 修改
+            createNote(state.taskForm).then(res => {
+                if (res) {
+                    ElMessage.success('修改成功!');
+                }
+                  onCollectPage();
+            });
+           
+        }
+        state.taskVisible = false;
+        
        
 
     }

@@ -237,6 +237,17 @@
                     <button id="scenarioResumeButton" disabled="disabled">继续识别</button>
                 </td>
             </tr>
+            <tr>
+                <td align="right">备注:</td>
+                <td>
+                    <input id="remark"
+                        type="text"
+                        size="60"
+                        value=""
+                        placeholder="请填写备注内容">
+                </td>
+            </tr>
+            <tr>
             <tr style="display:none">
                 <td align="right">篇章式显示:</td>
                 <td align="left">
@@ -339,6 +350,7 @@
 
         var soundContext = undefined;
         var timeID;
+        var remark;
 
         var recorder = new MP3Recorder({
             debug:true,
@@ -410,6 +422,7 @@
             formatSimpleRadio = document.getElementById('formatSimpleRadio');
             formatDetailedRadio = document.getElementById('formatDetailedRadio');
             referenceText = document.getElementById('referenceText');
+            remark = document.getElementById('remark');
 
             thingsToDisableDuringSession = [
                 // key,
@@ -466,6 +479,7 @@
             scenarioStartButton.addEventListener("click", function () {
                 // 点击start按钮开始时，生成唯一key，用于绑定此次会话
                  uuid=getUuid();
+                 remark.disabled = true;
                 switch (scenarioSelection.value) {
                     case 'speechRecognizerRecognizeOnce':
                         doRecognizeOnceAsync();
@@ -489,6 +503,7 @@
             });
 
             scenarioStopButton.addEventListener("click", function() {
+                remark.disabled = false;
                 switch (scenarioSelection.value) {
                     case 'speechRecognizerRecognizeOnce':
                     case 'intentRecognizerRecognizeOnce':
@@ -888,9 +903,9 @@
                         var token=localStorage.getItem('token');
                         if( thisSessionId!== null  && thisSessionId !== '' ){
                         // 生产 +"&remark="+remark
-                        var url="https://opencast.tsi.edu.sg/tansci/collect/createNote?docId="+thisSessionId;
+                        var url="https://opencast.tsi.edu.sg/tansci/collect/createNote?docId="+thisSessionId+"&remark="+remark.value;
                         // 开发
-                        // var url="http://localhost:8005/tansci/collect/createNote?docId="+thisSessionId;
+                        // var url="http://localhost:8005/tansci/collect/createNote?docId="+thisSessionId+"&remark="+remark.value;
 
 
 

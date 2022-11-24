@@ -464,6 +464,23 @@ export function sendNote(params) {
 }
 
 /**
+ * 创建或更新
+ * @param {*} params 
+ * @returns 
+ */
+export function createNote(params) {
+    // return axios.get('/tansci/collect/record', params);
+    // return axios.post('/tansci/taskConfig/save', params);
+
+    return axios.get('/tansci/collect/createNote', { params: params });
+    // return axios({
+    //     method: 'get',
+    //     url: '/tansci/collect/record',
+    //     params: params
+    //   });
+}
+
+/**
  * 删除管理
  * @param {*} params 
  * @returns 

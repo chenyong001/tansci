@@ -226,6 +226,9 @@ public class CollectController {
       record.setCreateTime(new Date());
       record.setUpdateTime(new Date());
       recordService.save(record);
+    }else {
+      record.setUpdateTime(new Date());
+      recordService.update(record);
     }
     return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
   }
