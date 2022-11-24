@@ -41,7 +41,7 @@ public class RecordData {
 
   @ApiModelProperty(value = "主键id")
   @TableId(type = IdType.AUTO)
-  private String id;
+  private int id;
 
   @ApiModelProperty(value = "会话文档ID")
   private String docId;

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.tansci.common.WrapMapper;
 import com.tansci.common.Wrapper;
@@ -44,6 +45,7 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -75,7 +77,6 @@ public class CollectController {
   private RecordDataService recordDataService;
   @Autowired
   private RecordService recordService;
-
 
   @Autowired
   private RecordTask recordTask;
@@ -226,7 +227,7 @@ public class CollectController {
       record.setCreateTime(new Date());
       record.setUpdateTime(new Date());
       recordService.save(record);
-    }else {
+    } else {
       record.setUpdateTime(new Date());
       recordService.update(record);
     }
@@ -283,6 +284,21 @@ public class CollectController {
     return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
   }
 
+  @GetMapping("/updateNote")
+  @ResponseBody
+  public Wrapper<Boolean> updateNote(@RequestParam(name = "subtitle", required = false) String subtitle,
+      @RequestParam(name = "id", required = true) int id) {
+    //        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.list(null));
+    log.info("updateNote===========,subtitle={}", subtitle);
+    //    添加内容到数据库
+    RecordData recordData = recordDataService.selectById(id);
+    if (Objects.nonNull(recordData)) {
+      recordData.setSubtitle(subtitle);
+      recordDataService.update(recordData);
+    }
+    return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+  }
+
   @PostMapping("/deleteNote")
   @ResponseBody
   public Wrapper<Boolean> deleteNote(@RequestBody Record record) {
@@ -313,7 +329,7 @@ public class CollectController {
     //   新增或更新采集记录
     List<MyData> myDataList = Lists.newArrayList();
     List<RecordData> recordDataList = recordDataService.selectList(recordData);
-    JSONArray recordDataJsonArray = JSONArray.parseArray(JSON.toJSONString(recordDataList));
+//    JSONArray recordDataJsonArray = JSONArray.parseArray(JSON.toJSONString(recordDataList));
     //    System.out.println(JSON.toJSONString(recordDataList));
     //    System.out.println("=========================");
     //    System.out.println(recordDataJsonArray.toJSONString());
@@ -368,9 +384,10 @@ public class CollectController {
         myDataList.add(new MyData(entry.getKey().toString(), Integer.parseInt(entry.getValue().toString())));
       }
 
+      int index=myDataList.size()>30?30:myDataList.size();
       myDataList = myDataList.stream().sorted((e1, e2) -> {
         return Integer.compare(e2.getValue(), e1.getValue());
-      }).collect(Collectors.toList()).subList(0,30);
+      }).collect(Collectors.toList()).subList(0, index);
       in.close();
       proc.waitFor();
     } catch (IOException e) {
@@ -386,6 +403,21 @@ public class CollectController {
     }
   }
 
+  public static void main(String[] args) {
+    List<MyData>   myDataList =Lists.newArrayList();
+    MyData myData1 = new MyData("111211",1);
+    myDataList.add(myData1);
+    MyData myData2 = new MyData("222",2);
+    myDataList.add(myData2);
+    MyData myData3 = new MyData("333",1);
+    myDataList.add(myData3);
+
+     myDataList = myDataList.stream().sorted((e1, e2) -> {
+      return Integer.compare(e2.getValue(), e1.getValue());
+    }).collect(Collectors.toList()).subList(0, 2);
+    System.out.println(myDataList);
+
+  }
   @ResponseBody
   @PostMapping("/upload")
   public String upload(@RequestParam(name = "file") MultipartFile file, String fileName, String docId) {
@@ -427,7 +459,7 @@ public class CollectController {
   }
 
   @Data
-  class MyData implements Serializable {
+  static class MyData implements Serializable {
     private static final long serialVersionUID = 6686838756389384302L;
     private String name;
     private Integer value;
@@ -436,7 +468,7 @@ public class CollectController {
     public MyData(String name, Integer value) {
       this.name = name;
       this.value = value;
-      this.wordLength=name.length();
+      this.wordLength = name.length();
     }
   }
 

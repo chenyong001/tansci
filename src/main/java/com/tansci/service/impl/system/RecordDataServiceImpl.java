@@ -36,7 +36,7 @@ public class RecordDataServiceImpl extends ServiceImpl<RecordDataMapper, RecordD
     IPage<RecordData> iPage = this.baseMapper
         .selectPage(page, Wrappers.<RecordData>lambdaQuery().eq(RecordData::getDocId, dto.getDocId())
             //            .eq(RecordData::getSenderId, SecurityUserUtils.getUser().getUsername())
-            .eq(StringUtils.isNotBlank(dto.getProperty()),RecordData::getProperty, dto.getProperty())
+            .eq(StringUtils.isNotBlank(dto.getProperty()), RecordData::getProperty, dto.getProperty())
             //            todo 根据时间查询
             .orderByAsc(RecordData::getTimestamp));
     //    iPage.getRecords().forEach(item -> {
@@ -50,10 +50,22 @@ public class RecordDataServiceImpl extends ServiceImpl<RecordDataMapper, RecordD
   public List<RecordData> selectList(RecordData dto) {
     return this.baseMapper.selectList(Wrappers.<RecordData>lambdaQuery().eq(RecordData::getDocId, dto.getDocId())
         //            .eq(RecordData::getSenderId, SecurityUserUtils.getUser().getUsername())
-        .eq(StringUtils.isNotBlank(dto.getProperty()),RecordData::getProperty, dto.getProperty())
+        .eq(StringUtils.isNotBlank(dto.getProperty()), RecordData::getProperty, dto.getProperty())
         //            todo 根据时间查询
         .orderByAsc(RecordData::getTimestamp));
 
+  }
+
+  @Override
+  public boolean update(RecordData recordData) {
+    this.baseMapper.updateById(recordData);
+    return true;
+  }
+
+  @Override
+  public RecordData selectById(int id) {
+
+    return this.baseMapper.selectById(id);
   }
 
   @Override
@@ -72,7 +84,7 @@ public class RecordDataServiceImpl extends ServiceImpl<RecordDataMapper, RecordD
   public Integer countRecord(RecordData recordData) {
     return this.baseMapper.selectCount(
         Wrappers.<RecordData>lambdaQuery().eq(RecordData::getDocId, recordData.getDocId())
-            .eq(StringUtils.isNotBlank(recordData.getProperty()),RecordData::getProperty, recordData.getProperty()));
+            .eq(StringUtils.isNotBlank(recordData.getProperty()), RecordData::getProperty, recordData.getProperty()));
   }
 
   //    @Override

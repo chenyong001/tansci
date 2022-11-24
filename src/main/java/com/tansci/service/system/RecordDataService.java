@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.tansci.domain.system.RecordData;
+import com.tansci.domain.system.TaskConfig;
 
 import java.util.List;
 
@@ -28,7 +29,9 @@ public interface RecordDataService extends IService<RecordData> {
 
   List<RecordData> selectList(RecordData dto);
 
-  //    boolean update(TaskConfig taskConfig);
+  boolean update(RecordData recordData);
+
+  RecordData selectById(int id);
 
   //    boolean del(TaskConfigDto dto);
 

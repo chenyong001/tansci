@@ -7,7 +7,7 @@
         <el-card>
               
               <!-- <p>PPT直播测试searchForm.docId=========={{ searchForm.docId }}</p> -->
-            <Table :data="tableData" :column="tableTitle" :operation="false" :page="page" :loading="loading"
+            <Table :data="tableData" :column="tableTitle" :operation="true" :page="page" :loading="loading"
                 @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange">
                 <template #search>
                     <div><el-button type="primary" @click="onExportTxt">导出</el-button></div>
@@ -24,13 +24,27 @@
                     <!-- <div><el-button @click="onRefresh" icon="RenfreshRight" circle></el-button></div> -->
                     <div><el-button @click="onSearch" type="primary" icon="Search">查询</el-button></div>
                 </template>
-                <!-- <template #column="scope">
-                    <el-button @click="onEdit(scope)" type="text" style="color:var(--edit)">详情/el-button>
-                    <el-button @click="onDelete(scope)" type="text" style="color:var(--delete)">删除</el-button>
-                </template> -->
+        <template #column="scope" style="width:100" >
+                         <el-button @click="onEdit(scope)" type="success">编辑</el-button>
+                   
+        </template>
             </Table>
         </el-card>
         
+          <el-dialog :title="taskTitle" v-model="taskVisible" width="80%" :show-close="false">
+            <el-form :model="taskForm" :rules="rules" ref="addRuleForm" label-position="left" label-width="100px">
+                <el-form-item label="内容" prop="内容" >
+                    <el-input v-model="taskForm.subtitle" placeholder="请输入内容" style="width:100%" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="taskVisible = false">取消</el-button>
+                    <el-button type="primary" @click="onSubmit">提交</el-button>
+                </span>
+            </template>
+        </el-dialog>
+
     </el-tab-pane>
     <el-tab-pane label="词频列表" name="second">
 
@@ -56,43 +70,13 @@
     </div>
     </div>
 </template>
-// <script>
-// export default {
-    
-//     data () {
-//       return {
-//         // 保存传递过来的index
-//         searchForm:{
-//           docId: '',
-//           property:''
-//         }
-        
-        
-//       }
-//     }, 
-// watch: {
-//     '$route': 'gettingData'
-//   },
-//   created() {
-//     this.gettingData()
-    
-//   },
-//   methods: {
-//     // 获取数据
-//     gettingData() {
-//       var docId2 = this.$route.query.docId;
-//       this.searchForm.docId=docId2;
-//       this.searchForm.property="en";
-//     }
-//   }
-// }
-// </script>
+
 <script setup>
 
     import {onMounted, reactive, nextTick, ref, unref, toRefs} from 'vue'
     import {ElMessage, ElMessageBox} from 'element-plus'
     import Table from '../../components/Table.vue'
-    import {collectDataPage,exportTxt,getMyData} from '../../api/systemApi.js'
+    import {collectDataPage,exportTxt,getMyData,updateNote} from '../../api/systemApi.js'
     import {timeFormate2} from '../../utils/utils.js'
     import * as echarts from "echarts";
 import "echarts-wordcloud";
@@ -175,6 +159,15 @@ let myResult;
         })
     }
     
+    // 编辑
+    const onEdit = (val) =>{
+        state.taskTitle = "编辑";
+        state.taskForm = {
+            id: val.column.row.id,
+            subtitle: val.column.row.subtitle
+        }
+        state.taskVisible = true;
+    }
 // 初始化数据
 const onFqcPage = () => {
   state.loading = true;
@@ -265,21 +258,23 @@ const onFqcPage = () => {
         await form.validate();
         if (state.taskForm.id == null || state.taskForm.id == '') {
             // 添加
-            collect(state.taskForm).then(res => {
-                if (res) {
-                    ElMessage.success('添加成功!');
-                }
-            });
+            // collect(state.taskForm).then(res => {
+            //     if (res) {
+            //         ElMessage.success('添加成功!');
+            //     }
+            // });
         } else {
             // 修改
-            updateTask(state.taskForm).then(res => {
+            updateNote(state.taskForm).then(res => {
                 if (res) {
                     ElMessage.success('修改成功!');
                 }
+                 onCollectPage();
+        onPie();
+        onLtrealtimewordcloud();
             });
         }
         state.taskVisible = false;
-        onCollectPage();
     }
 
     // // 删除

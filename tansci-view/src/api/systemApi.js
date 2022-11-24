@@ -463,6 +463,17 @@ export function sendNote(params) {
     //   });
 }
 
+export function updateNote(params) {
+    return axios.get('/tansci/collect/updateNote', { params: params });
+    // return axios({
+    //     method: 'get',
+    //     url: '/tansci/collect/record',
+    //     params: params
+    //   });
+}
+
+
+
 /**
  * 创建或更新
  * @param {*} params 
