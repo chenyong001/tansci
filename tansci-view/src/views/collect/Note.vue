@@ -45,7 +45,7 @@
 // export default {
 // methods: {
 //     // 跳转到传递参数页
-//     goDetail(row) {
+//     goDetail(row) {111
 //       this.$router.push({
 //         path: '/recordData',
 //         query: {
