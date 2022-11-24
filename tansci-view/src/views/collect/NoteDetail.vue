@@ -114,7 +114,8 @@ const state = reactive({
   activeName: 'first',
     fqcTableTitle: [
     { prop: "name", label: "单词"},
-    { prop: "value", label: "次数" }
+    { prop: "value", label: "次数" },
+    { prop: "wordLength", label: "词长" }
   ],
   fqcTableData: [],
 });

@@ -431,10 +431,12 @@ public class CollectController {
     private static final long serialVersionUID = 6686838756389384302L;
     private String name;
     private Integer value;
+    private Integer wordLength;
 
     public MyData(String name, Integer value) {
       this.name = name;
       this.value = value;
+      this.wordLength=name.length();
     }
   }
 
