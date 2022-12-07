@@ -7,15 +7,21 @@ import jieba
 import jieba.posseg as pseg
 import nltk
 from nltk.text import Text
+import pynlpir
+pynlpir.open()
+
 
 stopwords1=[line.strip() for line in open("/stopword.txt",encoding='utf-8').readlines()]
+with open('/Userdict.txt', 'a', encoding="utf-8") as f0:
+    f0.write("")
+
 class TextAnalysis:
     def __init__(self,text):
         self.text_test=text
         self.text_test = re.sub("\n", " ", self.text_test)
 
-    #预处理提取对话的内容
-    def pre_processing_GetContent(self):
+
+    def Get_content(self):
         container = re.findall(r"\"subtitle\"\:\".*?\"", self.text_test)
         # print(container)
         text01 = ""
@@ -31,40 +37,142 @@ class TextAnalysis:
             text01 += find_content(part)
         return text01
 
-    #提取英文关键词并生成字典
-    def Get_English_dict(self):
-        # print("pre_processing_GetContent()函数获取的是：",self.pre_processing_GetContent())
-        text_test=self.pre_processing_GetContent()
-        # print("text_test是：",text_test)
-        text_English = " ".join([word for word in re.findall(r'[\x00-\xff]+', text_test) if word.lower() not in stopwords1])
+    #预处理提取对话的中文内容
+    def Get_Chinese_content(self):
+        container = re.findall(r"\"subtitle\"\:\".*?\"", self.text_test)
+        # print(container)
+        text01 = ""
+
+        def find_content(str_input):
+            index1 = []
+            for i in range(len(str_input)):
+                if str_input[i] == "\"":
+                    index1.append(i)
+            return str_input[index1[-2] + 1:index1[-1]]
+
+        for part in container:
+            text01 += find_content(part)
+        text_Chinese = "".join(re.findall(r'[^\x00-\xff]+', text01))
+        return text_Chinese
+
+    # 预处理提取对话的英文内容
+    def Get_English_content(self):
+        container = re.findall(r"\"subtitle\"\:\".*?\"", self.text_test)
+        # print(container)
+        text01 = ""
+
+        def find_content(str_input):
+            index1 = []
+            for i in range(len(str_input)):
+                if str_input[i] == "\"":
+                    index1.append(i)
+            return str_input[index1[-2] + 1:index1[-1]]
+
+        for part in container:
+            text01 += find_content(part)
+        text_English = " ".join(
+            [word for word in re.findall(r'[\x00-\xff]+', text01) if word.lower() not in stopwords1])
         text_English = re.sub("\,|\.|\?", " ", text_English)
-        # print("text_English是",text_English)
+        return text_English
+
+
+    def Get_English_noun(self):
+        # print("pre_processing_GetContent()函数获取的是：",self.pre_processing_GetContent())
+        text_English=self.Get_English_content()
+        # print("text_English是：",text_English)
         tokens = word_tokenize(text_English)
-        tokens_tag = nltk.pos_tag(tokens)
-        # print(tokens_tag)
-        noun_container = [a for a, b in tokens_tag if b in ['NN', 'NNS', 'NNP', 'NNPS']]
-        t = Text(tokens)
+        tokens2=[token.lower() for token in tokens]
+        # tokens2=[token[0].lower()+token[1:] if len(token)>1 and 65<=ord(token[0])<=90 else token for token in tokens ]
+        # print(tokens2)
+        tokens_tag = nltk.pos_tag(tokens2)
         dict_noun = {}
-        for i in range(len(noun_container)):
-            dict_noun[noun_container[i]] = t.count(noun_container[i])
+        noun_container = []
+        for i in range(len(tokens_tag)):
+            if tokens_tag[i][1] in ['NN', 'NNS', 'NNP', 'NNPS'] and tokens[i] not in noun_container:
+                noun_container.append(tokens[i])
+                dict_noun[tokens[i]]=1
+            elif tokens_tag[i][1] in ['NN', 'NNS', 'NNP', 'NNPS'] and tokens[i] in noun_container:
+                dict_noun[tokens[i]]+=1
+
+            # [a for a, b in tokens_tag if b in ['NN', 'NNS', 'NNP', 'NNPS']]
+        # print(noun_container)
+        # t = Text(tokens)
+
+        # for i in range(len(noun_container)):
+        #     dict_noun[noun_container[i]] = t.count(noun_container[i])
         word_noun_cp = sorted(dict_noun.items(), key=lambda x: x[1], reverse=True)
         # print(word_cp)
         word_dict_english = {a: b for a, b in word_noun_cp}
         return word_dict_english
 
-    # 提取中文关键词并生成字典
-    def Get_Chinese_dict(self):
-        text_test=self.pre_processing_GetContent()
+    def Get_English_verb(self):
+        text_English=self.Get_English_content()
+        tokens = word_tokenize(text_English)
+        tokens2 = [token.lower() for token in tokens]
+        tokens_tag = nltk.pos_tag(tokens2)
+        # print(tokens_tag)
+
+        dict_verb = {}
+        verb_container = []
+        for i in range(len(tokens_tag)):
+            if tokens_tag[i][1] in ['VB','VBD','VBG','VBN','VBP','VBZ'] and tokens[i] not in verb_container:
+                verb_container.append(tokens[i])
+                dict_verb[tokens[i]]=1
+            elif tokens_tag[i][1] in ['VB','VBD','VBG','VBN','VBP','VBZ'] and tokens[i] in verb_container:
+                dict_verb[tokens[i]]+=1
+
+        # print(verb_container)
+
+        # t = Text(tokens)
+
+        # for i in range(len(verb_container)):
+        #     dict_verb[verb_container[i]] = t.count(verb_container[i])
+        word_noun_cp = sorted(dict_verb.items(), key=lambda x: x[1], reverse=True)
+        # print(word_cp)
+        word_dict_english = {a: b for a, b in word_noun_cp}
+        return word_dict_english
+
+    def Get_English_adj(self):
+        text_English=self.Get_English_content()
+        tokens = word_tokenize(text_English)
+        tokens2 = [token.lower() for token in tokens]
+        tokens_tag = nltk.pos_tag(tokens2)
+        # print(tokens_tag)
+
+        dict_adj = {}
+        adj_container = []
+        for i in range(len(tokens_tag)):
+            if tokens_tag[i][1] in ['JJ','JJR','JJS'] and tokens[i] not in adj_container:
+                adj_container.append(tokens[i])
+                dict_adj[tokens[i]]=1
+            elif tokens_tag[i][1] in ['JJ','JJR','JJS'] and tokens[i] in adj_container:
+                dict_adj[tokens[i]]+=1
+
+        # print(verb_container)
+
+        # t = Text(tokens)
+
+        # for i in range(len(verb_container)):
+        #     dict_verb[verb_container[i]] = t.count(verb_container[i])
+        word_noun_cp = sorted(dict_adj.items(), key=lambda x: x[1], reverse=True)
+        # print(word_cp)
+        word_dict_english = {a: b for a, b in word_noun_cp}
+        return word_dict_english
+
+
+    #获取说话内容中的汉语名词
+    def Get_Chinese_noun(self):
+        text_test=self.Get_Chinese_content()
         # print(text_test)
-        text_Chinese = "".join(re.findall(r'[^\x00-\xff]+', text_test))
-        # print(text_Chinese)
-        tokens1 = jieba.lcut(re.sub("，|。|？|！|：", " ", text_Chinese))
-        tokens1=[token for token in tokens1 if token!=' ']
-        # print("tokens1是：",tokens1)
-        t = Text(tokens1)
-        tokens = pseg.cut(text_Chinese)
-        tokens_tag = [(token.word, token.flag) for token in tokens if token.word not in stopwords1]
-        dict_noun = {a: t.count(a) for a, b in tokens_tag if b in ['n', 'nr', 'ns', 'nt', 'nz']}
+        container=pynlpir.segment(text_test)
+        container=[(a,b) for a,b in container if a not in stopwords1]
+        dict_noun={}
+        for item in container:
+            if item[1]=='noun':
+                if item[0] not in dict_noun:
+                    dict_noun[item[0]]=1
+                else:
+                    dict_noun[item[0]]+=1
         word_noun_cp = sorted(dict_noun.items(), key=lambda x: x[1], reverse=True)
         # print(word_noun_cp)
         word_dict_chinese = {a: b for a, b in word_noun_cp}
@@ -73,102 +181,229 @@ class TextAnalysis:
         # print("转换为json后：",word_Chinese_json)
         return word_dict_chinese
 
-    # 提取中英文关键词并生成字典
-    def Get_total_dict(self):
-        text_test=self.pre_processing_GetContent()
-        text_Chinese_part = "".join(re.findall(r'[^\x00-\xff]+', text_test))
-        text_English_part = "".join(
-            [word for word in re.findall(r'[\x00-\xff]+', text_test) if word not in stopwords.words('english')])
-        # print(get_Chinese_dict(text_Chinese_part))
-        # print(get_English_dict(text_English_part))
-        dict_total = {**self.Get_Chinese_dict(), **self.Get_English_dict()}
-        total_noun_cp = sorted(dict_total.items(), key=lambda x: x[1], reverse=True)
-        word_total_dict = {a: b for a, b in total_noun_cp}
-        return word_total_dict
+    # 获取说话内容中的汉语动词
+    def Get_Chinese_verb(self):
+        text_test=self.Get_Chinese_content()
+        # print(text_test)
+        container=pynlpir.segment(text_test)
+        container = [(a, b) for a, b in container if a not in stopwords1]
+        dict_noun={}
+        for item in container:
+            if item[1]=='verb':
+                if item[0] not in dict_noun:
+                    dict_noun[item[0]]=1
+                else:
+                    dict_noun[item[0]]+=1
+        word_vb_cp = sorted(dict_noun.items(), key=lambda x: x[1], reverse=True)
+        # print(word_noun_cp)
+        word_dict_chinese = {a: b for a, b in word_vb_cp}
+        # print("切分后的字典为：",word_dict_chinese)
+        # word_Chinese_json = json.dumps(dict_noun)
+        # print("转换为json后：",word_Chinese_json)
+        return word_dict_chinese
 
-    # 提取中文关键词并生成json
-    def Get_Chinese_json(self):
-        word_Chinese_json = json.dumps(self.Get_Chinese_dict())
-        return word_Chinese_json
+    # 获取说话内容中的汉语形容词
+    def Get_Chinese_adj(self):
+        text_test=self.Get_Chinese_content()
+        # print(text_test)
+        container=pynlpir.segment(text_test)
+        container = [(a, b) for a, b in container if a not in stopwords1]
+        dict_adj={}
+        for item in container:
+            if item[1]=='adjective':
+                if item[0] not in dict_adj:
+                    dict_adj[item[0]]=1
+                else:
+                    dict_adj[item[0]]+=1
+        word_adj_cp = sorted(dict_adj.items(), key=lambda x: x[1], reverse=True)
+        # print(word_noun_cp)
+        word_dict_chinese = {a: b for a, b in word_adj_cp}
+        # print("切分后的字典为：",word_dict_chinese)
+        # word_Chinese_json = json.dumps(dict_noun)
+        # print("转换为json后：",word_Chinese_json)
+        return word_dict_chinese
 
-    # 提取英文关键词并生成json
-    def Get_English_json(self):
-        word_English_json = json.dumps(self.Get_English_dict())
-        return word_English_json
+    # 获取说话内容中的汉语关键词
+    def Get_keyword(self,n=30):
+        text_test=self.Get_Chinese_content()
+        return pynlpir.get_key_words(text_test)[:n]
 
-    # 提取中英文关键词并生成json
-    def Get_total_json(self):
-        word_total_json = json.dumps(self.Get_total_dict())
-        return word_total_json
+    # 将dict格式转换为最后的json格式
+    def Get_json(self,dict_word):
+        json_word=json.dumps(dict_word)
+        return json_word
+
+    # 用户自定义添加关键词
+    def Add_UserDict(self,word_list):
+        with open('Userdict.txt', 'a', encoding="utf-8") as f:
+            for word in word_list:
+                f.write("\n" + word)
+
+    def Del_UserDict(self,word_list):
+        f1 = open('Userdict.txt', "r", encoding="utf-8")
+        content = f1.read()
+        for word in word_list:
+            content = content.replace(word, "")
+        with open('Userdict.txt', "w", encoding="utf-8") as f2:
+            f2.write(content)
+
+    # 用户自定义添加停用词
+    def Add_StopWord(self,word_list):
+        for word in word_list:
+            stopwords1.append(word)
+
+    def Del_StopWord(self,word_list):
+        for word in word_list:
+            stopwords1.remove(word)
+
+    # 词性有：名词、形容词、动词、关键词、所有
+    # 语言：中文、英文、所有
+    # num:输出词汇的个数
+    def Get_answer(self,language='all',cixing='all',num=30):
+        pynlpir.nlpir.ImportUserDict(b'Userdict.txt')
+        def generate_dict(dict_tartget,number):
+            dict_res={}
+            for key,val in dict_tartget.items():
+                dict_res[key]=val
+                number-=1
+                if number==0:
+                    break
+            word_noun_cp = sorted(dict_res.items(), key=lambda x: x[1], reverse=True)
+            dict_res = {a: b for a, b in word_noun_cp}
+            return dict_res
+
+        container_dict= {}
+        text_test=""
+        if cixing=="keywords":
+            container_dict2 = self.Get_answer(num=1000)
+            # print(len(container_dict2))
+            # print("总的词汇表为：", container_dict2)
+            container_list=[]
+            if language=='Chinese':
+                text_test = self.Get_Chinese_content()
+            elif language == 'English':
+                text_test = self.Get_English_content()
+            elif language == 'all':
+                text_test = self.Get_content()
+            container_list = [word for word in pynlpir.get_key_words(text_test) if word not in stopwords1][:num]
+            # for word in container_list:
+            #     if word not in container_dict2:
+            #         self.Add_UserDict(word)
+            # print("关键词列表为：",container_list)
+            # container_dict2 = self.Get_answer(num=1000)
+            # print(container_dict2)
+            for word in container_list:
+                container_dict[word]=container_dict2[word]
+            return container_dict
+
+        if language=='English':
+            text_test = self.Get_English_content()
+            if cixing=="noun":
+                container_dict=self.Get_English_noun()
+            elif cixing=="verb":
+                container_dict=self.Get_English_verb()
+            elif cixing=="adj":
+                container_dict=self.Get_English_adj()
+            elif cixing=='all':
+                container_dict = self.Get_English_noun()
+                container_dict.update(self.Get_English_verb())
+                container_dict.update(self.Get_English_adj())
+                word_noun_cp = sorted(container_dict.items(), key=lambda x: x[1], reverse=True)
+                container_dict = {a: b for a, b in word_noun_cp}
+            return generate_dict(container_dict ,num)
+        elif language=="Chinese":
+            text_test = self.Get_Chinese_content()
+            if cixing=="noun":
+                container_dict=self.Get_Chinese_noun()
+            elif cixing=="verb":
+                container_dict=self.Get_Chinese_verb()
+            elif cixing == "adj":
+                container_dict=self.Get_Chinese_adj()
+            elif cixing=='all':
+                container_dict = self.Get_Chinese_noun()
+                container_dict.update(self.Get_Chinese_verb())
+                container_dict.update(self.Get_Chinese_adj())
+                word_noun_cp = sorted(container_dict.items(), key=lambda x: x[1], reverse=True)
+                container_dict = {a: b for a, b in word_noun_cp}
+            return generate_dict(container_dict,num)
+        elif language=='all':
+            text_test = self.Get_content()
+            if cixing=="noun":
+                container_dict=self.Get_Chinese_noun()
+                container_dict.update(self.Get_English_noun())
+                # print(container_dict)
+            elif cixing=="verb":
+                container_dict = self.Get_Chinese_verb()
+                container_dict.update(self.Get_English_verb())
+            elif cixing == "adj":
+                container_dict = self.Get_Chinese_adj()
+                container_dict.update(self.Get_English_adj())
+            elif cixing=='all':
+                container_dict = self.Get_answer('Chinese','all',1000)
+                container_dict.update(self.Get_answer('English','all',1000))
+                # print(container_dict)
+            word_noun_cp = sorted(container_dict.items(), key=lambda x: x[1], reverse=True)
+            # print(word_noun_cp)
+            word_dict = {a: b for a, b in word_noun_cp}
+            return generate_dict(word_dict, num)
 
 
-    # 获得说话人时长的比例
-    def Get_person_proportion(self):
-        container1 = re.findall(r"\"userId\"\:\".*?\"", self.text_test)
-        container1 = [element[11:len(element) - 1] for element in container1]
-        # print(container1)
-        container2 = re.findall(r"\"timestamp\"\:\".*?\"", self.text_test)
-        container_time = []
-        for timeslot in container2:
-            container_time.append(timeslot[-20:-1])
-        # print(container_time)
-        userID_dict = {}
 
-        def get_time(num):
-            if num == len(container_time) - 1:
-                return 10
-            time1 = re.sub('-|:', ' ', container_time[num])
-            time2 = re.sub('-|:', ' ', container_time[num + 1])
-            time1 = time1.split(" ")
-            time2 = time2.split(" ")
-            unit = [31536000, 2592000, 86400, 3600, 60, 1]
-            ans1, ans2 = 0, 0
-            for i in range(len(time1)):
-                ans1 += int(time1[i]) * unit[i]
-                ans2 += int(time2[i]) * unit[i]
-            return ans2 - ans1
-
-        user_dict = {}
-        for user in container1:
-            if user not in user_dict:
-                user_dict[user] = 0
-        # print(user_dict)
-        for i in range(len(container1)):
-            user_dict[container1[i]] += get_time(i)
-        # print(user_dict)
-
-        time_span_all = sum(b for a, b in user_dict.items())
-        # print(time_span_all)
-
-        # user_talking_proportion={a:b/time_span_all} for a,b in user_dict.items()
-        user_talking_proportion = {}
-        for a, b in user_dict.items():
-            user_talking_proportion[a] = (b / time_span_all)
-        user_talking_proportion_json = json.dumps(user_talking_proportion)
-        return user_talking_proportion_json
-
-
-
-
-
+# 传参：filePath(文件路径)、keywordsList(用户关键词列表，默认为[])、stopwordsList(传入停用词，默认为[])、num(输入词个数，默认为5)
+# languageType(语言类型，选项有all、Chinese、English，默认为all)、classType(词性类型，选项有noun、verb、adj、keywords、all，默认为all)
 parser = argparse.ArgumentParser(description='manual to this script')
 parser.add_argument('--filePath', type=str, default = None)
 # parser.add_argument('--batch-size', type=int, default=32)
+parser.add_argument('--keywordsList', nargs='+', default = [])
+# parser.add_argument('--keywordsList', type=list, default = [])
+parser.add_argument('--stopwordsList', nargs='+', default = [])
+parser.add_argument('--num', type=int, default = 30)
+parser.add_argument('--languageType', type=str, default = 'all')
+parser.add_argument('--classType', type=str, default = 'all')
+# parser.add_argument('--batch-size', type=int, default=32)
+
 args = parser.parse_args()
+
+
 # print 'hello'
-# print(args.param1)
+# print(args.filePath)
+
 file=open(args.filePath,'r',encoding='utf-8')
 text=file.read()
 file.close()
-# data=data.replace('\'','\"')
-# print(data)
-# print(demjson.decode(args.param1))
-# data=demjson.decode(args.param1)
-# print(data[docId])
-# data=json.loads(args.param1)
-# solution=args.param1
+keywords_list=args.keywordsList
+stopwords_list=args.stopwordsList
+num=args.num
+language_type=args.languageType
+classType=args.classType
 
-# solution=TextAnalysis("请在这里输入你想处理的json数组样式的字符串")
-# solution=TextAnalysis('[{"docId":"rdvPragueDocId_ea41fe07-20b1-403e-afd8-183449a24bb0_r2","subtitle":"Hello。 Hello。","property":"en","userId":"bc3ac26e69731b617eb80274453f6dba","timestamp":"2022-09-23 15:57:15"},{"docId":"rdvPragueDocId_ea41fe07-20b1-403e-afd8-183449a24bb0_r2","subtitle":"Create an acquisition task.","property":"en","userId":"bc3ac26e69731b617eb80274453f6dba","timestamp":"2022-09-23 15:57:27"}]')
-solution=TextAnalysis(text)
-print(solution.Get_total_json())#调用获得对话内容词频函数
+
+# 创建类与预处理
+so=TextAnalysis(text)
+text_container=so.Get_content()
+container_list = [word for word in pynlpir.get_key_words(text_container) if word not in stopwords1]
+container_dict2=so.Get_answer(num=1000)
+after_delete=[]
+for keyword in container_list:
+    if keyword not in container_dict2:
+        after_delete.append(keyword)
+        so.Add_UserDict(keyword)#系统的关键词添加
+
+
+
+# print("------------用户自定义添加关键词--------------")
+so.Add_UserDict(keywords_list)
+# print("------------用户自定义添加停用词-------------")
+so.Add_StopWord(stopwords_list)
+# print("-----------------调用得到结果---------------------")
+print(so.Get_json(so.Get_answer(language_type,classType,num)))
+
+# print("------------------后续清理----------------------")
+so.Del_UserDict(after_delete)
+so.Del_UserDict(keywords_list)
+
+
+
+
+# 调用举例：
+# python C:\Users\Dell\Desktop\NLPbilibili\day2\code\test04.py --filePath=C:\Users\Dell\Desktop\NLPbilibili\day2\code\text_test.txt  --num=5 --classType=verb --languageType=Chinese --keywordsList Curry James --stopwordsList Harden Jaylon

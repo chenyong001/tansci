@@ -1,317 +1,872 @@
 <template>
-    <div class="record_data" style="display: flex;
+  <div class="record_data" style="display: flex;
   justify-content: space-between;">
-  <div style="width:60%;">
-        <el-tabs v-model="activeName" model-value="first" type="card" >
-    <el-tab-pane label="数据详情" name="first">
-        <el-card>
-              
-              <!-- <p>PPT直播测试searchForm.docId=========={{ searchForm.docId }}</p> -->
-            <Table :data="tableData" :column="tableTitle" :operation="true" :page="page" :loading="loading"
-                @onSizeChange="onSizeChange" @onCurrentChange="onCurrentChange">
-                <template #search>
-                    <div><el-button type="primary" @click="onExportTxt">导出</el-button></div>
-                    <div><el-input v-model="searchForm.docId" type="hidden" ></el-input></div>
-                       <div> <el-select v-model="searchForm.property" placeholder="请选择语言类型" style="width:70%" >
-                            <el-option label="英语" value="en" ></el-option>
-                            <el-option label="中文" value="zh-Hans"></el-option>
-                             <el-option label="德语" value="de"></el-option>
-                              <el-option label="法语" value="fr"></el-option>
-                               <el-option label="日语" value="ja"></el-option>
-                        </el-select></div>
-                     <!-- <div><el-input v-model="searchForm.subtitle" type="text" placeholder="请输入内容" ></el-input></div> -->
-                    <!-- <div><el-input v-model="searchForm.timestamp" type="text" placeholder="请输入时间" ></el-input></div> -->
-                    <!-- <div><el-button @click="onRefresh" icon="RenfreshRight" circle></el-button></div> -->
-                    <div><el-button @click="onSearch" type="primary" icon="Search">查询</el-button></div>
-                </template>
-        <template #column="scope" style="width:100" >
-                         <el-button @click="onEdit(scope)" type="success">编辑</el-button>
-                   
-        </template>
+    <div style="width:60%;">
+      <el-tabs v-model="activeName" model-value="first" type="card">
+        <el-tab-pane label="数据详情" name="first">
+          <el-card>
+            <!-- <p>PPT直播测试searchForm.docId=========={{ searchForm.docId }}</p> -->
+            <Table
+              :data="tableData"
+              :column="tableTitle"
+              :operation="true"
+              :page="page"
+              :loading="loading"
+              @onSizeChange="onSizeChange"
+              @onCurrentChange="onCurrentChange"
+            >
+              <template #search>
+                <div>
+                  <el-button type="primary" @click="onExportTxt">导出</el-button>
+                </div>
+                <div>
+                  <el-input v-model="searchForm.docId" type="hidden"></el-input>
+                </div>
+                <div>
+                  <el-select v-model="searchForm.property" placeholder="请选择语言类型" style="width:70%">
+                    <el-option label="英语" value="en"></el-option>
+                    <el-option label="中文" value="zh-Hans"></el-option>
+                    <el-option label="德语" value="de"></el-option>
+                    <el-option label="法语" value="fr"></el-option>
+                    <el-option label="日语" value="ja"></el-option>
+                  </el-select>
+                </div>
+                <!-- <div><el-input v-model="searchForm.subtitle" type="text" placeholder="请输入内容" ></el-input></div> -->
+                <!-- <div><el-input v-model="searchForm.timestamp" type="text" placeholder="请输入时间" ></el-input></div> -->
+                <!-- <div><el-button @click="onRefresh" icon="RenfreshRight" circle></el-button></div> -->
+                <div>
+                  <el-button @click="onSearch" type="primary" icon="Search">查询</el-button>
+                </div>
+              </template>
+              <template #column="scope" style="width:100">
+                <el-button @click="onEdit(scope)" type="success">编辑</el-button>
+              </template>
             </Table>
-        </el-card>
-        
+          </el-card>
+
           <el-dialog :title="taskTitle" v-model="taskVisible" width="80%" :show-close="false">
-            <el-form :model="taskForm" :rules="rules" ref="addRuleForm" label-position="left" label-width="100px">
-                <el-form-item label="内容" prop="内容" >
-                    <el-input v-model="taskForm.subtitle" placeholder="请输入内容" style="width:100%" />
-                </el-form-item>
+            <el-form
+              :model="taskForm"
+              :rules="rules"
+              ref="addRuleForm"
+              label-position="left"
+              label-width="100px"
+            >
+              <el-form-item label="内容" prop="内容">
+                <el-input v-model="taskForm.subtitle" placeholder="请输入内容" style="width:100%" />
+              </el-form-item>
             </el-form>
             <template #footer>
-                <span class="dialog-footer">
-                    <el-button @click="taskVisible = false">取消</el-button>
-                    <el-button type="primary" @click="onSubmit">提交</el-button>
-                </span>
+              <span class="dialog-footer">
+                <el-button @click="taskVisible = false">取消</el-button>
+                <el-button type="primary" @click="onSubmit">提交</el-button>
+              </span>
             </template>
-        </el-dialog>
+          </el-dialog>
+        </el-tab-pane>
+        <el-tab-pane label="词频列表" name="second">
+          <Table
+            :data="fqcTableData"
+            :column="fqcTableTitle"
+            :operation="false"
+            :page="fqcPage"
+            :loading="fqcLoading"
+            @onSizeChange="onSizeChange"
+            @onCurrentChange="onCurrentChange"
+          ></Table>
+        </el-tab-pane>
 
-    </el-tab-pane>
-    <el-tab-pane label="词频列表" name="second">
+        <el-tab-pane label="停用词" name="third">
+          <el-card>
+            <Table
+              :data="stopTableData"
+              :column="stopTableTitle"
+              :operation="true"
+              :page="stopPage"
+              :loading="stopLoading"
+              @onSizeChange="onSizeChangeStop"
+              @onCurrentChange="onCurrentChangeStop"
+            >
+              <template #search>
+                <div>
+                  <el-button type="primary" @click="onStopAdd">新增</el-button>
+                </div>
+              </template>
+              <template #column="scope" style="width:100">
+                <el-button @click="onStopEdit(scope)" type="success">编辑</el-button>
+                <el-button @click="onStopDelete(scope)" type="warning">删除</el-button>
+              </template>
+            </Table>
+          </el-card>
+          <el-dialog :title="stopTitle" v-model="stopVisible" width="80%" :show-close="false">
+            <el-form
+              :model="stopForm"
+              :rules="rules"
+              ref="addRuleForm"
+              label-position="left"
+              label-width="100px"
+            >
+              <el-form-item label="内容" prop="内容">
+                <el-input v-model="stopForm.value" placeholder="请输入内容" style="width:100%" />
+              </el-form-item>
+            </el-form>
+            <template #footer>
+              <span class="dialog-footer">
+                <el-button @click="stopVisible = false">取消</el-button>
+                <el-button type="primary" @click="onStopSubmit">提交</el-button>
+              </span>
+            </template>
+          </el-dialog>
+        </el-tab-pane>
 
-  <Table
-        :data="fqcTableData"
-        :column="fqcTableTitle"
-        :operation="false"
-        :page="page"
-        :loading="loading"
-        @onSizeChange="onSizeChange"
-        @onCurrentChange="onCurrentChange"
-      >
-   
-      </Table>
-    </el-tab-pane>
-  </el-tabs>
-       </div>
+        <el-tab-pane label="关键词" name="fourth">
+          <el-card>
+            <Table
+              :data="keyTableData"
+              :column="keyTableTitle"
+              :operation="true"
+              :page="keyPage"
+              :loading="keyLoading"
+              @onSizeChange="onSizeChangekey"
+              @onCurrentChange="onCurrentChangekey"
+            >
+              <template #search>
+                <div>
+                  <el-button type="primary" @click="onkeyAdd">新增</el-button>
+                </div>
+              </template>
+              <template #column="scope" style="width:100">
+                <el-button @click="onkeyEdit(scope)" type="success">编辑</el-button>
+                <el-button @click="onkeyDelete(scope)" type="warning">删除</el-button>
+              </template>
+            </Table>
+          </el-card>
+          <el-dialog :title="keyTitle" v-model="keyVisible" width="80%" :show-close="false">
+            <el-form
+              :model="keyForm"
+              :rules="rules"
+              ref="addRuleForm"
+              label-position="left"
+              label-width="100px"
+            >
+              <el-form-item label="内容" prop="内容">
+                <el-input v-model="keyForm.value" placeholder="请输入内容" style="width:100%" />
+              </el-form-item>
+            </el-form>
+            <template #footer>
+              <span class="dialog-footer">
+                <el-button @click="keyVisible = false">取消</el-button>
+                <el-button type="primary" @click="onkeySubmit">提交</el-button>
+              </span>
+            </template>
+          </el-dialog>
+        </el-tab-pane>
+
+        <el-tab-pane label="参数设置" name="fifth">
+          <el-card>
+            <Table
+              :data="param2TableData"
+              :column="param2TableTitle"
+              :operation="true"
+              :page="param2Page"
+              :loading="param2Loading"
+              @onSizeChange="onSizeChangeparam2"
+              @onCurrentChange="onCurrentChangeparam2"
+            >
+              <template #column="scope" style="width:100">
+                <el-button @click="onparam2Edit(scope)" type="success">编辑</el-button>
+              </template>
+            </Table>
+          </el-card>
+          <el-dialog :title="param2Title" v-model="param2Visible" width="80%" :show-close="false">
+            <el-form
+              :model="param2Form"
+              :rules="rules"
+              ref="addRuleForm"
+              label-position="left"
+              label-width="100px"
+            >
+              <el-form-item label="参数值" prop="参数值">
+                <el-input v-model="param2Form.value" placeholder="请输入参数值" style="width:100%" />
+              </el-form-item>
+            </el-form>
+            <template #footer>
+              <span class="dialog-footer">
+                <el-button @click="param2Visible = false">取消</el-button>
+                <el-button type="primary" @click="onparam2Submit">提交</el-button>
+              </span>
+            </template>
+          </el-dialog>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
     <div style="width:40%;">
-    <el-card >
-      <div id="myPie" style="height:500px"></div>
-      <div id="tlrealtimewordcloud"  style="height:500px" ></div>
-    </el-card>
+      <el-card>
+        <div id="myPie" style="height:500px"></div>
+        <div id="tlrealtimewordcloud" style="height:500px"></div>
+      </el-card>
     </div>
-    </div>
+  </div>
 </template>
 
 <script setup>
-
-    import {onMounted, reactive, nextTick, ref, unref, toRefs} from 'vue'
-    import {ElMessage, ElMessageBox} from 'element-plus'
-    import Table from '../../components/Table.vue'
-    import {collectDataPage,exportTxt,getMyData,updateNote} from '../../api/systemApi.js'
-    import {timeFormate2} from '../../utils/utils.js'
-    import * as echarts from "echarts";
+import { onMounted, reactive, nextTick, ref, unref, toRefs } from "vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import Table from "../../components/Table.vue";
+import {
+  collectDataPage,
+  exportTxt,
+  getMyData,
+  updateNote,
+  paramPage,
+  createParam,
+  updateParam,
+  deleteParam
+} from "../../api/systemApi.js";
+import { timeFormate2 } from "../../utils/utils.js";
+import * as echarts from "echarts";
 import "echarts-wordcloud";
-
 
 import { useRoute } from "vue-router";
 const route = useRoute();
-    console.log(route.query.docId);  //通过query 传递过来的参数
+console.log(route.query.docId); //通过query 传递过来的参数
 
-
-    const addRuleForm = ref(null)
-    const state = reactive({
-        searchForm:{
-            docId: route.query.docId,
-            // subtitle: '',
-            property: 'en',
-            //  timestamp: ''
-        },
-        loading: false,
-        page: {
-            current: 1,
-            size: 500,
-            total: 1,
-        },
-        tableTitle: [
-            {prop:'id',label:'ID',width:100},
-            // {prop:'docId',label:'文档ID'},
-            // {prop:'status',alias:'statusName',label:'状态',
-            //     type:'switch',
-            //     option:{
-            //         activeValue:1,activeColor:'#13ce66',activeText:'启用',
-            //         inactiveValue:0,inactiveColor:'#ff4949',inactiveText:'禁用'
-            //     }
-            // },
-            // {prop:'creater',label:'创建人'},
-            {prop:'subtitle',label:'内容'},
-            {prop:'timestamp',label:'创建时间',width:200},
-        ],
-        tableData:[],
-        taskVisible: false,
-        taskTitle: '创建采集任务',
-        taskForm:{
-            domain: '',
-            docId: '',
-            reamrk: ''
-        },
-        activeName: 'first',
-          fqcTableTitle: [
-          { prop: "name", label: "单词"},
-          { prop: "value", label: "次数" },
-          { prop: "wordLength", label: "词长" }
-        ],
-        fqcTableData: [],
-    })
+const addRuleForm = ref(null);
+const state = reactive({
+  searchForm: {
+    docId: route.query.docId,
+    // subtitle: '',
+    property: "en"
+    //  timestamp: ''
+  },
+  loading: false,
+  page: {
+    current: 1,
+    size: 500,
+    total: 1
+  },
+  tableTitle: [
+    { prop: "id", label: "ID", width: 100 },
+    // {prop:'docId',label:'文档ID'},
+    // {prop:'status',alias:'statusName',label:'状态',
+    //     type:'switch',
+    //     option:{
+    //         activeValue:1,activeColor:'#13ce66',activeText:'启用',
+    //         inactiveValue:0,inactiveColor:'#ff4949',inactiveText:'禁用'
+    //     }
+    // },
+    // {prop:'creater',label:'创建人'},
+    { prop: "subtitle", label: "内容" },
+    { prop: "timestamp", label: "创建时间", width: 200 }
+  ],
+  tableData: [],
+  taskVisible: false,
+  taskTitle: "创建采集任务",
+  taskForm: {
+    domain: "",
+    docId: "",
+    reamrk: ""
+  },
+  activeName: "first",
+  fqcTableTitle: [
+    { prop: "name", label: "单词" },
+    { prop: "value", label: "次数" },
+    { prop: "wordLength", label: "词长" }
+  ],
+  fqcTableData: [],
+  fqcLoading: false,
+  fqcPage: {
+    current: 1,
+    size: 500,
+    total: 1
+  },
+  stopTableTitle: [
+    { prop: "id", label: "ID", width: 100 },
+    { prop: "value", label: "内容" }
+  ],
+  stopTableData: [],
+  stopLoading: false,
+  stopVisible: false,
+  stopPage: {
+    current: 1,
+    size: 500,
+    total: 1
+  },
+  stopSearchForm: {
+    docId: route.query.docId,
+    type: 0
+  },
+  stopForm: {
+    id: "",
+    docId: "",
+    value: "",
+    type: 0
+  },
+  stopTitle: "",
+  keyTableTitle: [
+    { prop: "id", label: "ID", width: 100 },
+    { prop: "value", label: "内容" }
+  ],
+  keyTableData: [],
+  keyLoading: false,
+  keyVisible: false,
+  keyPage: {
+    current: 1,
+    size: 500,
+    total: 1
+  },
+  keySearchForm: {
+    docId: route.query.docId,
+    type: 1
+  },
+  keyForm: {
+    id: "",
+    docId: "",
+    value: "",
+    type: 1
+  },
+  keyTitle: "",
+  param2TableTitle: [
+    { prop: "id", label: "ID", width: 100 },
+    { prop: "name", label: "参数名" },
+    { prop: "value", label: "参数值" }
+  ],
+  param2TableData: [],
+  param2Loading: false,
+  param2Visible: false,
+  param2Page: {
+    current: 1,
+    size: 500,
+    total: 1
+  },
+  param2SearchForm: {
+    docId: route.query.docId,
+    type: 2
+  },
+  param2Form: {
+    id: "",
+    docId: "",
+    value: "",
+    type: 2,
+    name: ""
+  },
+  param2Title: ""
+});
 let myResult;
-    const {
-        searchForm,loading,page,tableHeight,tableTitle,tableData,
-        taskVisible,taskTitle,taskForm,
-        fqcTableTitle,
-        fqcTableData
-    } = toRefs(state)
+const {
+  searchForm,
+  loading,
+  page,
+  tableHeight,
+  tableTitle,
+  tableData,
+  taskVisible,
+  taskTitle,
+  taskForm,
+  fqcTableTitle,
+  fqcTableData,
+  fqcLoading,
+  fqcPage,
+  stopTableTitle,
+  stopTableData,
+  stopPage,
+  stopLoading,
+  stopSearchForm,
+  stopVisible,
+  stopTitle,
+  stopForm,
+  keyTableTitle,
+  keyTableData,
+  keyPage,
+  keyLoading,
+  keySearchForm,
+  keyVisible,
+  keyTitle,
+  keyForm,
+  param2TableTitle,
+  param2TableData,
+  param2Page,
+  param2Loading,
+  param2SearchForm,
+  param2Visible,
+  param2Title,
+  param2Form
+} = toRefs(state);
 
-    onMounted(() => {
-        onCollectPage();
-          onPie();
+onMounted(() => {
+  onCollectPage();
+  onStopPage();
+  onKeyPage();
+  onparam2Page();
+  onPie();
   onLtrealtimewordcloud();
-    })
+});
 
-    // 初始化数据
-    const onCollectPage = () =>{
-        state.loading = true;
-        // state.searchForm.docId=this.$route.params.id;
-        // state.searchForm.docId=this.docId;
-        collectDataPage(Object.assign(state.page,state.searchForm)).then(res=>{
-            state.loading = false;
-            state.tableData = res.result.records;
-            state.page.current = res.result.current;
-            state.page.size = res.result.size;
-            state.page.total = res.result.total;
-        })
-    }
-    
-    // 编辑
-    const onEdit = (val) =>{
-        state.taskTitle = "编辑";
-        state.taskForm = {
-            id: val.column.row.id,
-            subtitle: val.column.row.subtitle
-        }
-        state.taskVisible = true;
-    }
+// 初始化数据
+const onCollectPage = () => {
+  state.loading = true;
+  // state.searchForm.docId=this.$route.params.id;
+  // state.searchForm.docId=this.docId;
+  collectDataPage(Object.assign(state.page, state.searchForm)).then(res => {
+    state.loading = false;
+    state.tableData = res.result.records;
+    state.page.current = res.result.current;
+    state.page.size = res.result.size;
+    state.page.total = res.result.total;
+  });
+};
+
+// 编辑
+const onEdit = val => {
+  state.taskTitle = "编辑";
+  state.taskForm = {
+    id: val.column.row.id,
+    subtitle: val.column.row.subtitle
+  };
+  state.taskVisible = true;
+};
 // 初始化数据
 const onFqcPage = () => {
-  state.loading = true;
-    state.loading = false;
-    state.fqcTableData = myResult;
+  state.fqcLoading = true;
+  state.fqcLoading = false;
+  state.fqcTableData = myResult;
+  state.fqcPage.total = myResult.length;
 };
-        // 初始化数据
-    const onExportTxt = () =>{
-        state.loading = true;
-        // state.searchForm.docId=this.$route.params.docId;
-        // state.searchForm.docId=this.docId;
-        exportTxt(Object.assign(state.searchForm)).then(res=>{
-            if (!res.data) {
-        return
-      }
-      let url = window.URL.createObjectURL(new Blob([res.data]))
-      let link = document.createElement('a')
-      link.style.display = 'none'
-      link.href = url
-      let fileName='data_'+timeFormate2(new Date())+"_"+state.searchForm.property+".txt";
-      link.setAttribute('download', fileName)
-      document.body.appendChild(link)
-      link.click()
-      // 释放URL对象所占资源
-      window.URL.revokeObjectURL(url)
-      // 用完即删
-      document.body.removeChild(link)
-      onCollectPage();
-            
-            });
+// 初始化数据
+const onExportTxt = () => {
+  state.loading = true;
+  // state.searchForm.docId=this.$route.params.docId;
+  // state.searchForm.docId=this.docId;
+  exportTxt(Object.assign(state.searchForm)).then(res => {
+    if (!res.data) {
+      return;
     }
-    const onSizeChange = (e) =>{
-        state.page.size = e;
-        onCollectPage();
-    }
-    const onCurrentChange = (e) =>{
-        state.page.current = e;
-        onCollectPage();
-    }
-    const onRefresh = () =>{
-        state.searchForm = {
-            name: null,
+    let url = window.URL.createObjectURL(new Blob([res.data]));
+    let link = document.createElement("a");
+    link.style.display = "none";
+    link.href = url;
+    let fileName =
+      "data_" +
+      timeFormate2(new Date()) +
+      "_" +
+      state.searchForm.property +
+      ".txt";
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    // 释放URL对象所占资源
+    window.URL.revokeObjectURL(url);
+    // 用完即删
+    document.body.removeChild(link);
+    onCollectPage();
+  });
+};
+const onSizeChange = e => {
+  state.page.size = e;
+  onCollectPage();
+};
+const onCurrentChange = e => {
+  state.page.current = e;
+  onCollectPage();
+};
+
+// --------------------------------stop start-----------------------------------
+// 添加
+const onStopAdd = () => {
+  state.stopTitle = "创建";
+  state.stopForm = {
+    docId: route.query.docId,
+    value: ""
+  };
+
+  state.stopVisible = true;
+};
+
+// 编辑
+const onStopEdit = val => {
+  state.stopTitle = "编辑";
+  state.stopForm = {
+    id: val.column.row.id,
+    value: val.column.row.value
+  };
+  state.stopVisible = true;
+};
+
+// 删除
+const onStopDelete = val => {
+  ElMessageBox.confirm("此操作将永久删除, 是否继续?", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning"
+  })
+    .then(() => {
+      let param = {
+        id: val.column.row.id
+      };
+      deleteParam(param).then(res => {
+        if (res) {
+          ElMessage.success("删除成功!");
+          onStopPage();
+          onPie();
+          onLtrealtimewordcloud();
         }
-        onCollectPage();
-    }
-    const onSearch = () =>{
-        onCollectPage();
-                  onPie();
-  onLtrealtimewordcloud();
-    }
-    
-    // const exportTxt = () =>{
-    //     onCollectPage();
-    // }
+      });
+    })
+    .catch(e => {
+      console.log(e);
+    });
+};
+
+// 初始化数据
+const onStopPage = () => {
+  state.stopLoading = true;
+  paramPage(Object.assign(state.stopPage, state.stopSearchForm)).then(res => {
+    state.stopLoading = false;
+    state.stopTableData = res.result.records;
+    state.stopPage.current = res.result.current;
+    state.stopPage.size = res.result.size;
+    state.stopPage.total = res.result.total;
+  });
+};
+
+const onSizeChangeStop = e => {
+  state.stopPage.size = e;
+  onStopPage();
+};
+const onCurrentChangeStop = e => {
+  state.stopPage.current = e;
+  onStopPage();
+};
+
+const onStopSubmit = async () => {
+  // const form = unref(addRuleForm);
+  // if (!form) return;
+  // await form.validate();
+  if (state.stopForm.id == null || state.stopForm.id == "") {
     // 添加
-    // const onAddCollect = () =>{
-    //     state.taskTitle = "创建任务";
-    //     state.taskForm = {
-    //         id: '',
-    //         domain: '',
-    //         docId: '',
-    //         reamrk: ''
-    //     }
+    createParam(state.stopForm).then(res => {
+      if (res) {
+        ElMessage.success("添加成功!");
+      }
+      onStopPage();
+      onPie();
+      onLtrealtimewordcloud();
+    });
+  } else {
+    // 修改
+    updateParam(state.stopForm).then(res => {
+      if (res) {
+        ElMessage.success("修改成功!");
+      }
+      onStopPage();
+      onPie();
+      onLtrealtimewordcloud();
+    });
+  }
+  state.stopVisible = false;
+};
+// --------------------------------stop end-----------------------------------
 
-    //     state.taskVisible = true;
-    // }
-        const goBack = () => {
-        router.go(-1)
-    }
+// --------------------------------key start-----------------------------------
+// 添加
+const onkeyAdd = () => {
+  state.keyTitle = "创建";
+  state.keyForm = {
+    docId: route.query.docId,
+    value: "",
+    type: 1
+  };
 
+  state.keyVisible = true;
+};
 
-    // // 编辑
-    // const onEdit = (val) =>{
-    //     state.taskTitle = "修改任务";
-    //     state.taskForm = {
-    //         id: val.column.row.id,
-    //         code: val.column.row.code,
-    //         name: val.column.row.name,
-    //         expression: val.column.row.expression,
-    //         remarks: val.column.row.remarks
-    //     }
-    //     state.taskVisible = true;
-    // }
+// 编辑
+const onkeyEdit = val => {
+  state.keyTitle = "编辑";
+  state.keyForm = {
+    id: val.column.row.id,
+    value: val.column.row.value
+  };
+  state.keyVisible = true;
+};
 
-    const onSubmit = async () =>{
-        const form = unref(addRuleForm);
-        if(!form) return;
-        await form.validate();
-        if (state.taskForm.id == null || state.taskForm.id == '') {
-            // 添加
-            // collect(state.taskForm).then(res => {
-            //     if (res) {
-            //         ElMessage.success('添加成功!');
-            //     }
-            // });
-        } else {
-            // 修改
-            updateNote(state.taskForm).then(res => {
-                if (res) {
-                    ElMessage.success('修改成功!');
-                }
-                 onCollectPage();
-        onPie();
-        onLtrealtimewordcloud();
-            });
+// 删除
+const onkeyDelete = val => {
+  ElMessageBox.confirm("此操作将永久删除, 是否继续?", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning"
+  })
+    .then(() => {
+      let param = {
+        id: val.column.row.id
+      };
+      deleteParam(param).then(res => {
+        if (res) {
+          ElMessage.success("删除成功!");
+          onKeyPage();
+          onPie();
+          onLtrealtimewordcloud();
         }
-        state.taskVisible = false;
+      });
+    })
+    .catch(e => {
+      console.log(e);
+    });
+};
+
+// 初始化数据
+const onKeyPage = () => {
+  state.keyLoading = true;
+  paramPage(Object.assign(state.keyPage, state.keySearchForm)).then(res => {
+    state.keyLoading = false;
+    state.keyTableData = res.result.records;
+    state.keyPage.current = res.result.current;
+    state.keyPage.size = res.result.size;
+    state.keyPage.total = res.result.total;
+  });
+};
+
+const onSizeChangekey = e => {
+  state.keyPage.size = e;
+  onKeyPage();
+};
+const onCurrentChangekey = e => {
+  state.keyPage.current = e;
+  onKeyPage();
+};
+
+const onkeySubmit = async () => {
+  // const form = unref(addRuleForm);
+  // if (!form) return;
+  // await form.validate();
+  if (state.keyForm.id == null || state.keyForm.id == "") {
+    // 添加
+    createParam(state.keyForm).then(res => {
+      if (res) {
+        ElMessage.success("添加成功!");
+      }
+      onKeyPage();
+      onPie();
+      onLtrealtimewordcloud();
+    });
+  } else {
+    // 修改
+    updateParam(state.keyForm).then(res => {
+      if (res) {
+        ElMessage.success("修改成功!");
+      }
+      onKeyPage();
+      onPie();
+      onLtrealtimewordcloud();
+    });
+  }
+  state.keyVisible = false;
+};
+// --------------------------------key end-----------------------------------
+
+// --------------------------------param2 start-----------------------------------
+// 添加
+const onparam2Add = () => {
+  state.param2Title = "创建";
+  state.param2Form = {
+    docId: route.query.docId,
+    value: "",
+    type: 2,
+    name: ""
+  };
+
+  state.param2Visible = true;
+};
+
+// 编辑
+const onparam2Edit = val => {
+  state.param2Title = "编辑";
+  state.param2Form = {
+    id: val.column.row.id,
+    value: val.column.row.value
+  };
+  state.param2Visible = true;
+};
+
+// // 删除
+// const onparam2Delete = val => {
+//   ElMessageBox.confirm("此操作将永久删除, 是否继续?", "提示", {
+//     confirmButtonText: "确定",
+//     cancelButtonText: "取消",
+//     type: "warning"
+//   })
+//     .then(() => {
+//       let param2 = {
+//         id: val.column.row.id
+//       };
+//       deleteparam2(param2).then(res => {
+//         if (res) {
+//           ElMessage.success("删除成功!");
+//           onparam2Page();
+//         }
+//       });
+//     })
+//     .catch(e => {
+//       console.log(e);
+//     });
+// };
+
+// 初始化数据
+const onparam2Page = () => {
+  state.param2Loading = true;
+  paramPage(Object.assign(state.param2Page, state.param2SearchForm)).then(
+    res => {
+      state.param2Loading = false;
+      state.param2TableData = res.result.records;
+      state.param2Page.current = res.result.current;
+      state.param2Page.size = res.result.size;
+      state.param2Page.total = res.result.total;
     }
+  );
+};
 
-    // // 删除
-    // const onDelete = (val) =>{
-    //     ElMessageBox.confirm('此操作将永久删除, 是否继续?', '提示', {
-    //         confirmButtonText: '确定',
-    //         cancelButtonText: '取消',
-    //         type: 'warning'
-    //     }).then(() => {
-    //         let param = {
-    //             id: val.column.row.id
-    //         }
-    //         delTask(param).then(res=>{
-    //             if(res){
-    //                 ElMessage.success('删除成功!');
-    //                 onCollectPage();
-    //             }
-    //         })
-    //     }).catch(e=>{
-    //         console.log(e)
-    //     })
-    // }
+const onSizeChangeparam2 = e => {
+  state.param2Page.size = e;
+  onparam2Page();
+};
+const onCurrentChangeparam2 = e => {
+  state.param2Page.current = e;
+  onparam2Page();
+};
 
-    // const onSwitchChange = (row) =>{
-    //     updateTask({id:row.id, status: row.status}).then(res=>{
-    //         if(res){
-    //             ElMessage.success("操作成功！");
-    //             onCollectPage();
-    //         }
-    //     })
-    // }
-    
-const   onPie = async  () => {
+const onparam2Submit = async () => {
+  // const form = unref(addRuleForm);
+  // if (!form) return;
+  // await form.validate();
+  if (state.param2Form.id == null || state.param2Form.id == "") {
+    // 添加
+    // createparam2(state.param2Form).then(res => {
+    //   if (res) {
+    //     ElMessage.success("添加成功!");
+    //   }
+    //   onparam2Page();
+    //   onPie();
+    //   onLtrealtimewordcloud();
+    // });
+  } else {
+    // 修改
+    updateParam(state.param2Form).then(res => {
+      if (res) {
+        ElMessage.success("修改成功!");
+      }
+      onparam2Page();
+      onPie();
+      onLtrealtimewordcloud();
+    });
+  }
+  state.param2Visible = false;
+};
+// --------------------------------param2 end-----------------------------------
+const onRefresh = () => {
+  state.searchForm = {
+    name: null
+  };
+  onCollectPage();
+};
+const onSearch = () => {
+  onCollectPage();
+  onPie();
+  onLtrealtimewordcloud();
+};
+
+// const exportTxt = () =>{
+//     onCollectPage();
+// }
+// 添加
+// const onAddCollect = () =>{
+//     state.taskTitle = "创建任务";
+//     state.taskForm = {
+//         id: '',
+//         domain: '',
+//         docId: '',
+//         reamrk: ''
+//     }
+
+//     state.taskVisible = true;
+// }
+const goBack = () => {
+  router.go(-1);
+};
+
+// // 编辑
+// const onEdit = (val) =>{
+//     state.taskTitle = "修改任务";
+//     state.taskForm = {
+//         id: val.column.row.id,
+//         code: val.column.row.code,
+//         name: val.column.row.name,
+//         expression: val.column.row.expression,
+//         remarks: val.column.row.remarks
+//     }
+//     state.taskVisible = true;
+// }
+
+const onSubmit = async () => {
+  const form = unref(addRuleForm);
+  if (!form) return;
+  await form.validate();
+  if (state.taskForm.id == null || state.taskForm.id == "") {
+    // 添加
+    // collect(state.taskForm).then(res => {
+    //     if (res) {
+    //         ElMessage.success('添加成功!');
+    //     }
+    // });
+  } else {
+    // 修改
+    updateNote(state.taskForm).then(res => {
+      if (res) {
+        ElMessage.success("修改成功!");
+      }
+      onCollectPage();
+      onPie();
+      onLtrealtimewordcloud();
+    });
+  }
+  state.taskVisible = false;
+};
+
+// // 删除
+// const onDelete = (val) =>{
+//     ElMessageBox.confirm('此操作将永久删除, 是否继续?', '提示', {
+//         confirmButtonText: '确定',
+//         cancelButtonText: '取消',
+//         type: 'warning'
+//     }).then(() => {
+//         let param = {
+//             id: val.column.row.id
+//         }
+//         delTask(param).then(res=>{
+//             if(res){
+//                 ElMessage.success('删除成功!');
+//                 onCollectPage();
+//             }
+//         })
+//     }).catch(e=>{
+//         console.log(e)
+//     })
+// }
+
+// const onSwitchChange = (row) =>{
+//     updateTask({id:row.id, status: row.status}).then(res=>{
+//         if(res){
+//             ElMessage.success("操作成功！");
+//             onCollectPage();
+//         }
+//     })
+// }
+
+const onPie = async () => {
   let myPie = echarts.init(document.getElementById("myPie"));
-  const { result } = await getMyData(Object.assign(state.searchForm))
-      console.log(result)
-       myResult=result;
+  const { result } = await getMyData(Object.assign(state.searchForm));
+  console.log(result);
+  myResult = result;
   onFqcPage();
 
   myPie.setOption({
@@ -363,8 +918,8 @@ const onLtrealtimewordcloud = async () => {
     document.getElementById("tlrealtimewordcloud")
   );
 
-      const { result } = await getMyData(Object.assign(state.searchForm))
-      console.log(result)
+  const { result } = await getMyData(Object.assign(state.searchForm));
+  console.log(result);
   tlrealtimewordcloud.setOption({
     // title: {},
     // legend: {},

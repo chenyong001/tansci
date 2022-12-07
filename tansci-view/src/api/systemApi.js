@@ -436,15 +436,7 @@ export function exportWAV(params) {
  * @returns 
  */
 export function collect(params) {
-    // return axios.get('/tansci/collect/record', params);
-    // return axios.post('/tansci/taskConfig/save', params);
-
     return axios.get('/tansci/collect/record', { params: params });
-    // return axios({
-    //     method: 'get',
-    //     url: '/tansci/collect/record',
-    //     params: params
-    //   });
 }
 /**
  * 采集管理
@@ -452,24 +444,12 @@ export function collect(params) {
  * @returns 
  */
 export function sendNote(params) {
-    // return axios.get('/tansci/collect/record', params);
-    // return axios.post('/tansci/taskConfig/save', params);
-
     return axios.get('/tansci/collect/sendNote', { params: params });
-    // return axios({
-    //     method: 'get',
-    //     url: '/tansci/collect/record',
-    //     params: params
-    //   });
+
 }
 
 export function updateNote(params) {
     return axios.get('/tansci/collect/updateNote', { params: params });
-    // return axios({
-    //     method: 'get',
-    //     url: '/tansci/collect/record',
-    //     params: params
-    //   });
 }
 
 
@@ -480,15 +460,8 @@ export function updateNote(params) {
  * @returns 
  */
 export function createNote(params) {
-    // return axios.get('/tansci/collect/record', params);
-    // return axios.post('/tansci/taskConfig/save', params);
-
     return axios.get('/tansci/collect/createNote', { params: params });
-    // return axios({
-    //     method: 'get',
-    //     url: '/tansci/collect/record',
-    //     params: params
-    //   });
+  
 }
 
 /**
@@ -497,15 +470,7 @@ export function createNote(params) {
  * @returns 
  */
 export function deleteNote(params) {
-    // return axios.get('/tansci/collect/record', params);
-    // return axios.post('/tansci/taskConfig/save', params);
-
     return axios.post('/tansci/collect/deleteNote', params);
-    // return axios({
-    //     method: 'get',
-    //     url: '/tansci/collect/record',
-    //     params: params
-    //   });
 }
 
 /**
@@ -523,4 +488,36 @@ export function getMyData(params) {
     //     url: '/tansci/collect/record',
     //     params: params
     //   });
+}
+
+/**
+ * 参数数据分页
+ * @param {*} params 
+ * @returns 
+ */
+export function paramPage(params) {
+    return axios.get('/tansci/recordParam/page', { params: params });
+}
+
+export function updateParam(params) {
+    return axios.get('/tansci/recordParam/updateParam', { params: params });
+}
+
+/**
+ * 创建
+ * @param {*} params 
+ * @returns 
+ */
+export function createParam(params) {
+    return axios.get('/tansci/recordParam/createParam', { params: params });
+  
+}
+
+/**
+ * 删除管理
+ * @param {*} params 
+ * @returns 
+ */
+export function deleteParam(params) {
+    return axios.post('/tansci/recordParam/deleteParam', params);
 }

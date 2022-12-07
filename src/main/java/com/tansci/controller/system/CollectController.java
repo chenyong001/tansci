@@ -16,7 +16,9 @@ import com.tansci.common.constant.Constants;
 import com.tansci.common.task.RecordTask;
 import com.tansci.domain.system.Record;
 import com.tansci.domain.system.RecordData;
+import com.tansci.domain.system.RecordParam;
 import com.tansci.enums.CollectTypeEnum;
+import com.tansci.service.record.RecordParamService;
 import com.tansci.service.system.RecordDataService;
 import com.tansci.service.system.RecordService;
 import com.tansci.utils.ExportUtil;
@@ -77,6 +79,9 @@ public class CollectController {
   private RecordDataService recordDataService;
   @Autowired
   private RecordService recordService;
+
+  @Autowired
+  private RecordParamService recordParamService;
 
   @Autowired
   private RecordTask recordTask;
@@ -177,6 +182,16 @@ public class CollectController {
       record.setUpdateTime(new Date());
       record.setType(CollectTypeEnum.COLLECT_TYPE_MICROSOFT_PPT.getType());
       recordService.save(record);
+
+      //      添加本次会话的参数配置
+      RecordParam recordParam = new RecordParam();
+      recordParam.setDocId(docId);
+      recordParam.setName(Constants.ANALYSIS_NAME);
+      recordParam.setValue(Constants.ANALYSIS_NUM);
+      recordParam.setType(2);
+      recordParam.setCreateTime(new Date());
+      recordParam.setUpdateTime(new Date());
+      recordParamService.save(recordParam);
     } else {
       record.setUpdateTime(new Date());
       recordService.update(record);
@@ -186,30 +201,6 @@ public class CollectController {
     //    recordTask.singleTask(docId, domain);
     recordTask.addTask(docId, domain);
     return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
-
-    //    return "success";
-    //    Map<String, String> exportMap = new HashMap();
-    //    LanguageEnum[] var6 = LanguageEnum.values();
-    //    int var7 = var6.length;
-    //
-    //    for (int var8 = 0; var8 < var7; ++var8) {
-    //      LanguageEnum value = var6[var8];
-    //      String language = value.getLanguage();
-    //      String key = docId + "_" + language;
-    //      if (RecordTask.dbMap.containsKey(key)) {
-    //            exportMap.put(key, (String) RecordTask.dbMap.get(key));
-    //      }
-    //    }
-    //
-    //    try {
-    //      Thread.sleep(1000L);
-    //    } catch (InterruptedException e) {
-    //      e.printStackTrace();
-    //    }
-    //    if (!exportMap.isEmpty()) {
-    //          ExportUtil.exportZip(httpServletResponse, exportMap);
-    //      log.info("export===========success,docId={},time={}", docId, System.currentTimeMillis());
-    //    }
   }
 
   @GetMapping("/createNote")
@@ -227,6 +218,16 @@ public class CollectController {
       record.setCreateTime(new Date());
       record.setUpdateTime(new Date());
       recordService.save(record);
+
+      //      添加本次会话的参数配置
+      RecordParam recordParam = new RecordParam();
+      recordParam.setDocId(docId);
+      recordParam.setName(Constants.ANALYSIS_NAME);
+      recordParam.setValue(Constants.ANALYSIS_NUM);
+      recordParam.setType(2);
+      recordParam.setCreateTime(new Date());
+      recordParam.setUpdateTime(new Date());
+      recordParamService.save(recordParam);
     } else {
       record.setUpdateTime(new Date());
       recordService.update(record);
@@ -326,18 +327,10 @@ public class CollectController {
   public Wrapper<List<MyData>> getMyData(RecordData recordData) {
     //        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.list(null));
     log.info("getMyData======================================");
+    String docId = recordData.getDocId();
     //   新增或更新采集记录
     List<MyData> myDataList = Lists.newArrayList();
     List<RecordData> recordDataList = recordDataService.selectList(recordData);
-//    JSONArray recordDataJsonArray = JSONArray.parseArray(JSON.toJSONString(recordDataList));
-    //    System.out.println(JSON.toJSONString(recordDataList));
-    //    System.out.println("=========================");
-    //    System.out.println(recordDataJsonArray.toJSONString());
-    //    JSON.parseArray()
-    //    String str = "[{\"docId\":\"rdvPragueDocId_ea41fe07-20b1-403e-afd8-183449a24bb0_r2\",\"subtitle\":\"Hello。 H22ello22。我爱你，时间\",\"property\":\"en\",\"userId\":\"bc3ac26e69731b617eb80274453f6dba\",\"timestamp\":\"2022-09-23 15:57:15\"},{\"docId\":\"rdvPragueDocId_ea41fe07-20b1-403e-afd8-183449a24bb0_r2\",\"subtitle\":\"Create an acquisition task.\",\"property\":\"en\",\"userId\":\"bc3ac26e69731b617eb80274453f6dba\",\"timestamp\":\"2022-09-23 15:57:27\"}]";
-    //    PyList pyList = new PyList();
-    //    JSONArray jsonArray = JSONArray.parseArray(str);
-    //    System.out.println(jsonArray.toJSONString());
     Process proc;
     String result = null;
     String filePath = null;
@@ -353,22 +346,45 @@ public class CollectController {
       //      jsonStr = jsonStr.replace("\"", "\'");
       //      "C:\\Python310/python.exe"
       log.info("===============os.name={}", SystemUtil.getOsName());
-      String fileName =
-          recordData.getDocId() + "_" + System.currentTimeMillis() + "_" + (int) (Math.random() * 100) + ".txt";
+      String fileName = docId + "_" + System.currentTimeMillis() + "_" + (int) (Math.random() * 100) + ".txt";
 
       //      jsonStr写入文件，由py文件读取
       String[] args1;
+      StringBuffer args2 = new StringBuffer();
+      String keywordsList = getListByType(docId, 1);
+      String stopwordsList = getListByType(docId, 0);
+      String num = getConfigNum(docId);
       if (SystemUtil.isWindows()) {
         filePath = "E:\\tansci\\py/" + fileName;
         FileUtils.write(new File(filePath), jsonStr, "utf-8");
-        args1 = new String[] { "python", "E:\\tansci\\py/analyseRecord_windows.py", "--filePath=" + filePath };
+//        args1 = new String[] { "python", "E:\\tansci\\py/analyseRecord_windows.py", "--filePath=" + filePath,
+//            "--num=" + num, "--keywordsList" + keywordsList, "--stopwordsList" + stopwordsList };
+        args2.append("python  E://tansci//py//analyseRecord_windows.py  --filePath=").append(filePath).append(" --num=")
+            .append(num);
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(keywordsList)) {
+          args2.append(" --keywordsList ").append(keywordsList);
+        }
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(stopwordsList)) {
+          args2.append(" --stopwordsList").append(stopwordsList);
+        }
+
+        //        args2="python E://tansci//py//analyseRecord_windows.py  --filePath=E:\\tansci\\py\\4658E7EC4A364AA6BF394F64E7716917_1670309430243_65.txt "
+        //                  + " --num=20 --keywordsList 开始 --stopwordsList 腾讯 生活";
       } else {
         filePath = "/temp/" + fileName;
         FileUtils.write(new File(filePath), jsonStr, "utf-8");
-        args1 = new String[] { "python", "/analyseRecord_linux.py", "--filePath=" + filePath };
+//        args1 = new String[] { "python", "/analyseRecord_linux.py", "--filePath=" + filePath };
+        args2.append("python  /analyseRecord_linux.py  --filePath=").append(filePath).append(" --num=")
+            .append(num);
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(keywordsList)) {
+          args2.append(" --keywordsList ").append(keywordsList);
+        }
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(stopwordsList)) {
+          args2.append(" --stopwordsList").append(stopwordsList);
+        }
       }
 
-      proc = Runtime.getRuntime().exec(args1);
+      proc = Runtime.getRuntime().exec(args2.toString());
       BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
       String line;
       while ((line = in.readLine()) != null) {
@@ -377,6 +393,21 @@ public class CollectController {
         result = line;
       }
 
+      BufferedReader error = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+      String lineerror;
+      while ((lineerror = error.readLine()) != null) {
+        //        {"hello": 1, "h": 1, "ello": 1, "create": 1, "an": 1, "acquisition": 1, "task": 1}
+        System.out.println(lineerror);
+      }
+      error.close();
+
+      in.close();
+      int code = proc.waitFor();
+      if (code == 0) {
+        log.info("docId={},执行脚本成功", docId);
+      } else {
+        log.info("docId={},执行脚本失败", docId);
+      }
       JSONObject jsonInfo = JSON.parseObject(result);
       Iterator iter = jsonInfo.entrySet().iterator();
       while (iter.hasNext()) {
@@ -384,12 +415,10 @@ public class CollectController {
         myDataList.add(new MyData(entry.getKey().toString(), Integer.parseInt(entry.getValue().toString())));
       }
 
-      int index=myDataList.size()>30?30:myDataList.size();
       myDataList = myDataList.stream().sorted((e1, e2) -> {
         return Integer.compare(e2.getValue(), e1.getValue());
-      }).collect(Collectors.toList()).subList(0, index);
-      in.close();
-      proc.waitFor();
+      }).collect(Collectors.toList());
+
     } catch (IOException e) {
       e.printStackTrace();
     } catch (InterruptedException e) {
@@ -403,21 +432,48 @@ public class CollectController {
     }
   }
 
+  private String getConfigNum(String docId) {
+    RecordParam recordParam = new RecordParam();
+    recordParam.setDocId(docId);
+    recordParam.setName(Constants.ANALYSIS_NAME);
+    RecordParam recordParam1 = recordParamService.selectOneByName(recordParam);
+    return recordParam1==null?"30":recordParam1.getValue();
+  }
+
+  private String getListByType(String docId, int type) {
+    RecordParam recordParam = new RecordParam();
+    recordParam.setDocId(docId);
+    recordParam.setType(type);
+    List<RecordParam> recordParams = recordParamService.selectListByType(recordParam);
+    StringBuffer sb = new StringBuffer();
+    final int[] i = { 1 };
+    recordParams.stream().forEach(e -> {
+      //      if (i[0] == 1) {
+      //        i[0]++;
+      //        sb.append(e.getValue());
+      //      } else {
+      sb.append(" ").append(e.getValue());
+      //      }
+    });
+    return sb.toString();
+  }
+
   public static void main(String[] args) {
-    List<MyData>   myDataList =Lists.newArrayList();
-    MyData myData1 = new MyData("111211",1);
+    List<MyData> myDataList = Lists.newArrayList();
+    MyData myData1 = new MyData("111211", 1);
     myDataList.add(myData1);
-    MyData myData2 = new MyData("222",2);
+    MyData myData2 = new MyData("222", 2);
     myDataList.add(myData2);
-    MyData myData3 = new MyData("333",1);
+    MyData myData3 = new MyData("333", 1);
     myDataList.add(myData3);
 
-     myDataList = myDataList.stream().sorted((e1, e2) -> {
+    myDataList = myDataList.stream().sorted((e1, e2) -> {
       return Integer.compare(e2.getValue(), e1.getValue());
     }).collect(Collectors.toList()).subList(0, 2);
     System.out.println(myDataList);
 
   }
+
   @ResponseBody
   @PostMapping("/upload")
   public String upload(@RequestParam(name = "file") MultipartFile file, String fileName, String docId) {

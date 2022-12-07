@@ -10,9 +10,13 @@ from nltk.text import Text
 import pynlpir
 pynlpir.open()
 
-
-stopwords1=[line.strip() for line in open("E:/tansci/py/stopword.txt",encoding='utf-8').readlines()]
-with open('E:/tansci/py/Userdict.txt', 'a', encoding="utf-8") as f0:
+jieba.add_word("多模态")
+# jieba.add_word("南洋理工大学")
+file=open("./text_test.txt",'r',encoding='utf-8')
+text=file.read()
+file.close()
+stopwords1=[line.strip() for line in open("./stopword.txt",encoding='utf-8').readlines()]
+with open('Userdict.txt', 'a', encoding="utf-8") as f0:
     f0.write("")
 
 class TextAnalysis:
@@ -234,27 +238,23 @@ class TextAnalysis:
         return json_word
 
     # 用户自定义添加关键词
-    def Add_UserDict(self,word_list):
+    def Add_UserDict(self,word):
         with open('Userdict.txt', 'a', encoding="utf-8") as f:
-            for word in word_list:
-                f.write("\n" + word)
+            f.write("\n"+word)
 
-    def Del_UserDict(self,word_list):
+    def Del_UserDict(self,word):
         f1 = open('Userdict.txt', "r", encoding="utf-8")
         content = f1.read()
-        for word in word_list:
-            content = content.replace(word, "")
+        content = content.replace(word, "")
         with open('Userdict.txt', "w", encoding="utf-8") as f2:
             f2.write(content)
 
     # 用户自定义添加停用词
-    def Add_StopWord(self,word_list):
-        for word in word_list:
-            stopwords1.append(word)
+    def Add_StopWord(self,word):
+        stopwords1.append(word)
 
-    def Del_StopWord(self,word_list):
-        for word in word_list:
-            stopwords1.remove(word)
+    def Del_StopWord(self,word):
+        stopwords1.remove(word)
 
     # 词性有：名词、形容词、动词、关键词、所有
     # 语言：中文、英文、所有
@@ -349,61 +349,31 @@ class TextAnalysis:
 
 
 
-# 传参：filePath(文件路径)、keywordsList(用户关键词列表，默认为[])、stopwordsList(传入停用词，默认为[])、num(输入词个数，默认为5)
-# languageType(语言类型，选项有all、Chinese、English，默认为all)、classType(词性类型，选项有noun、verb、adj、keywords、all，默认为all)
-parser = argparse.ArgumentParser(description='manual to this script')
-parser.add_argument('--filePath', type=str, default = None)
-# parser.add_argument('--batch-size', type=int, default=32)
-parser.add_argument('--keywordsList', nargs='+', default = [])
-# parser.add_argument('--keywordsList', type=list, default = [])
-parser.add_argument('--stopwordsList', nargs='+', default = [])
-parser.add_argument('--num', type=int, default = 30)
-parser.add_argument('--languageType', type=str, default = 'all')
-parser.add_argument('--classType', type=str, default = 'all')
-# parser.add_argument('--batch-size', type=int, default=32)
-
-args = parser.parse_args()
+# pynlpir.nlpir.AddUserWord('教学研究')
 
 
-# print 'hello'
-# print(args.filePath)
-
-file=open(args.filePath,'r',encoding='utf-8')
-text=file.read()
-file.close()
-keywords_list=args.keywordsList
-stopwords_list=args.stopwordsList
-num=args.num
-language_type=args.languageType
-classType=args.classType
-
-
-# 创建类与预处理
 so=TextAnalysis(text)
 text_container=so.Get_content()
 container_list = [word for word in pynlpir.get_key_words(text_container) if word not in stopwords1]
 container_dict2=so.Get_answer(num=1000)
-after_delete=[]
 for keyword in container_list:
     if keyword not in container_dict2:
-        after_delete.append(keyword)
-        so.Add_UserDict(keyword)#系统的关键词添加
+        so.Add_UserDict(keyword)
+
+print("------------用户自定义添加关键词--------------")
+so.Add_UserDict("斯蒂芬库里")
+print("------------用户自定义删去关键词-------------")
+so.Del_UserDict("斯蒂芬库里")
+print("------------用户自定义添加停用词-------------")
+so.Add_StopWord("智慧教育")
+print("------------用户自定义删去停用词-------------")
+so.Del_StopWord("智慧教育")
+print("------------求前30个高频中文名词--------------")
+print(so.Get_answer('Chinese','noun'))
+print(so.Get_json(so.Get_answer('Chinese','noun')))
+
+print("-------------求前20个高频中英文关键词--------------")
+print(so.Get_answer('all','keywords',num=20))
+print(so.Get_json(so.Get_answer('all','keywords',num=20)))
 
 
-
-# print("------------用户自定义添加关键词--------------")
-so.Add_UserDict(keywords_list)
-# print("------------用户自定义添加停用词-------------")
-so.Add_StopWord(stopwords_list)
-# print("-----------------调用得到结果---------------------")
-print(so.Get_json(so.Get_answer(language_type,classType,num)))
-
-# print("------------------后续清理----------------------")
-so.Del_UserDict(after_delete)
-so.Del_UserDict(keywords_list)
-
-
-
-
-# 调用举例：
-# python C:\Users\Dell\Desktop\NLPbilibili\day2\code\test04.py --filePath=C:\Users\Dell\Desktop\NLPbilibili\day2\code\text_test.txt  --num=5 --classType=verb --languageType=Chinese --keywordsList Curry James --stopwordsList Harden Jaylon

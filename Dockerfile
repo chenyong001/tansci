@@ -1,4 +1,4 @@
-FROM com/my/python-java:v1.0
+FROM com/my/python-java:v1.1
 #FROM openjdk:8-jdk-alpine
 #基础镜像
 #工作目录
@@ -11,6 +11,8 @@ ADD  target/*.jar /app/tansci.jar
 #添加py脚本文件
 ADD py/analyseRecord_linux.py /
 ADD py/stopword.txt /
+ADD py/Userdict.txt /
+ADD py/NLPIR.user /usr/local/lib/python3.7/site-packages/pynlpir/Data
 #用于存放py文件参数数据目录
 RUN mkdir /temp
 #创建日志目录

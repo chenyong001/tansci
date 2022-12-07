@@ -8,11 +8,19 @@ import jieba.posseg as pseg
 import nltk
 from nltk.text import Text
 import pynlpir
+import sys
+import os
+curPath = os.path.abspath(os.path.dirname(__file__))
+rootPath = os.path.split(curPath)[0]
+sys.path.append(rootPath)
+
 pynlpir.open()
 
+jieba.add_word("多模态")
+# jieba.add_word("南洋理工大学")
 
-stopwords1=[line.strip() for line in open("E:/tansci/py/stopword.txt",encoding='utf-8').readlines()]
-with open('E:/tansci/py/Userdict.txt', 'a', encoding="utf-8") as f0:
+stopwords1=[line.strip() for line in open("./stopword.txt",encoding='utf-8').readlines()]
+with open('Userdict.txt', 'a', encoding="utf-8") as f0:
     f0.write("")
 
 class TextAnalysis:
@@ -348,35 +356,33 @@ class TextAnalysis:
             return generate_dict(word_dict, num)
 
 
-
-# 传参：filePath(文件路径)、keywordsList(用户关键词列表，默认为[])、stopwordsList(传入停用词，默认为[])、num(输入词个数，默认为5)
-# languageType(语言类型，选项有all、Chinese、English，默认为all)、classType(词性类型，选项有noun、verb、adj、keywords、all，默认为all)
+# 传参：filePath
 parser = argparse.ArgumentParser(description='manual to this script')
 parser.add_argument('--filePath', type=str, default = None)
-# parser.add_argument('--batch-size', type=int, default=32)
-parser.add_argument('--keywordsList', nargs='+', default = [])
-# parser.add_argument('--keywordsList', type=list, default = [])
-parser.add_argument('--stopwordsList', nargs='+', default = [])
+parser.add_argument('--keywords-list', type=list, default = [])
+parser.add_argument('--stopwords-list', type=list, default = [])
 parser.add_argument('--num', type=int, default = 30)
-parser.add_argument('--languageType', type=str, default = 'all')
-parser.add_argument('--classType', type=str, default = 'all')
+parser.add_argument('--language-type', type=str, default = 'all')
+parser.add_argument('--xxtype', type=str, default = 'all')
 # parser.add_argument('--batch-size', type=int, default=32)
-
 args = parser.parse_args()
-
-
 # print 'hello'
-# print(args.filePath)
-
+# print(args.param1)
 file=open(args.filePath,'r',encoding='utf-8')
 text=file.read()
 file.close()
-keywords_list=args.keywordsList
-stopwords_list=args.stopwordsList
+keywords_list=args.keywords_list
+stopwords_list=args.stopwords_list
 num=args.num
-language_type=args.languageType
-classType=args.classType
-
+language_type=args.language_type
+xxtype=args.xxtype
+# data=data.replace('\'','\"')
+# print(data)
+# print(demjson.decode(args.param1))
+# data=demjson.decode(args.param1)
+# print(data[docId])
+# data=json.loads(args.param1)
+# solution=args.param1
 
 # 创建类与预处理
 so=TextAnalysis(text)
@@ -396,7 +402,7 @@ so.Add_UserDict(keywords_list)
 # print("------------用户自定义添加停用词-------------")
 so.Add_StopWord(stopwords_list)
 # print("-----------------调用得到结果---------------------")
-print(so.Get_json(so.Get_answer(language_type,classType,num)))
+print(so.Get_json(so.Get_answer(language_type,xxtype,num)))
 
 # print("------------------后续清理----------------------")
 so.Del_UserDict(after_delete)
@@ -405,5 +411,3 @@ so.Del_UserDict(keywords_list)
 
 
 
-# 调用举例：
-# python C:\Users\Dell\Desktop\NLPbilibili\day2\code\test04.py --filePath=C:\Users\Dell\Desktop\NLPbilibili\day2\code\text_test.txt  --num=5 --classType=verb --languageType=Chinese --keywordsList Curry James --stopwordsList Harden Jaylon

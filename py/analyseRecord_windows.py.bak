@@ -1,0 +1,17 @@
+import pynlpir
+import re
+from nltk.tokenize import word_tokenize
+import json
+from nltk.corpus import stopwords
+import argparse
+import jieba
+import jieba.posseg as pseg
+import nltk
+from nltk.text import Text
+
+pynlpir.open()
+
+
+
+s = '欢迎聪明的科研人员、技术工程师、企事业单位与个人参与NLPIR平台的建设工作。'
+print(pynlpir.segment(s))
