@@ -421,6 +421,16 @@ export function exportTxt(params) {
       });
 
 }
+
+export function exportSrt(params) {
+    return axios({
+        method: 'get',
+        url: '/tansci/collect/exportSrt',
+        responseType: 'blob',
+        params: params
+      });
+
+}
 export function exportWAV(params) {
     return axios({
         method: 'get',

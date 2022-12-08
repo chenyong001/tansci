@@ -1,5 +1,6 @@
 package com.tansci.utils;
 
+import com.alibaba.fastjson.JSON;
 import com.tansci.common.constant.Constants;
 import com.tansci.domain.system.Record;
 import com.tansci.domain.system.RecordData;
@@ -57,11 +58,13 @@ public class ExportUtil {
     try {
       writer = response.getWriter();
       StringBuffer sb = new StringBuffer();
-      recordDataList.stream().forEach(recordData -> {
-        sb.append(DateUtil.date2Str(recordData.getTimestamp(), DateUtil.FORMAT_YYYY_MM_DD_HH_MM_SS)).append("===>")
-            .append(recordData.getSubtitle()).append(Constants.OS_LINE_SPERATOR);
-      });
-      writer.write(sb.toString());
+      String jsonStr = JSON.toJSONString(recordDataList);
+
+//      recordDataList.stream().forEach(recordData -> {
+//        sb.append(DateUtil.date2Str(recordData.getTimestamp(), DateUtil.FORMAT_YYYY_MM_DD_HH_MM_SS)).append("===>")
+//            .append(recordData.getSubtitle()).append(Constants.OS_LINE_SPERATOR);
+//      });
+      writer.write(jsonStr);
       writer.flush();
     } catch (Exception var12) {
     } finally {

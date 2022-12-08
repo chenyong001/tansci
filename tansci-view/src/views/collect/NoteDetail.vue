@@ -19,7 +19,10 @@
             >
               <template #search>
                 <div>
-                  <el-button type="primary" @click="onExportSrt">导出</el-button>
+                  <el-button type="primary" @click="onExportSrt">导出srt</el-button>
+                </div>
+                <div>
+                  <el-button type="primary" @click="onExportTxt">导出txt</el-button>
                 </div>
                 <div>
                   <el-button @click="onSearch" type="primary" icon="Search">查询</el-button>
@@ -204,6 +207,7 @@ import Table from "../../components/Table.vue";
 import {
   collectDataPage,
   exportTxt,
+  exportSrt,
   getMyData,
   updateNote,
   paramPage,
@@ -457,7 +461,7 @@ const onExportSrt = () => {
   state.loading = true;
   // state.searchForm.docId=this.$route.params.docId;
   // state.searchForm.docId=this.docId;
-  exportTxt(Object.assign(state.searchForm)).then(res => {
+  exportSrt(Object.assign(state.searchForm)).then(res => {
     if (!res.data) {
       return;
     }

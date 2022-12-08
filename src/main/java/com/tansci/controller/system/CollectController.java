@@ -146,10 +146,17 @@ public class CollectController {
 
   @ApiOperation(value = "导出列表", notes = "导出列表")
   @Log(modul = "采集-导出列表", type = Constants.SELECT, desc = "导出列表")
+  @GetMapping("/exportSrt")
+  public void exportSrt(RecordData recordData, HttpServletResponse response) {
+    List<RecordData> recordDataList = recordDataService.selectList(recordData);
+    ExportUtil.exportSrt(response, recordDataList);
+  }
+  @ApiOperation(value = "导出列表", notes = "导出列表")
+  @Log(modul = "采集-导出列表", type = Constants.SELECT, desc = "导出列表")
   @GetMapping("/exportTxt")
   public void exportTxt(RecordData recordData, HttpServletResponse response) {
     List<RecordData> recordDataList = recordDataService.selectList(recordData);
-    ExportUtil.exportSrt(response, recordDataList);
+    ExportUtil.exportTxt(response, recordDataList);
   }
 
   @ApiOperation(value = "导出音频文件", notes = "导出音频文件")
