@@ -35,11 +35,20 @@
                 <!-- <div><el-input v-model="searchForm.timestamp" type="text" placeholder="请输入时间" ></el-input></div> -->
                 <!-- <div><el-button @click="onRefresh" icon="RenfreshRight" circle></el-button></div> -->
                 <div>
-                  <el-button @click="onSearch" type="primary" icon="Search">查询</el-button>
+                  <el-button @click="onSearch" type="primary" icon="Search">刷新</el-button>
                 </div>
+                  <el-select v-model="value1" multiple clearable placeholder="请选择排除的标记">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
               </template>
               <template #column="scope" style="width:100">
                 <el-button @click="onEdit(scope)" type="success">编辑</el-button>
+                       <el-button @click="onMark(scope)" type="success">标记</el-button>
               </template>
             </Table>
           </el-card>
@@ -53,12 +62,33 @@
               label-width="100px"
             >
               <el-form-item label="内容" prop="内容">
-                <el-input v-model="taskForm.subtitle" placeholder="请输入内容" style="width:100%" />
+                <el-input type="textarea" rows="10" v-model="taskForm.subtitle" placeholder="请输入内容" style="width:100%" />
               </el-form-item>
             </el-form>
             <template #footer>
               <span class="dialog-footer">
                 <el-button @click="taskVisible = false">取消</el-button>
+                <el-button type="primary" @click="onSubmit">提交</el-button>
+              </span>
+            </template>
+          </el-dialog>
+
+          
+          <el-dialog :title="markTitle" v-model="markVisible" width="80%" :show-close="false">
+            <el-form
+              :model="taskForm"
+              :rules="rules"
+              ref="addRuleForm"
+              label-position="left"
+              label-width="100px"
+            >
+              <el-form-item label="标记" prop="标记">
+                <el-input v-model="taskForm.mark" placeholder="请输入标记内容" style="width:100%" />
+              </el-form-item>
+            </el-form>
+            <template #footer>
+              <span class="dialog-footer">
+                <el-button @click="markVisible = false">取消</el-button>
                 <el-button type="primary" @click="onSubmit">提交</el-button>
               </span>
             </template>
@@ -217,6 +247,7 @@ import {
   collectDataPage,
   exportTxt,
   getMyData,
+  getMarksByDocId,
   updateNote,
   paramPage,
   createParam,
@@ -236,7 +267,8 @@ const state = reactive({
   searchForm: {
     docId: route.query.docId,
     // subtitle: '',
-    property: "en"
+    property: "en",
+    mark:''
     //  timestamp: ''
   },
   loading: false,
@@ -257,11 +289,16 @@ const state = reactive({
     // },
     // {prop:'creater',label:'创建人'},
     { prop: "subtitle", label: "内容" },
-    { prop: "timestamp", label: "创建时间", width: 200 }
+    { prop: "timestamp", label: "创建时间", width: 160 },
+        { prop: "mark", label: "标记", width: 200 }
   ],
   tableData: [],
+    options: [],
+  value1: [],
   taskVisible: false,
   taskTitle: "创建采集任务",
+    markVisible: false,
+  markTitle: "创建采集任务",
   taskForm: {
     domain: "",
     docId: "",
@@ -362,7 +399,11 @@ const {
   tableData,
   taskVisible,
   taskTitle,
+    markVisible,
+  markTitle,
   taskForm,
+    options,
+  value1,
   fqcTableTitle,
   fqcTableData,
   fqcLoading,
@@ -394,12 +435,13 @@ const {
 } = toRefs(state);
 
 onMounted(() => {
+    getMarksByDocIdInit();
   onCollectPage();
   onStopPage();
   onKeyPage();
   onparam2Page();
-  onPie();
-  onLtrealtimewordcloud();
+  // onPie();
+  // onLtrealtimewordcloud();
 });
 
 // 初始化数据
@@ -413,6 +455,14 @@ const onCollectPage = () => {
     state.page.current = res.result.current;
     state.page.size = res.result.size;
     state.page.total = res.result.total;
+  });
+      onPie();
+  onLtrealtimewordcloud();
+};
+// 初始化数据
+const getMarksByDocIdInit = () => {
+  getMarksByDocId(Object.assign(state.searchForm)).then(res => {
+    state.options = res.result;
   });
 };
 
@@ -689,6 +739,16 @@ const onparam2Edit = val => {
   state.param2Visible = true;
 };
 
+// 标记
+const onMark = val => {
+  state.markTitle = "标记";
+  state.taskForm = {
+    id: val.column.row.id,
+    mark: val.column.row.mark
+  };
+  state.markVisible = true;
+};
+
 // // 删除
 // const onparam2Delete = val => {
 //   ElMessageBox.confirm("此操作将永久删除, 是否继续?", "提示", {
@@ -825,11 +885,13 @@ const onSubmit = async () => {
         ElMessage.success("修改成功!");
       }
       onCollectPage();
-      onPie();
-      onLtrealtimewordcloud();
+      getMarksByDocIdInit();
+      // onPie();
+      // onLtrealtimewordcloud();
     });
   }
   state.taskVisible = false;
+    state.markVisible = false;
 };
 
 // // 删除
@@ -864,6 +926,7 @@ const onSubmit = async () => {
 
 const onPie = async () => {
   let myPie = echarts.init(document.getElementById("myPie"));
+      state.searchForm.mark=state.value1.join(",")
   const { result } = await getMyData(Object.assign(state.searchForm));
   console.log(result);
   myResult = result;
@@ -917,7 +980,7 @@ const onLtrealtimewordcloud = async () => {
   let tlrealtimewordcloud = echarts.init(
     document.getElementById("tlrealtimewordcloud")
   );
-
+    state.searchForm.mark=state.value1.join(",")
   const { result } = await getMyData(Object.assign(state.searchForm));
   console.log(result);
   tlrealtimewordcloud.setOption({

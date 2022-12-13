@@ -1,5 +1,6 @@
 package com.tansci.service.impl.system;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -15,6 +16,9 @@ import com.tansci.utils.SecurityUserUtils;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,11 +52,23 @@ public class RecordDataServiceImpl extends ServiceImpl<RecordDataMapper, RecordD
 
   @Override
   public List<RecordData> selectList(RecordData dto) {
-    return this.baseMapper.selectList(Wrappers.<RecordData>lambdaQuery().eq(RecordData::getDocId, dto.getDocId())
+    LambdaQueryWrapper<RecordData> eq = Wrappers.<RecordData>lambdaQuery().eq(RecordData::getDocId, dto.getDocId())
         //            .eq(RecordData::getSenderId, SecurityUserUtils.getUser().getUsername())
-        .eq(StringUtils.isNotBlank(dto.getProperty()), RecordData::getProperty, dto.getProperty())
-        //            todo 根据时间查询
-        .orderByAsc(RecordData::getTimestamp));
+        .eq(StringUtils.isNotBlank(dto.getProperty()), RecordData::getProperty, dto.getProperty());
+    if(StringUtils.isNotBlank(dto.getMark())){
+      eq.notIn(RecordData::getMark, Arrays.asList(dto.getMark().split(",")));
+    }
+//    eq.notIn(StringUtils.isNotBlank(dto.getMark()),RecordData::getMark, Arrays.asList(dto.getMark().split(",")));
+    eq.orderByAsc(RecordData::getTimestamp);
+
+    return this.baseMapper.selectList(eq);
+//    return this.baseMapper.selectList(Wrappers.<RecordData>lambdaQuery().eq(RecordData::getDocId, dto.getDocId())
+//        //            .eq(RecordData::getSenderId, SecurityUserUtils.getUser().getUsername())
+//        .eq(StringUtils.isNotBlank(dto.getProperty()), RecordData::getProperty, dto.getProperty())
+//
+////        .notIn(StringUtils.isNotBlank(dto.getMark()), RecordData::getMark, Arrays.asList(dto.getMark().split(",")))
+//        //            todo 根据时间查询
+//        .orderByAsc(RecordData::getTimestamp));
 
   }
 

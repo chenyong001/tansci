@@ -67,6 +67,9 @@ public class RecordData {
   @ApiModelProperty(value = "持续时间")
   private String duration;
 
+  @ApiModelProperty(value = "标记")
+  private String mark;
+
   public RecordData(String docId, String property) {
     this.docId = docId;
     this.property = property;

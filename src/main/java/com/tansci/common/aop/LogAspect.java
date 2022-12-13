@@ -126,7 +126,13 @@ public class LogAspect {
             logInfo.setId(UUID.randomUUID().toString());
             logInfo.setMethod(className + "." + method.getName()); // 请求的方法名
             logInfo.setReqParam(JSON.toJSONString(converMap(request.getParameterMap()))); // 请求参数
-            logInfo.setResParam(JSON.toJSONString(keys)); // 返回结果
+
+//            text 最大长度为65,535(2的16次方–1)字符的TEXT列
+            String keyStr = JSON.toJSONString(keys);
+            if(keyStr.length()>60000){
+                keyStr=keyStr.substring(0,60000);
+            }
+            logInfo.setResParam(keyStr); // 返回结果
             logInfo.setUserId(SecurityUserUtils.getUser().getId()); // 请求用户ID
             logInfo.setUserName(SecurityUserUtils.getUser().getUsername()); // 请求用户名称
             logInfo.setIp(IPUtils.getIpAddress(request)); // 请求IP

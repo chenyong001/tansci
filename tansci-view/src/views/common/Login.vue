@@ -2,12 +2,12 @@
 	<div class="login" :style="loginStyle">
 		<el-card shadow="always">
 			<div class="login-main">
-				<div class="login-logo">
+				<!-- <div class="login-logo">
 					<el-image :src="loginLogo"  style="width: 100%; height: 100%;"></el-image>
-				</div>
+				</div> -->
 				<div class="login-form">
 					<el-form v-if="loginMode" :model="loginForm" :rules="rules" ref="loginRuleForm">
-						<div class="login-form-title">欢迎登录</div>
+						<div class="login-form-title">欢迎登录 Touchstone AI</div>
 						<el-form-item prop="username" :rules="[
 								{required: true,message: '请输入用户名',trigger: 'blur'},
 								{pattern: /^[a-zA-Z]\w{4,17}$/,message: '用户名式有误，请重新输入',trigger: 'blur'}]">
@@ -18,17 +18,17 @@
 								{pattern: /^[a-zA-Z]\w{5,17}$/,message: '密码格式有误，请重新输入',trigger: 'blur'}]">
 							<el-input type="password" v-model="loginForm.password" prefix-icon="Lock" show-password placeholder="请输入密码" style="width:100%"></el-input>
 						</el-form-item>
-						<el-form-item prop="verifyStatus" :rules="[{required: true,message: '请拖动滑块验证',trigger: 'blur'}]">
+						<!-- <el-form-item prop="verifyStatus" :rules="[{required: true,message: '请拖动滑块验证',trigger: 'blur'}]">
 							<SlidingVerify ref="slidingVerify" :status="loginForm.verifyStatus" :successFun="onVerifySuccess" :errorFun="onVerifyError"></SlidingVerify>
-						</el-form-item>
-						<el-form-item>
+						</el-form-item> -->
+						<!-- <el-form-item>
 							<el-checkbox v-model="loginForm.keepPassword" label="记住密码"></el-checkbox>
-						</el-form-item>
+						</el-form-item> -->
 						<el-form-item>
 							<el-button type="primary" round @click="submit" style="width:100%">登录</el-button>
 						</el-form-item>
 					</el-form>
-					<div v-else-if="!loginMode" class="other-form">
+					<!-- <div v-else-if="!loginMode" class="other-form">
 						<div class="login-form-title">{{otherForm.qrcodeTitle}}</div>
 						<el-result v-if="otherForm.status == 1" icon="success" title="扫码成功" sub-title="正在登录中，请稍后。"></el-result>
 						<el-result v-if="otherForm.status == 2" icon="error" title="授权失败" sub-title="登录授权失败，请刷新重试。"></el-result>
@@ -36,13 +36,13 @@
 						<div>
 							<el-button @click="loginMode = true" type="text" icon='UserFilled'>账号密码登录</el-button>
 						</div>
-					</div>
-					<el-divider><el-icon><star-filled /></el-icon></el-divider>
-					<div class="other-login">
+					</div> -->
+					<!-- <el-divider><el-icon><star-filled /></el-icon></el-divider> -->
+					<!-- <div class="other-login">
 						<el-image v-for="item in otherForm.modes" :key="item.id" @click="otherLogin(item.id)" :src="item.icon"
 							style="width:32px;height:32px;padding:0 0.4rem;cursor: pointer;">
 						</el-image>
-					</div>
+					</div> -->
 				</div>
 			</div>
 		</el-card>
@@ -101,9 +101,9 @@
 	}
 
 	const submit = async () => {
-		const form = unref(loginRuleForm)
-		if (!form) return;
-		await form.validate();
+		// const form = unref(loginRuleForm)
+		// if (!form) return;
+		// await form.validate();
 
 		let param = {
 			username: state.loginForm.username,

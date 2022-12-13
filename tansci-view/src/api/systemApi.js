@@ -501,6 +501,15 @@ export function getMyData(params) {
 }
 
 /**
+ * 根据DOCID获取标记列表
+ * @param {*} params 
+ * @returns 
+ */
+export function getMarksByDocId(params) {
+    return axios.get('/tansci/collect/getMarksByDocId', { params: params });
+}
+
+/**
  * 参数数据分页
  * @param {*} params 
  * @returns 

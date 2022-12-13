@@ -40,52 +40,52 @@ public class TestController {
   public static Map<String, String> dbMap = new ConcurrentHashMap();
 
   public static void main(String[] args) throws IOException {
-
-    Process proc;
-    try {
-        	/*
-			附加：
-			String[] args1=new String[]{"/home/huan/anaconda2/bin/python","/home/huan/myfile/pythonfile/helloword.py"};
-            Process pr=Runtime.getRuntime().exec(args1);
-			String数组里的那一行很重要
-			首先一定要设置好你所使用的python的位置，切记不要直接使用python，因为系统会默认使用自带的python，所以一定要设置好你所使用的python的位置，否则可能会出现意想不到的问题（比如说我使用的是anaconda中的python，而ubuntu系统会默认调用自带的python，而我自带的python中并没有numpy库，所以会造成相应的代码不会执行的问题，所以设置好python的位置是很重要的）。还有就是要设置好py文件的位置，使用绝对路径。在这里插入代码片
-
-       还有就是可以看出，此方法可以满足我们python代码中调用第三方库的情况，简单实用。
-			*/
-//      proc = Runtime.getRuntime().exec("python E://tansci//py//analyseRecord_windows.py  --filePath=E:\\tansci\\py\\4658E7EC4A364AA6BF394F64E7716917_1670309430243_65.txt "
-//          + " --num=20 --keywordsList 开始 --stopwordsList 腾讯 生活");
-      String filePath="E:\\tansci\\py\\4658E7EC4A364AA6BF394F64E7716917_1670309430243_65.txt";
-      String num="33";
-      String keywordsList=" 开始";
-      String stopwordsList=" 腾讯 生活";
-      String[] args1 = new String[] { "python", "E:\\tansci\\py/analyseRecord_windows.py", "--filePath=" + filePath,
-          "--num=" + num, "--keywordsList" + keywordsList, "--stopwordsList" + stopwordsList };
-      proc = Runtime.getRuntime().exec(args1);
-      BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-      String line = null;
-      while ((line = in.readLine()) != null) {
-        System.out.println(line);
-      }
-
-      BufferedReader error = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-      String lineerror;
-      while ((lineerror = error.readLine()) != null) {
-        //        {"hello": 1, "h": 1, "ello": 1, "create": 1, "an": 1, "acquisition": 1, "task": 1}
-        System.out.println(lineerror);
-      }
-      error.close();
-      in.close();
-      int i = proc.waitFor();
-      if(i==0){
-        System.out.println("py脚本执行成功");
-      }else {
-        System.out.println("py脚本执行失败");
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+//
+//    Process proc;
+//    try {
+//        	/*
+//			附加：
+//			String[] args1=new String[]{"/home/huan/anaconda2/bin/python","/home/huan/myfile/pythonfile/helloword.py"};
+//            Process pr=Runtime.getRuntime().exec(args1);
+//			String数组里的那一行很重要
+//			首先一定要设置好你所使用的python的位置，切记不要直接使用python，因为系统会默认使用自带的python，所以一定要设置好你所使用的python的位置，否则可能会出现意想不到的问题（比如说我使用的是anaconda中的python，而ubuntu系统会默认调用自带的python，而我自带的python中并没有numpy库，所以会造成相应的代码不会执行的问题，所以设置好python的位置是很重要的）。还有就是要设置好py文件的位置，使用绝对路径。在这里插入代码片
+//
+//       还有就是可以看出，此方法可以满足我们python代码中调用第三方库的情况，简单实用。
+//			*/
+////      proc = Runtime.getRuntime().exec("python E://tansci//py//analyseRecord_windows.py  --filePath=E:\\tansci\\py\\4658E7EC4A364AA6BF394F64E7716917_1670309430243_65.txt "
+////          + " --num=20 --keywordsList 开始 --stopwordsList 腾讯 生活");
+//      String filePath="E:\\tansci\\py\\4658E7EC4A364AA6BF394F64E7716917_1670309430243_65.txt";
+//      String num="33";
+//      String keywordsList=" 开始";
+//      String stopwordsList=" 腾讯 生活";
+//      String[] args1 = new String[] { "python", "E:\\tansci\\py/analyseRecord_windows.py", "--filePath=" + filePath,
+//          "--num=" + num, "--keywordsList" + keywordsList, "--stopwordsList" + stopwordsList };
+//      proc = Runtime.getRuntime().exec(args1);
+//      BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+//      String line = null;
+//      while ((line = in.readLine()) != null) {
+//        System.out.println(line);
+//      }
+//
+//      BufferedReader error = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+//      String lineerror;
+//      while ((lineerror = error.readLine()) != null) {
+//        //        {"hello": 1, "h": 1, "ello": 1, "create": 1, "an": 1, "acquisition": 1, "task": 1}
+//        System.out.println(lineerror);
+//      }
+//      error.close();
+//      in.close();
+//      int i = proc.waitFor();
+//      if(i==0){
+//        System.out.println("py脚本执行成功");
+//      }else {
+//        System.out.println("py脚本执行失败");
+//      }
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    } catch (InterruptedException e) {
+//      e.printStackTrace();
+//    }
 
 
   }

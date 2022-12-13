@@ -21,6 +21,7 @@ import com.tansci.enums.CollectTypeEnum;
 import com.tansci.service.record.RecordParamService;
 import com.tansci.service.system.RecordDataService;
 import com.tansci.service.system.RecordService;
+import com.tansci.utils.CollectionUtil;
 import com.tansci.utils.ExportUtil;
 import com.tansci.utils.HttpClientUtil;
 import com.tansci.utils.ResourcesUtil;
@@ -47,6 +48,7 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -151,6 +153,7 @@ public class CollectController {
     List<RecordData> recordDataList = recordDataService.selectList(recordData);
     ExportUtil.exportSrt(response, recordDataList);
   }
+
   @ApiOperation(value = "导出列表", notes = "导出列表")
   @Log(modul = "采集-导出列表", type = Constants.SELECT, desc = "导出列表")
   @GetMapping("/exportTxt")
@@ -295,16 +298,58 @@ public class CollectController {
   @GetMapping("/updateNote")
   @ResponseBody
   public Wrapper<Boolean> updateNote(@RequestParam(name = "subtitle", required = false) String subtitle,
-      @RequestParam(name = "id", required = true) int id) {
+      @RequestParam(name = "id", required = true) int id, @RequestParam(name = "mark", required = false) String mark) {
     //        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.list(null));
     log.info("updateNote===========,subtitle={}", subtitle);
     //    添加内容到数据库
     RecordData recordData = recordDataService.selectById(id);
     if (Objects.nonNull(recordData)) {
-      recordData.setSubtitle(subtitle);
+      if (org.apache.commons.lang3.StringUtils.isNotBlank(subtitle)) {
+        recordData.setSubtitle(subtitle);
+      }
+      if (org.apache.commons.lang3.StringUtils.isNotBlank(mark)) {
+        recordData.setMark(mark);
+      }
+
       recordDataService.update(recordData);
     }
     return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+  }
+
+  /**
+   * 根据DOCID获取标记列表
+   *
+   * @param docId
+   * @return
+   */
+  @GetMapping("/getMarksByDocId")
+  @ResponseBody
+  public Wrapper<List<Map<String, Object>>> getMarkByDocId(
+      @RequestParam(name = "docId", required = true) String docId) {
+    //        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, sysMenuService.list(null));
+    log.info("getMarkByDocId===========,docId={}", docId);
+    List<Map<String, Object>> resultList = Lists.newArrayList();
+
+//    用于排除重复标记
+    Map<String, Object> markMap = Maps.newHashMap();
+    RecordData recordData = new RecordData();
+    recordData.setDocId(docId);
+    List<RecordData> recordDataList = recordDataService.selectList(recordData);
+    if (!CollectionUtil.isEmpty(recordDataList)) {
+      recordDataList.stream().forEach(e -> {
+        String mark = e.getMark();
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(mark)) {
+          if (!markMap.containsKey(mark)) {
+            Map<String, Object> tempMap = Maps.newHashMap();
+            tempMap.put("label", mark);
+            tempMap.put("value", mark);
+            markMap.put(mark, mark);
+            resultList.add(tempMap);
+          }
+        }
+      });
+    }
+    return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, resultList);
   }
 
   @PostMapping("/deleteNote")
@@ -364,8 +409,8 @@ public class CollectController {
       if (SystemUtil.isWindows()) {
         filePath = "E:\\tansci\\py/" + fileName;
         FileUtils.write(new File(filePath), jsonStr, "utf-8");
-//        args1 = new String[] { "python", "E:\\tansci\\py/analyseRecord_windows.py", "--filePath=" + filePath,
-//            "--num=" + num, "--keywordsList" + keywordsList, "--stopwordsList" + stopwordsList };
+        //        args1 = new String[] { "python", "E:\\tansci\\py/analyseRecord_windows.py", "--filePath=" + filePath,
+        //            "--num=" + num, "--keywordsList" + keywordsList, "--stopwordsList" + stopwordsList };
         args2.append("python  E://tansci//py//analyseRecord_windows.py  --filePath=").append(filePath).append(" --num=")
             .append(num);
         if (org.apache.commons.lang3.StringUtils.isNotBlank(keywordsList)) {
@@ -380,9 +425,8 @@ public class CollectController {
       } else {
         filePath = "/temp/" + fileName;
         FileUtils.write(new File(filePath), jsonStr, "utf-8");
-//        args1 = new String[] { "python", "/analyseRecord_linux.py", "--filePath=" + filePath };
-        args2.append("python  /analyseRecord_linux.py  --filePath=").append(filePath).append(" --num=")
-            .append(num);
+        //        args1 = new String[] { "python", "/analyseRecord_linux.py", "--filePath=" + filePath };
+        args2.append("python  /analyseRecord_linux.py  --filePath=").append(filePath).append(" --num=").append(num);
         if (org.apache.commons.lang3.StringUtils.isNotBlank(keywordsList)) {
           args2.append(" --keywordsList ").append(keywordsList);
         }
@@ -391,6 +435,7 @@ public class CollectController {
         }
       }
 
+      long startTime=System.currentTimeMillis();
       proc = Runtime.getRuntime().exec(args2.toString());
       BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
       String line;
@@ -410,10 +455,11 @@ public class CollectController {
 
       in.close();
       int code = proc.waitFor();
+      long endTime=System.currentTimeMillis();
       if (code == 0) {
-        log.info("docId={},执行脚本成功", docId);
+        log.info("docId={},执行脚本成功,times={}s", docId,(endTime-startTime)/1000f);
       } else {
-        log.info("docId={},执行脚本失败", docId);
+        log.info("docId={},执行脚本失败,times={}s", docId,(endTime-startTime)/1000f);
       }
       JSONObject jsonInfo = JSON.parseObject(result);
       Iterator iter = jsonInfo.entrySet().iterator();
@@ -444,7 +490,7 @@ public class CollectController {
     recordParam.setDocId(docId);
     recordParam.setName(Constants.ANALYSIS_NAME);
     RecordParam recordParam1 = recordParamService.selectOneByName(recordParam);
-    return recordParam1==null?"30":recordParam1.getValue();
+    return recordParam1 == null ? "30" : recordParam1.getValue();
   }
 
   private String getListByType(String docId, int type) {
