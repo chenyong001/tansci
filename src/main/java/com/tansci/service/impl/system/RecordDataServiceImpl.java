@@ -53,28 +53,46 @@ public class RecordDataServiceImpl extends ServiceImpl<RecordDataMapper, RecordD
   @Override
   public List<RecordData> selectList(RecordData dto) {
     LambdaQueryWrapper<RecordData> eq = Wrappers.<RecordData>lambdaQuery().eq(RecordData::getDocId, dto.getDocId())
-        //            .eq(RecordData::getSenderId, SecurityUserUtils.getUser().getUsername())
         .eq(StringUtils.isNotBlank(dto.getProperty()), RecordData::getProperty, dto.getProperty());
-    if(StringUtils.isNotBlank(dto.getMark())){
+    if (StringUtils.isNotBlank(dto.getMark())) {
       eq.notIn(RecordData::getMark, Arrays.asList(dto.getMark().split(",")));
     }
-//    eq.notIn(StringUtils.isNotBlank(dto.getMark()),RecordData::getMark, Arrays.asList(dto.getMark().split(",")));
     eq.orderByAsc(RecordData::getTimestamp);
-
     return this.baseMapper.selectList(eq);
-//    return this.baseMapper.selectList(Wrappers.<RecordData>lambdaQuery().eq(RecordData::getDocId, dto.getDocId())
-//        //            .eq(RecordData::getSenderId, SecurityUserUtils.getUser().getUsername())
-//        .eq(StringUtils.isNotBlank(dto.getProperty()), RecordData::getProperty, dto.getProperty())
-//
-////        .notIn(StringUtils.isNotBlank(dto.getMark()), RecordData::getMark, Arrays.asList(dto.getMark().split(",")))
-//        //            todo 根据时间查询
-//        .orderByAsc(RecordData::getTimestamp));
+  }
 
+  @Override
+  public RecordData selectFirstByDocId(RecordData dto) {
+    LambdaQueryWrapper<RecordData> eq = Wrappers.<RecordData>lambdaQuery().eq(RecordData::getDocId, dto.getDocId())
+        .eq(StringUtils.isNotBlank(dto.getProperty()), RecordData::getProperty, dto.getProperty());
+    eq.orderByAsc(RecordData::getTimestamp);
+    eq.last("limit  1");
+    return this.baseMapper.selectOne(eq);
+  }
+
+  @Override
+  public RecordData selectEndByDocId(RecordData dto) {
+    LambdaQueryWrapper<RecordData> eq = Wrappers.<RecordData>lambdaQuery().eq(RecordData::getDocId, dto.getDocId())
+        .eq(StringUtils.isNotBlank(dto.getProperty()), RecordData::getProperty, dto.getProperty());
+    eq.orderByDesc(RecordData::getTimestamp);
+    eq.last("limit  1");
+    return this.baseMapper.selectOne(eq);
   }
 
   @Override
   public boolean update(RecordData recordData) {
     this.baseMapper.updateById(recordData);
+    return true;
+  }
+
+  @Override
+  public boolean updateCut(RecordData dto, RecordData condition) {
+    LambdaQueryWrapper<RecordData> eq = Wrappers.<RecordData>lambdaQuery()
+        .eq(RecordData::getDocId, condition.getDocId());
+    if (condition.getTimestamp() != null) {
+      eq.ge(RecordData::getTimestamp, condition.getTimestamp());
+    }
+    this.baseMapper.update(dto, eq);
     return true;
   }
 

@@ -5,20 +5,30 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.tansci.common.constant.Constants;
 import com.tansci.domain.system.Record;
 import com.tansci.domain.system.RecordData;
+import com.tansci.domain.system.RecordParam;
 import com.tansci.domain.system.RecordStat;
+import com.tansci.enums.CollectTypeEnum;
 import com.tansci.mapper.system.RecordMapper;
+import com.tansci.service.record.RecordParamService;
 import com.tansci.service.system.RecordDataService;
 import com.tansci.service.system.RecordService;
 import com.tansci.service.system.RecordStatService;
+import com.tansci.utils.DateUtil;
+import com.tansci.utils.FileUtil;
 import com.tansci.utils.SecurityUserUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +47,8 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
   private RecordDataService recordDataService;
   @Autowired
   private RecordStatService recordStatService;
+  @Autowired
+  private RecordParamService recordParamService;
 
   //
   //  @Override
@@ -143,6 +155,176 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
   }
 
   /**
+   * 1、获取开始和结束时间
+   * 2、计算时长，根据比例计算出分隔时间
+   * 3、根据分隔时间，新建会话并将超过>=的记录移到新的会话中
+   * 4、分隔音频，删除总音频，并更新数据记录
+   *
+   * @param docId 会话ID
+   * @param ratio 比例
+   */
+  @Override
+  public void cuttingRecord(String docId, int ratio) {
+    //    1、获取开始和结束时间
+    //    2、计算时长，根据比例计算出分隔时间
+    //    3、根据分隔时间，新建会话并将>=分隔时间的记录移到新的会话中
+    //    4、分隔音频，删除总音频，并更新数据记录
+
+    //    float ratio = 50.0f;
+    if (ratio == 100) {
+      //      不切割
+      return;
+    }
+    RecordData dto = new RecordData();
+    dto.setDocId(docId);
+    //    String property = record.getType() == 1 ? "en" : null;
+    //    dto.setProperty(property);
+    //    1、获取开始和结束时间
+    RecordData firstRecordData = recordDataService.selectFirstByDocId(dto);
+    RecordData endRecordData = recordDataService.selectEndByDocId(dto);
+    if (Objects.isNull(firstRecordData) || Objects.isNull(endRecordData)) {
+      return;
+    }
+    //    2、计算时长，根据比例计算出分隔时间
+    Record oldRecord = new Record();
+    oldRecord.setDocId(docId);
+    Record oldRecord1 = selectOne(oldRecord);
+    String filePath = oldRecord1.getFilePath();
+
+    int duration = FileUtil.getTimeLen(filePath);
+    long startTime = firstRecordData.getTimestamp().getTime();
+    //    long endTime = startTime+duration;
+    //    long duration = endTime - startTime;
+    long ratioTime = duration * ratio / 100;
+    Date cutDate = new Date(startTime + ratioTime);
+    String newDocId = "cut_" + System.currentTimeMillis() + "_" + docId;
+
+    //    3、根据分隔时间，新建会话并将超过>=的记录移到新的会话中
+    Record record = new Record();
+    record.setDocId(newDocId);
+    record.setUserId(SecurityUserUtils.getUser().getId());
+    record.setRemark("切割来自DOCID=" + docId);
+
+    //    if (Objects.isNull(recordService.selectOne(record))) {
+    record.setCreateTime(new Date());
+    record.setUpdateTime(new Date());
+    //    record.setFilePath();
+    record.setType(CollectTypeEnum.COLLECT_TYPE_AZURE.getType());
+    save(record);
+
+    RecordParam recordParam = new RecordParam();
+    recordParam.setDocId(newDocId);
+    recordParam.setName(Constants.ANALYSIS_NAME);
+    recordParam.setValue(Constants.ANALYSIS_NUM);
+    recordParam.setType(2);
+    recordParam.setCreateTime(new Date());
+    recordParam.setUpdateTime(new Date());
+    recordParamService.save(recordParam);
+
+    RecordData rdDto = new RecordData();
+    rdDto.setDocId(newDocId);
+    RecordData condition = new RecordData();
+    condition.setDocId(docId);
+    condition.setTimestamp(cutDate);
+    recordDataService.updateCut(rdDto, condition);
+    //    4、分隔音频，删除总音频，并更新数据记录
+
+    if (StringUtils.isNotBlank(filePath)) {
+      Path path = Paths.get("").toAbsolutePath().resolve("tempAudio");
+      String parentPath = path.toAbsolutePath().toString() + File.separator;
+
+      //目标文件
+      String targetFileName1 =
+          parentPath + "audio_recording_" + docId + "_" + DateUtil.date2Str(new Date(), DateUtil.FORMAT_YYYYMMDDHHMMSS)
+              + ".mp3";
+      String targetFileName2 = parentPath + "audio_recording_" + newDocId + "_" + DateUtil
+          .date2Str(new Date(), DateUtil.FORMAT_YYYYMMDDHHMMSS) + ".mp3";
+
+      //原mp3文件
+      FileUtil.cutMp3(filePath, targetFileName1, 0, ratioTime);
+      FileUtil.cutMp3(filePath, targetFileName2, ratioTime, duration);
+      //      删除源文件
+      File srcFile = new File(filePath);
+      if (srcFile.exists()) {
+        srcFile.delete();
+      }
+      //      更新记录
+
+      oldRecord.setFilePath(targetFileName1);
+      update(oldRecord);
+      Record newRecord = new Record();
+      newRecord.setDocId(newDocId);
+      newRecord.setFilePath(targetFileName2);
+      update(newRecord);
+    }
+
+  }
+
+  /**
+   * //   1、合并2个音频、删除2个音频，并更新数据记录
+   * //   2、将传入docid的会话数据，更新其docid为本docid
+   *
+   * @param docId1
+   * @param docId2
+   */
+  @Override
+  public void mergeRecord(String docId1, String docId2) {
+    //    1、合并2个音频、删除2个音频，并更新数据记录
+    Record record1 = new Record();
+    record1.setDocId(docId1);
+    record1 = selectOne(record1);
+    Record record2 = new Record();
+    record2.setDocId(docId2);
+    record2 = selectOne(record2);
+    String filePath1 = record1.getFilePath();
+    String filePath2 = record2.getFilePath();
+    String newFilePath;
+    if (StringUtils.isBlank(filePath1) || StringUtils.isBlank(filePath2)) {
+      newFilePath = filePath1 + filePath2;
+    } else {
+      Path path = Paths.get("").toAbsolutePath().resolve("tempAudio");
+      String parentPath = path.toAbsolutePath().toString() + File.separator;
+      //目标文件
+      newFilePath =
+          parentPath + "merge_audio_recording_" + docId1 + "_" + DateUtil.date2Str(new Date(), DateUtil.FORMAT_YYYYMMDDHHMMSS)
+              + ".mp3";
+      FileUtil.mergeFile(filePath1, filePath2, newFilePath);
+
+      //      删除源文件
+      File srcFile1 = new File(filePath1);
+      if (srcFile1.exists()) {
+        srcFile1.delete();
+      }
+      File srcFile2 = new File(filePath2);
+      if (srcFile2.exists()) {
+        srcFile2.delete();
+      }
+
+    }
+    //      更新记录
+    Record newRecord = new Record();
+    newRecord.setDocId(docId1);
+    newRecord.setFilePath(newFilePath);
+    update(newRecord);
+
+    //    2、将传入docid的会话数据，更新其docid为本docid，删除历史参数
+
+    Record record = new Record();
+    record.setDocId(docId2);
+    deleteByDocId(record);
+
+    RecordParam recordParam = new RecordParam();
+    recordParam.setDocId(docId2);
+    recordParamService.deleteByDocId(recordParam);
+
+    RecordData rdDto = new RecordData();
+    rdDto.setDocId(docId1);
+    RecordData condition = new RecordData();
+    condition.setDocId(docId2);
+    recordDataService.updateCut(rdDto, condition);
+  }
+
+  /**
    * 获取时长字符串
    *
    * @param duration
@@ -196,6 +378,11 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
       return true;
     }
     return false;
+  }
+
+  @Override
+  public void deleteByDocId(Record record) {
+    this.baseMapper.delete(Wrappers.<Record>lambdaQuery().eq(Record::getDocId, record.getDocId()));
   }
 
 }

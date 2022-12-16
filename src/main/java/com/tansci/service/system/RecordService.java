@@ -15,6 +15,11 @@ import com.tansci.domain.system.Record;
 public interface RecordService extends IService<Record> {
 
   IPage<Record> page(Page page, Record record);
+
+  void cuttingRecord(String docId, int ratio);
+
+  void mergeRecord(String docId1, String docId2);
+
   //    @Override
   @Override
   boolean save(Record record);
@@ -27,4 +32,5 @@ public interface RecordService extends IService<Record> {
 
       boolean del(Record record);
 
+  void deleteByDocId(Record record);
 }

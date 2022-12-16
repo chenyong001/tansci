@@ -77,5 +77,10 @@ public class Record {
   @ApiModelProperty(value = "字符量")
   @TableField(exist = false)
   private long charactersCount;
-
+  @ApiModelProperty(value = "切割比例")
+  @TableField(exist = false)
+  private int cutValue;
+  @ApiModelProperty(value = "合并docId")
+  @TableField(exist = false)
+  private String docId2;
 }

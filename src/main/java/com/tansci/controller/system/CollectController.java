@@ -330,7 +330,7 @@ public class CollectController {
     log.info("getMarkByDocId===========,docId={}", docId);
     List<Map<String, Object>> resultList = Lists.newArrayList();
 
-//    用于排除重复标记
+    //    用于排除重复标记
     Map<String, Object> markMap = Maps.newHashMap();
     RecordData recordData = new RecordData();
     recordData.setDocId(docId);
@@ -435,7 +435,7 @@ public class CollectController {
         }
       }
 
-      long startTime=System.currentTimeMillis();
+      long startTime = System.currentTimeMillis();
       proc = Runtime.getRuntime().exec(args2.toString());
       BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
       String line;
@@ -455,11 +455,11 @@ public class CollectController {
 
       in.close();
       int code = proc.waitFor();
-      long endTime=System.currentTimeMillis();
+      long endTime = System.currentTimeMillis();
       if (code == 0) {
-        log.info("docId={},执行脚本成功,times={}s", docId,(endTime-startTime)/1000f);
+        log.info("docId={},执行脚本成功,times={}s", docId, (endTime - startTime) / 1000f);
       } else {
-        log.info("docId={},执行脚本失败,times={}s", docId,(endTime-startTime)/1000f);
+        log.info("docId={},执行脚本失败,times={}s", docId, (endTime - startTime) / 1000f);
       }
       JSONObject jsonInfo = JSON.parseObject(result);
       Iterator iter = jsonInfo.entrySet().iterator();
@@ -566,6 +566,26 @@ public class CollectController {
     }
     return "upload success";
   }
+
+  @ResponseBody
+  @PostMapping("/cuttingRecord")
+  public Wrapper<Boolean> cuttingRecord(@RequestBody Record record) {
+    log.info("==================cuttingRecord=record={}", JSON.toJSONString(record));
+        recordService.cuttingRecord(record.getDocId(),record.getCutValue());
+    return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+
+  }
+
+  @ResponseBody
+  @PostMapping("/mergeRecord")
+  public Wrapper<Boolean> mergeRecord(@RequestBody Record record) {
+    log.info("==================mergeRecord=record={}", JSON.toJSONString(record));
+    recordService.mergeRecord(record.getDocId(),record.getDocId2());
+    return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+
+  }
+
+
 
   @Data
   static class MyData implements Serializable {

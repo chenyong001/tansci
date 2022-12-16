@@ -86,5 +86,10 @@ public class RecordParamServiceImpl extends ServiceImpl<RecordParamMapper, Recor
     }
     return false;
   }
+  @Override
+  public void deleteByDocId(RecordParam recordParam) {
+    this.baseMapper.delete(Wrappers.<RecordParam>lambdaQuery().eq(RecordParam::getDocId, recordParam.getDocId()));
+  }
+
 
 }

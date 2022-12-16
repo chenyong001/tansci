@@ -29,7 +29,14 @@ public interface RecordDataService extends IService<RecordData> {
 
   List<RecordData> selectList(RecordData dto);
 
+  RecordData selectFirstByDocId(RecordData dto);
+
+  RecordData selectEndByDocId(RecordData dto);
+
   boolean update(RecordData recordData);
+
+
+  boolean updateCut(RecordData dto, RecordData condition);
 
   RecordData selectById(int id);
 

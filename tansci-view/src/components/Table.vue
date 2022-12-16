@@ -59,7 +59,7 @@
                     </el-table-column>
                 </template>
                 <!-- 自定义插槽  -->
-                <el-table-column v-if="operation" fixed="right" label="操作" align="left" width="220">
+                <el-table-column v-if="operation" fixed="right" label="操作" align="left" width="250">
                     <template #default="scope">
                         <slot name="column" v-bind:column="scope"></slot>
                     </template>

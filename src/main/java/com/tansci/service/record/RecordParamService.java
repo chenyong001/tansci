@@ -32,4 +32,5 @@ public interface RecordParamService extends IService<RecordParam> {
 
   boolean del(RecordParam recordParam);
 
+  void deleteByDocId(RecordParam recordParam);
 }

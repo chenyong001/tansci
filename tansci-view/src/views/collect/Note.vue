@@ -18,11 +18,14 @@
                     <div><el-button @click="onSearch" type="primary" icon="Search">查询</el-button></div>
                 </template>
          
-                <template #column="scope" style="width:1000" >
+                <template #column="scope"    >
                     <el-button @click="onEdit(scope)" type="success">编辑</el-button>
                     <el-button @click="menuClick(scope)" type="success" >详情</el-button>
                     <el-button @click="onDelete(scope)" type="warning" >删除</el-button>
                     <el-button @click="download(scope)" type="primary" >下载</el-button>
+                    <el-button @click="onCut(scope)" type="warning" >切割</el-button>
+                    <el-button @click="onMerge(scope)" type="warning" >合并</el-button>
+
                 </template>
             </Table>
         </el-card>
@@ -36,6 +39,34 @@
                 <span class="dialog-footer">
                     <el-button @click="taskVisible = false">取消</el-button>
                     <el-button type="primary" @click="onSubmit">提交</el-button>
+                </span>
+            </template>
+        </el-dialog>
+
+          <el-dialog :title="cutTitle" v-model="cutVisible" width="80%" :show-close="false">
+            <el-form :model="taskForm" :rules="rules" ref="addRuleForm" label-position="left" label-width="100px">
+                <span class="demonstration">切割比例</span>
+                <el-slider v-model="taskForm.cutValue" show-input="true"></el-slider>
+  
+            </el-form>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="cutVisible = false">取消</el-button>
+                    <el-button type="primary" @click="onCutSubmit">提交</el-button>
+                </span>
+            </template>
+        </el-dialog>
+
+         <el-dialog :title="mergeTitle" v-model="mergeVisible" width="80%" :show-close="false">
+            <el-form :model="taskForm" :rules="rules" ref="addRuleForm" label-position="left" label-width="100px">
+                              <el-form-item label="合并会话" prop="合并会话" >
+                    <el-input v-model="taskForm.docId2" placeholder="请输入待合并的会话文档ID" style="width:100%" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="mergeVisible = false">取消</el-button>
+                    <el-button type="primary" @click="onMergeSubmit">提交</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -61,7 +92,7 @@
     import {onMounted, reactive, nextTick, ref, unref, toRefs} from 'vue'
     import {ElMessage, ElMessageBox} from 'element-plus'
     import Table from '../../components/Table.vue'
-    import {collectPage, collect,deleteNote,exportWAV,createNote} from '../../api/systemApi.js'
+    import {collectPage, collect,deleteNote,exportWAV,createNote,cuttingRecord,mergeRecord} from '../../api/systemApi.js'
 import { useRouter } from 'vue-router'
 import { timeFormate2 } from "../../utils/utils.js";
 
@@ -146,16 +177,22 @@ import { timeFormate2 } from "../../utils/utils.js";
         tableData:[],
         taskVisible: false,
         taskTitle: '创建采集任务',
+                cutVisible: false,
+        cutTitle: '切割',
+        mergeVisible: false,
+        mergeTitle: '切割',
         taskForm:{
             domain: '',
             docId: '',
-            reamrk: ''
+            reamrk: '',
+            cutValue: '',
+            docId2:''
         }
     })
 
     const {
         searchForm,loading,page,tableHeight,tableTitle,tableData,
-        taskVisible,taskTitle,taskForm
+        taskVisible,taskTitle,taskForm,cutVisible,cutTitle,mergeVisible,mergeTitle
     } = toRefs(state)
 
     onMounted(() => {
@@ -240,6 +277,25 @@ import { timeFormate2 } from "../../utils/utils.js";
         }
         state.taskVisible = true;
     }
+        // 切割
+    const onCut = (val) =>{
+        state.cutTitle = "切割";
+        state.taskForm = {
+            id: val.column.row.id,
+            docId: val.column.row.docId,
+            cutValue: 100
+        }
+        state.cutVisible = true;
+    }
+            // 合并
+    const onMerge = (val) =>{
+        state.cutTitle = "合并";
+        state.taskForm = {
+            id: val.column.row.id,
+            docId: val.column.row.docId,
+        }
+        state.mergeVisible = true;
+    }
 
     const onSubmit = async () =>{
         const form = unref(addRuleForm);
@@ -264,6 +320,44 @@ import { timeFormate2 } from "../../utils/utils.js";
            
         }
         state.taskVisible = false;
+        
+       
+
+    }
+    
+    const onCutSubmit = async () =>{
+        const form = unref(addRuleForm);
+        if(!form) return;
+        await form.validate();
+            // 修改
+            cuttingRecord(state.taskForm).then(res => {
+                if (res) {
+                    ElMessage.success('切割成功!');
+                     onCollectPage();
+                }
+                 
+            });
+           
+        state.cutVisible = false;
+        
+       
+
+    }
+
+        const onMergeSubmit = async () =>{
+        const form = unref(addRuleForm);
+        if(!form) return;
+        await form.validate();
+            // 修改
+            mergeRecord(state.taskForm).then(res => {
+                if (res) {
+                    ElMessage.success('切割成功!');
+                     onCollectPage();
+                }
+                 
+            });
+           
+        state.mergeVisible = false;
         
        
 

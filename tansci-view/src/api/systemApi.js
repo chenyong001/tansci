@@ -475,6 +475,22 @@ export function createNote(params) {
 }
 
 /**
+ * 切割
+ * @param {*} params 
+ * @returns 
+ */
+export function cuttingRecord(params) {
+    return axios.post('/tansci/collect/cuttingRecord', params);
+}
+/**
+ * 合并
+ * @param {*} params 
+ * @returns 
+ */
+export function mergeRecord(params) {
+    return axios.post('/tansci/collect/mergeRecord', params);
+}
+/**
  * 删除管理
  * @param {*} params 
  * @returns 
