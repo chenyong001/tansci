@@ -180,7 +180,7 @@ import { timeFormate2 } from "../../utils/utils.js";
                 cutVisible: false,
         cutTitle: '切割',
         mergeVisible: false,
-        mergeTitle: '切割',
+        mergeTitle: '合并',
         taskForm:{
             domain: '',
             docId: '',

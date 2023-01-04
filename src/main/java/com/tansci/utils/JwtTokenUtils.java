@@ -34,8 +34,8 @@ public class JwtTokenUtils {
     // 用户信息key
     private static final String USER_CLAIMS = "user";
 
-    // 过期时间是3600*4秒，既4个小时
-    private static final long EXPIRATION = 14400L;
+    // 过期时间是3600*48秒，既48个小时
+    private static final long EXPIRATION = 48*3600L;
 
     // 选择了记住我之后的过期时间为7天
     private static final long EXPIRATION_REMEMBER = 604800L;
