@@ -132,7 +132,7 @@ import { useRouter } from 'vue-router'
             {prop:'createTime',label:'创建时间'},
              {prop:'durationStr',label:'总时长'},
             {prop:'charactersCount',label:'总字符量'},
-             {prop:'docId',label:'会话文档ID'},
+             {prop:'userName',label:'创建者'},
             {prop:'remark',label:'备注'}
         ],
         tableData:[],

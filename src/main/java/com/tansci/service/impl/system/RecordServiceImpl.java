@@ -1,5 +1,6 @@
 package com.tansci.service.impl.system;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -10,12 +11,14 @@ import com.tansci.domain.system.Record;
 import com.tansci.domain.system.RecordData;
 import com.tansci.domain.system.RecordParam;
 import com.tansci.domain.system.RecordStat;
+import com.tansci.domain.system.SysUser;
 import com.tansci.enums.CollectTypeEnum;
 import com.tansci.mapper.system.RecordMapper;
 import com.tansci.service.record.RecordParamService;
 import com.tansci.service.system.RecordDataService;
 import com.tansci.service.system.RecordService;
 import com.tansci.service.system.RecordStatService;
+import com.tansci.service.system.SysUserService;
 import com.tansci.utils.DateUtil;
 import com.tansci.utils.FileUtil;
 import com.tansci.utils.SecurityUserUtils;
@@ -49,6 +52,8 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
   private RecordStatService recordStatService;
   @Autowired
   private RecordParamService recordParamService;
+  @Autowired
+  private SysUserService sysUserService;
 
   //
   //  @Override
@@ -86,11 +91,19 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
 
   @Override
   public IPage<Record> page(Page page, Record record) {
-    IPage<Record> iPage = this.baseMapper.selectPage(page, Wrappers.<Record>lambdaQuery()
-        .eq(StringUtils.isNotBlank(record.getDocId()), Record::getDocId, record.getDocId())
-        .eq(Record::getUserId, SecurityUserUtils.getUser().getId()).eq(Record::getType, record.getType())
+    SysUser user = SecurityUserUtils.getUser();
+
+    LambdaQueryWrapper<Record> recordLambdaQueryWrapper = Wrappers.<Record>lambdaQuery()
+        .eq(StringUtils.isNotBlank(record.getDocId()), Record::getDocId, record.getDocId());
+    if (Objects.equals(user.getType(), 2)) {
+      //      如果类型是普通用户，才通过账号ID过滤
+      recordLambdaQueryWrapper.eq(Record::getUserId, user.getId());
+    }
+    recordLambdaQueryWrapper.eq(Record::getType, record.getType())
         .like(StringUtils.isNotBlank(record.getRemark()), Record::getRemark, record.getRemark())
-        .orderByDesc(Record::getCreateTime));
+        .orderByDesc(Record::getCreateTime);
+
+    IPage<Record> iPage = this.baseMapper.selectPage(page, recordLambdaQueryWrapper);
 
     iPage.getRecords().forEach(item -> {
 
@@ -145,6 +158,10 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
           }
         }
       }
+      //      遍历查询每个会话的用户信息
+      SysUser sysUser = sysUserService.selectByUserId(item.getUserId());
+      item.setUserName(sysUser == null ? "" : sysUser.getUsername());
+
       item.setRecordNum(recordNum);
       item.setDuration(duration);
       item.setDurationStr(durationStr);
@@ -285,9 +302,8 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
       Path path = Paths.get("").toAbsolutePath().resolve("tempAudio");
       String parentPath = path.toAbsolutePath().toString() + File.separator;
       //目标文件
-      newFilePath =
-          parentPath + "merge_audio_recording_" + docId1 + "_" + DateUtil.date2Str(new Date(), DateUtil.FORMAT_YYYYMMDDHHMMSS)
-              + ".mp3";
+      newFilePath = parentPath + "merge_audio_recording_" + docId1 + "_" + DateUtil
+          .date2Str(new Date(), DateUtil.FORMAT_YYYYMMDDHHMMSS) + ".mp3";
       FileUtil.mergeFile(filePath1, filePath2, newFilePath);
 
       //      删除源文件

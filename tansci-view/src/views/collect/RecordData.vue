@@ -278,7 +278,7 @@ const state = reactive({
     total: 1
   },
   tableTitle: [
-    { prop: "id", label: "ID", width: 100 },
+    // { prop: "id", label: "ID", width: 100 },
     // {prop:'docId',label:'文档ID'},
     // {prop:'status',alias:'statusName',label:'状态',
     //     type:'switch',
@@ -289,8 +289,8 @@ const state = reactive({
     // },
     // {prop:'creater',label:'创建人'},
     { prop: "subtitle", label: "内容" },
-    { prop: "timestamp", label: "创建时间", width: 160 },
-        { prop: "mark", label: "标记", width: 200 }
+    { prop: "timestamp", label: "创建时间", width: 120 },
+        { prop: "mark", label: "标记", width: 100 }
   ],
   tableData: [],
     options: [],

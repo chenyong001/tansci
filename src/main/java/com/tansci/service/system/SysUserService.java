@@ -32,4 +32,6 @@ public interface SysUserService extends IService<SysUser> {
 
     SysUser login(String username);
 
+    SysUser selectByUserId(String userId);
+
 }

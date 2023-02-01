@@ -47,6 +47,9 @@ public class Record {
 
   @ApiModelProperty(value = "用户ID")
   private String userId;
+  @ApiModelProperty(value = "用户名称")
+  @TableField(exist = false)
+  private String userName;
   //1:表示微软PPT语音采集，2：表示AZURE-API语音采集
   @ApiModelProperty(value = "采集类型")
   private Integer type;

@@ -36,7 +36,7 @@
                   ></el-option>
                 </el-select>
               </template>
-              <template #column="scope" style="width:100">
+              <template #column="scope" width="100">
                 <el-button @click="onEdit(scope)" type="success">编辑</el-button>
                 <el-button @click="onMark(scope)" type="success">标记</el-button>
               </template>
@@ -271,10 +271,10 @@ const state = reactive({
     total: 1
   },
   tableTitle: [
-    { prop: "id", label: "ID", width: 100 },
+    // { prop: "id", label: "ID", width: 100 },
     { prop: "subtitle", label: "内容" },
-    { prop: "timestamp", label: "创建时间", width: 160 },
-    { prop: "mark", label: "标记", width: 200 }
+    { prop: "timestamp", label: "创建时间", width: 120 },
+    { prop: "mark", label: "标记", width: 100 }
   ],
   tableData: [],
   options: [],
