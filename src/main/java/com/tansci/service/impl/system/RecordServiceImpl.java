@@ -91,19 +91,28 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
 
   @Override
   public IPage<Record> page(Page page, Record record) {
-    SysUser user = SecurityUserUtils.getUser();
 
-    LambdaQueryWrapper<Record> recordLambdaQueryWrapper = Wrappers.<Record>lambdaQuery()
-        .eq(StringUtils.isNotBlank(record.getDocId()), Record::getDocId, record.getDocId());
+    SysUser user = SecurityUserUtils.getUser();
+    if (!Objects.equals(0, user.getType())) {
+      record.setOrgIds(user.getOrgIds());
+    }
     if (Objects.equals(user.getType(), 2)) {
       //      如果类型是普通用户，才通过账号ID过滤
-      recordLambdaQueryWrapper.eq(Record::getUserId, user.getId());
+      record.setUserId(user.getId());
     }
-    recordLambdaQueryWrapper.eq(Record::getType, record.getType())
-        .like(StringUtils.isNotBlank(record.getRemark()), Record::getRemark, record.getRemark())
-        .orderByDesc(Record::getCreateTime);
 
-    IPage<Record> iPage = this.baseMapper.selectPage(page, recordLambdaQueryWrapper);
+    //    LambdaQueryWrapper<Record> recordLambdaQueryWrapper = Wrappers.<Record>lambdaQuery()
+    //        .eq(StringUtils.isNotBlank(record.getDocId()), Record::getDocId, record.getDocId());
+    //    if (Objects.equals(user.getType(), 2)) {
+    //      //      如果类型是普通用户，才通过账号ID过滤
+    //      recordLambdaQueryWrapper.eq(Record::getUserId, user.getId());
+    //    }
+    //    recordLambdaQueryWrapper.eq(Record::getType, record.getType())
+    //        .like(StringUtils.isNotBlank(record.getRemark()), Record::getRemark, record.getRemark())
+    //        .orderByDesc(Record::getCreateTime);
+    //
+    //    IPage<Record> iPage = this.baseMapper.selectPage(page, recordLambdaQueryWrapper);
+    IPage<Record> iPage = this.baseMapper.page(page, record);
 
     iPage.getRecords().forEach(item -> {
 

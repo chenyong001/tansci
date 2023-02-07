@@ -8,7 +8,7 @@
                 <template #column="scope">
                     <el-button @click="onAdd(scope)" type="text" style="color:var(--add)">添加</el-button>
                     <el-button @click="onEdit(scope)" type="text" style="color:var(--edit)">编辑</el-button>
-                    <el-button @click="onRole(scope)" type="text" style="color:var(--role)">权限</el-button>
+                    <!-- <el-button @click="onRole(scope)" type="text" style="color:var(--role)">权限</el-button> -->
                     <el-button @click="onDelete(scope)" type="text" style="color:var(--delete)">删除</el-button>
                 </template>
             </Table>

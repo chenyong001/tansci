@@ -103,7 +103,7 @@
                     <el-row>
                         <el-col>
                             <el-form-item label="组织机构" prop="orgId" :rules="[{required: true, message: '请选择组织机构', trigger: 'change'}]">
-                                <el-cascader v-model="userForm.orgId" :options="orgData" :props="{value:'id',label:'name',children:'children',checkStrictly: true, emitPath: false}" clearable filterable style="width:100%;"/>
+                                <el-cascader v-model="userForm.orgId" :options="orgData" :props="{value:'id',label:'name',children:'children',checkStrictly: false, emitPath: false}" clearable filterable style="width:100%;"/>
                             </el-form-item>
                         </el-col>
                     </el-row>

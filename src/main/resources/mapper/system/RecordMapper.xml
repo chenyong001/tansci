@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tansci.mapper.system.RecordMapper">
+
+  <select id="page" parameterType="com.tansci.domain.system.Record" resultType="com.tansci.domain.system.Record">
+    select u.*,o.org_id from record u
+    left join sys_user_org o on o.user_id = u.user_id
+    <where>
+      <if test="dto.docId != null and dto.docId != ''">
+        and u.docId =#{dto.docId}
+      </if>
+      <if test="dto.userId != null and dto.userId != ''">
+        and u.user_id =#{dto.userId}
+      </if>
+      <if test="dto.type != null and dto.type != ''">
+        and u.type =#{dto.type}
+      </if>
+      <if test="dto.remark != null and dto.remark != ''">
+        and u.remark like concat('%', #{dto.remark}, '%')
+      </if>
+      <if test="dto.orgIds != null and dto.orgIds.size > 0">
+        and o.org_id in
+        <foreach collection="dto.orgIds" index="index" item="item" open="(" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+    </where>
+    order by u.create_time desc
+  </select>
+
+</mapper>

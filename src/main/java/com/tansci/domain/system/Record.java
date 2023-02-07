@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.beans.Transient;
 import java.util.Date;
+import java.util.List;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -86,4 +87,7 @@ public class Record {
   @ApiModelProperty(value = "合并docId")
   @TableField(exist = false)
   private String docId2;
+  @ApiModelProperty(value = "值IDS")
+  @TableField(exist = false)
+  private List<Integer> orgIds;
 }

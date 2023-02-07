@@ -91,8 +91,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
       // 获取角色
       SysUserRole role = sysUserRoleService
           .getOne(Wrappers.<SysUserRole>lambdaQuery().eq(SysUserRole::getUserId, user.getId()));
-      log.error("====={}=======无权限================", username);
       if (Objects.isNull(role) || Objects.isNull(role.getRoleId())) {
+        log.error("====={}=======无权限================", username);
         throw new BusinessException("暂无登录权限，请联系管理员！");
       }
       user.setRole(String.valueOf(role.getRoleId()));

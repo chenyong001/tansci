@@ -1,10 +1,14 @@
 package com.tansci.mapper.system;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tansci.domain.system.Record;
 import com.tansci.domain.system.RecordData;
+import com.tansci.domain.system.SysUser;
+import com.tansci.domain.system.dto.SysUserDto;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * @ClassName： TaskConfigMapper.java
@@ -15,4 +19,5 @@ import org.apache.ibatis.annotations.Mapper;
  **/
 @Mapper
 public interface RecordMapper extends BaseMapper<Record> {
+  Page<Record> page(Page page, @Param("dto") Record dto);
 }
