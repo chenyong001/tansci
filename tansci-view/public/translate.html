@@ -139,9 +139,9 @@
                 targetContent.innerHTML = '';
 
                 // 生产
-                // var url="https://opencast.tsi.edu.sg/tansci/collect/sendNote?resultText="+resultText+"&language="+result.language+"&docId="+thisSessionId+"&offset="+offset+"&duration="+duration;
+                var url = "https://opencast.tsi.edu.sg/tansci/translate/text?targetLanguage=" + targetLanguage + "&content=" + content+ "&srcLanguage=" + srcLanguage;
                 // 开发
-                var url = "http://localhost:8005/tansci/translate/text?targetLanguage=" + targetLanguage + "&content=" + content+ "&srcLanguage=" + srcLanguage;
+                // var url = "http://localhost:8005/tansci/translate/text?targetLanguage=" + targetLanguage + "&content=" + content+ "&srcLanguage=" + srcLanguage;
 
 
 
