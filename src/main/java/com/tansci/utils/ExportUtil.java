@@ -2,6 +2,7 @@ package com.tansci.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.tansci.common.constant.Constants;
+import com.tansci.domain.system.ChatGPT;
 import com.tansci.domain.system.Record;
 import com.tansci.domain.system.RecordData;
 
@@ -65,6 +66,32 @@ public class ExportUtil {
 //            .append(recordData.getSubtitle()).append(Constants.OS_LINE_SPERATOR);
 //      });
       writer.write(jsonStr);
+      writer.flush();
+    } catch (Exception var12) {
+    } finally {
+      ResourcesUtil.multiClose(writer);
+    }
+
+  }
+
+  public static void exportChatGPTTxt(HttpServletResponse response, List<ChatGPT> chatGPTList) {
+    response.reset();
+    response.setCharacterEncoding("utf-8");
+    response.setContentType("application/octet-stream;charset=utf-8");
+    response.addHeader("Content-Disposition", "attachment;filename=data_" + System.currentTimeMillis() + ".txt");
+    PrintWriter writer = null;
+
+    try {
+      writer = response.getWriter();
+      StringBuffer sb = new StringBuffer();
+//      String jsonStr = JSON.toJSONString(chatGPTList);
+
+            chatGPTList.stream().forEach(chatGPT -> {
+              sb.append(DateUtil.date2Str(chatGPT.getCreateTime(), DateUtil.FORMAT_YYYY_MM_DD_HH_MM_SS)).append("===>")
+                  .append(chatGPT.getPrompt()).append(Constants.OS_LINE_SPERATOR);
+              sb.append(chatGPT.getContent()).append(Constants.OS_LINE_SPERATOR).append(Constants.OS_LINE_SPERATOR);
+            });
+      writer.write(sb.toString());
       writer.flush();
     } catch (Exception var12) {
     } finally {

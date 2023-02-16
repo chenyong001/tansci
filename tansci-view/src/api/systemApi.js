@@ -556,3 +556,28 @@ export function createParam(params) {
 export function deleteParam(params) {
     return axios.post('/tansci/recordParam/deleteParam', params);
 }
+
+/** ===chatGPT====start */
+/**
+ * chatGPT page
+ * @param {*} params 
+ * @returns 
+ */
+export function chatGPTPage(params) {
+    return axios.get('/tansci/chatGPT/page', { params: params });
+}
+/**
+ * 导出采集数据分页
+ * @param {*} params 
+ * @returns 
+ */
+export function exportChatGPTTxt(params) {
+    return axios({
+        method: 'get',
+        url: '/tansci/chatGPT/exportChatGPTTxt',
+        responseType: 'blob',
+        params: params
+      });
+
+}
+/** ===chatGPT====end */

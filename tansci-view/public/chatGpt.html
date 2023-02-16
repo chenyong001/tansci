@@ -1,56 +1,82 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>ChatGPT API Demo</title>
+    <meta charset="utf-8" />
+    <title>ChatGPT API </title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#submit').click(function() {
-                $('#response').text("正在请求数据，请等待...");
-                // 设置API请求参数
-                const data = JSON.stringify({
-                    // engine: "text-davinci-003",
-                    prompt: $('#prompt').val(),
-                    temperature: 0.7,
-                    max_tokens: 2048,
-                    n:1
-                    // stop: ['\n']
-                    // stop: None
-                });
+        $(document).ready(function () {
+            $('#submit').click(function () {
+                $('#response').append(getCurrentTime() + "  提问：" + $('#prompt').val() + "\r\n");
 
-                // 设置请求选项和API凭证
-                const options = {
-                    // url: 'https://api.openai.com/v1/engines/davinci-codex/completions',
-                    url: 'https://api.openai.com/v1/engines/text-davinci-003/completions',
-                    type: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer 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'
-                    },
-                    data: data,
-                    dataType: 'json'
-                };
+                var prompt = $('#prompt').val();
+                if (prompt !== null && prompt !== '') {
+                    // 入库数据
+                    var token = localStorage.getItem('token');
+                    // 生产 +"&remark="+remark
+                    var url="https://opencast.tsi.edu.sg/tansci/chatGPT/send?prompt=" + prompt;
+                    // 开发
+                    // var url = "http://localhost:8005/tansci/chatGPT/send?prompt=" + prompt;
 
-                // 向API发送POST请求
-                $.ajax(options)
-                    .done(function(data) {
-                        const reply = data.choices[0].text;
-                        $('#response').text(reply);
-                    })
-                    .fail(function(jqXHR, textStatus, errorThrown) {
-                        console.log('请求失败: ' + errorThrown);
-                    });
+
+
+                    var a = new XMLHttpRequest();
+                    a.open("Post", url);
+                    a.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    a.setRequestHeader("Authorization", 'Bearer ' + token);
+
+                    // a.send(formData);
+                    a.send();
+                    a.onload = function () {
+                        console.log("this.responseText: " + this.responseText);
+                        var data=this.responseText;
+                        const reply =  JSON.parse(data).result;
+                        // $('#response').text(reply);
+                        $('#response').append(reply + "\r\n\r\n");
+                    }
+                }
+
             });
         });
+        /**
+* 获取当前日期
+* @returns {string} 返回值类型”yyyy-MM-dd HH:mm:ss“，例如：2022-09-13 21:18:23。
+*/
+        function getCurrentTime() {
+            var datetime = new Date();
+            var year = datetime.getFullYear();
+            var month = datetime.getMonth() + 1 < 10 ? "0" + (datetime.getMonth() + 1) : datetime.getMonth() + 1;
+            var date = datetime.getDate() < 10 ? "0" + datetime.getDate() : datetime.getDate();
+            var date = datetime.getDate() < 10 ? "0" + datetime.getDate() : datetime.getDate();
+            var hour = datetime.getHours() < 10 ? "0" + datetime.getHours() : datetime.getHours();
+            var minute = datetime.getMinutes() < 10 ? "0" + datetime.getMinutes() : datetime.getMinutes();
+            var second = datetime.getSeconds() < 10 ? "0" + datetime.getSeconds() : datetime.getSeconds();
+            return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
+        }
     </script>
 </head>
+
 <body>
-    <h1>ChatGPT API, engine: "text-davinci-003"</h1>
-    <label for="prompt">提示:</label>
-    <input type="text" id="prompt" name="prompt" />
-    <button id="submit">提交</button>
-    <br /><br />
-    <label for="response">响应:</label>
-    <textarea id="response" name="response" rows="5" cols="50" disabled="disabled" style="display: inline-block;width:800px;height:400px"></textarea>
+
+    <table border="0" align="center">
+        <th colspan="3">
+            <h1>ChatGPT API, engine: "text-davinci-003"</h1>
+        </th>
+
+        <tr>
+            <td> <label for="prompt">提问: </label></td>
+            <td> <input type="text" id="prompt" name="prompt" style="display: inline-block;width:800px;height:50px" />
+            </td>
+            <td align="left"> <button id="submit" style="display: inline-block;width:100px;height:50px">提交</button></td>
+        </tr>
+        <tr>
+            <td> <label for="response">响应:</label></td>
+            <td colspan="2"> <textarea id="response" name="response" rows="5" cols="50" disabled="disabled"
+                    style="display: inline-block;width:1000px;height:600px;font-size:18px"></textarea></td>
+        </tr>
+    </table>
+
 </body>
+
 </html>
