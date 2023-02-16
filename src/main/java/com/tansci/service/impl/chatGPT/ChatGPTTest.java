@@ -1,4 +1,4 @@
-package com.tansci.service.impl.translate;
+package com.tansci.service.impl.chatGPT;
 
 /**
  * @Author chenyong
@@ -16,7 +16,7 @@ import org.json.JSONObject;
 
 public class ChatGPTTest {
   public static void main(String[] args) throws Exception {
-    String apiKey="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";
+    String apiKey="";
     HttpClient httpClient = HttpClientBuilder.create().build();
     HttpPost request = new HttpPost("https://api.openai.com/v1/engines/text-davinci-003/completions");
     request.addHeader("Content-Type", "application/json");

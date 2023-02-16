@@ -2,13 +2,19 @@ package com.tansci.service.impl.chatGPT;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Collections2;
 import com.tansci.domain.system.ChatGPT;
+import com.tansci.domain.system.SysDic;
+import com.tansci.domain.system.dto.SysDicDto;
 import com.tansci.mapper.chatGPT.ChatGPTMapper;
 import com.tansci.service.chatGPT.ChatGPTService;
+import com.tansci.service.system.SysDicService;
 import com.tansci.service.system.SysUserService;
+import com.tansci.utils.CollectionUtil;
 import com.tansci.utils.SecurityUserUtils;
 
 import org.apache.http.HttpResponse;
@@ -37,13 +43,27 @@ import lombok.extern.slf4j.Slf4j;
 public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements ChatGPTService {
   @Autowired
   private SysUserService sysUserService;
-  String apiKey = "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";
+  @Autowired
+  private SysDicService sysDicService;
   String uri = "https://api.openai.com/v1/engines/text-davinci-003/completions";
+  String apiKey;
 
   @Override
   public String send(String prompt) {
     String result = "";
     try {
+      if(StringUtils.isBlank(apiKey)){
+        SysDicDto sysDicDto = new SysDicDto();
+        sysDicDto.setKeyword("chat_gpt_apikey");
+        List<SysDic> sysDics = sysDicService.dicList(sysDicDto);
+        if (CollectionUtil.isEmpty(sysDics)) {
+          log.warn("chatGPT apikey is not get!!!");
+          return result;
+        }
+        apiKey = sysDics.get(0).getRemarks();
+      }
+
+
       HttpClient httpClient = HttpClientBuilder.create().build();
       HttpPost request = new HttpPost(uri);
       request.addHeader("Content-Type", "application/json");
@@ -64,7 +84,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
       result = choices.getJSONObject(0).getString("text");
     } catch (Exception e) {
       log.error("Exception:", e);
-    }finally {
+    } finally {
       //      添加记录
       ChatGPT chatGPT = new ChatGPT();
       chatGPT.setUserId(SecurityUserUtils.getUser().getId());
@@ -77,22 +97,21 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
     }
   }
 
-
   @Override
   public IPage<ChatGPT> page(Page page, ChatGPT chatGPT) {
 
-    IPage<ChatGPT> iPage = this.baseMapper.selectPage(page, Wrappers.<ChatGPT>lambdaQuery()
-        .eq(ChatGPT::getUserId,SecurityUserUtils.getUser().getId())
-        .eq(ChatGPT::getStatus,1)
-//        .eq(StringUtils.isNotBlank(chatGPT.getDocId()), ChatGPT::getDocId, chatGPT.getDocId())
-//        .eq(ChatGPT::getType, chatGPT.getType())
-        .orderByDesc(ChatGPT::getCreateTime));
+    IPage<ChatGPT> iPage = this.baseMapper.selectPage(page,
+        Wrappers.<ChatGPT>lambdaQuery().eq(ChatGPT::getUserId, SecurityUserUtils.getUser().getId())
+            .eq(ChatGPT::getStatus, 1)
+            //        .eq(StringUtils.isNotBlank(chatGPT.getDocId()), ChatGPT::getDocId, chatGPT.getDocId())
+            //        .eq(ChatGPT::getType, chatGPT.getType())
+            .orderByDesc(ChatGPT::getCreateTime));
 
-//    iPage.getRecords().forEach(item -> {
-//      //      遍历查询每个会话的用户信息
-//      SysUser sysUser = sysUserService.selectByUserId(item.getUserId());
-//      item.setUserName(sysUser == null ? "" : sysUser.getUsername());
-//    });
+    //    iPage.getRecords().forEach(item -> {
+    //      //      遍历查询每个会话的用户信息
+    //      SysUser sysUser = sysUserService.selectByUserId(item.getUserId());
+    //      item.setUserName(sysUser == null ? "" : sysUser.getUsername());
+    //    });
     return iPage;
   }
 
@@ -112,10 +131,9 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
   }
 
   @Override
-  public List<ChatGPT> selectList(ChatGPT chatGPT){
+  public List<ChatGPT> selectList(ChatGPT chatGPT) {
     LambdaQueryWrapper<ChatGPT> eq = Wrappers.<ChatGPT>lambdaQuery()
-        .eq(ChatGPT::getUserId,SecurityUserUtils.getUser().getId())
-        .eq(ChatGPT::getStatus,1)
+        .eq(ChatGPT::getUserId, SecurityUserUtils.getUser().getId()).eq(ChatGPT::getStatus, 1)
         .orderByDesc(ChatGPT::getCreateTime);
     return this.baseMapper.selectList(eq);
   }

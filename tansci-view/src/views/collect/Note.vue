@@ -12,7 +12,7 @@
                        <div><el-button type="primary" @click="onAddNoteSubtitle">实时语音识别(字幕式)</el-button></div>
                       <div><el-button type="primary" @click="onAddNoteTranslateSubtitle">实时语音翻译(字幕式)</el-button></div>
                       <div><el-button type="primary" @click="onTranslate">文本翻译</el-button></div>
-                       <div><el-button type="primary" @click="onChatGpt">chatGpt</el-button></div>
+                       <!-- <div><el-button type="primary" @click="onChatGpt">chatGpt</el-button></div> -->
                            <!-- <div><el-button type="primary" @click="onAddNoteMp3">MP3</el-button></div> -->
                     <!-- <div><el-button type="primary" @click="onAddNote4and1">4合1</el-button></div> -->
                     <div><el-input v-model="searchForm.docId" placeholder="请输入docId"></el-input></div>
