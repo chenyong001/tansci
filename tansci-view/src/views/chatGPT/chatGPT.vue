@@ -45,7 +45,7 @@ import { timeFormate2 } from "../../utils/utils.js";
 const router = useRouter();
 
 const onChatGpt = () => {
-  window.open("/chatGpt.html");
+  window.open("/index-azure-chatGpt.html");
 };
 
 const menuClick = val => {

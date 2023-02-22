@@ -21,6 +21,7 @@ https://github.com/NLPIR-team/NLPIR/blob/master/License/license%20for%20a%20mont
 #docker stop tansci-view && docker rm tansci-view
 #docker run -p 8001:80 --name=tansci-view -d tansci-view:v2.5.1.0
 #docker run -p 8080:8080 --name=xf -d xf:v1.0
+#docker run -p 8002:80 --name=cv -d cv:v1.1
 
 #后端部署
     #tansci根目录下新增Dockerfile
@@ -30,3 +31,6 @@ https://github.com/NLPIR-team/NLPIR/blob/master/License/license%20for%20a%20mont
 #docker stop tansci && docker rm tansci
 #docker run -d --name=tansci -p 8005:8005  --restart=always --privileged=true \
 -v /app/tempAudio:/app/tempAudio tansci:v2.5.0.9
+
+1.proxy_pass代理地址端口后有目录(包括 / )，转发后地址：代理地址+访问URL目录部分去除location匹配目录 
+2.proxy_pass代理地址端口后无任何，转发后地址：代理地址+访问URL目录部

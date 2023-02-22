@@ -52,7 +52,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
   public String send(String prompt) {
     String result = "";
     try {
-      if(StringUtils.isBlank(apiKey)){
+      if (StringUtils.isBlank(apiKey)) {
         SysDicDto sysDicDto = new SysDicDto();
         sysDicDto.setKeyword("chat_gpt_apikey");
         List<SysDic> sysDics = sysDicService.dicList(sysDicDto);
@@ -62,7 +62,6 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
         }
         apiKey = sysDics.get(0).getRemarks();
       }
-
 
       HttpClient httpClient = HttpClientBuilder.create().build();
       HttpPost request = new HttpPost(uri);
@@ -82,6 +81,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
       JSONObject responseJson = new JSONObject(responseString);
       JSONArray choices = responseJson.getJSONArray("choices");
       result = choices.getJSONObject(0).getString("text");
+      result = result.trim();
     } catch (Exception e) {
       log.error("Exception:", e);
     } finally {
