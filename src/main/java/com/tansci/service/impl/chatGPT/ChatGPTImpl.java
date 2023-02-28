@@ -49,7 +49,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
   String apiKey;
 
   @Override
-  public String send(String prompt) {
+  public String send(String prompt, String speechText) {
     String result = "";
     try {
       if (StringUtils.isBlank(apiKey)) {
@@ -89,6 +89,9 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
       ChatGPT chatGPT = new ChatGPT();
       chatGPT.setUserId(SecurityUserUtils.getUser().getId());
       chatGPT.setPrompt(prompt);
+      if (StringUtils.isNotBlank(speechText)) {
+        chatGPT.setSpeechText(speechText);
+      }
       chatGPT.setContent(result);
       chatGPT.setCreateTime(new Date());
       chatGPT.setUpdateTime(new Date());

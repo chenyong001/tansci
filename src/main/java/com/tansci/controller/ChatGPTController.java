@@ -43,13 +43,13 @@ public class ChatGPTController {
 
   @PostMapping("/send")
   @ResponseBody
-  public Wrapper<String> send(String prompt) {
-    log.info("send====ChatGPT=======,prompt={}", prompt);
+  public Wrapper<String> send(String prompt,String speechText) {
+    log.info("send====ChatGPT=======,prompt={},speechText={}", prompt,speechText);
     if (StringUtils.isBlank(prompt)) {
       //      如果数据为空，则不处理，直接返回
       return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
     }
-    String result = chatGPTService.send(prompt);
+    String result = chatGPTService.send(prompt,speechText);
     //    String translate = translateService.translate(srcLanguage,targetLanguage, content);
 
     //    recordParamService.del(recordParam);

@@ -12,7 +12,7 @@ import java.util.List;
  * @Version 1.0
  */
 public interface ChatGPTService {
-  String send(String prompt);
+  String send(String prompt, String speechText);
 
   IPage<ChatGPT> page(Page page, ChatGPT chatGPT);
 

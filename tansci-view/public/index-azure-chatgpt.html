@@ -41,7 +41,7 @@
                     </select>
                 </td>
             </tr>
-            <tr style="display:none">
+            <tr >
                 <td align="right">Recognition language:</td>
                 <td align="left">
                     <!-- For the full list of supported languages see:
@@ -226,7 +226,7 @@
                 </td>
             </tr>
             <tr>
-                <td align="right">语音提问</td>
+                <td align="right">语音识别</td>
                 <td>
                     <button id="scenarioStartButton" style="display: inline-block;width:200px;height:50px">开始</button>
                     <button id="scenarioStopButton" disabled="disabled"
@@ -652,6 +652,8 @@
         //     import {collectPage, collect} from '../../api/systemApi.js'
         // import { useRouter } from 'vue-router'
         // import axios from '../src/utils/axios.js'
+        var speechText='';
+        var prompt='';
 
 
         function getAudioConfig() {
@@ -868,8 +870,9 @@
                     var duration = result.duration;
 
                     if (resultText !== null && resultText !== '') {
-                        onChatGPT(resultText);
-
+                        // onChatGPT(resultText);
+                        speechText=resultText;
+                        $('#prompt').val(resultText);
 
                     }
 
@@ -884,9 +887,9 @@
             // 入库数据
             var token = localStorage.getItem('token');
             // 生产 +"&remark="+remark
-            var url = "https://opencast.tsi.edu.sg/tansci/chatGPT/send?prompt=" + prompt;
+            var url = "https://opencast.tsi.edu.sg/tansci/chatGPT/send?prompt=" + prompt+"&speechText="+speechText;
             // 开发
-            // var url = "http://localhost:8005/tansci/chatGPT/send?prompt=" + prompt;
+            // var url = "http://localhost:8005/tansci/chatGPT/send?prompt=" + prompt+"&speechText="+speechText;
 
 
 

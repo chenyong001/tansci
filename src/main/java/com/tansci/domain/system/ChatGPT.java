@@ -36,6 +36,8 @@ public class ChatGPT {
   private String userName;
   @ApiModelProperty(value = "提问")
   private String prompt;
+  @ApiModelProperty(value = "语音识别的内容")
+  private String speechText;
   @ApiModelProperty(value = "内容")
   private String content;
   @ApiModelProperty(value = "默认1正常，0删除")
