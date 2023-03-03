@@ -61,5 +61,22 @@ public class HttpClientUtil {
     return (String)response.getBody();
   }
 
+  public static String sendPostRequest2(String url, Map<String, String> headerParams, Map<String, Object> bodyParams) {
+    RestTemplate client = new RestTemplate();
+    HttpHeaders headers = new HttpHeaders();
+    Iterator var5 = headerParams.keySet().iterator();
+
+    while(var5.hasNext()) {
+      String key = (String)var5.next();
+      headers.add(key, (String)headerParams.get(key));
+    }
+
+    HttpMethod method = HttpMethod.POST;
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<Map<String, Object>> requestEntity = new HttpEntity(bodyParams, headers);
+    ResponseEntity<String> response = client.exchange(url, method, requestEntity, String.class, new Object[0]);
+    return (String)response.getBody();
+  }
+
 
 }

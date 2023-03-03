@@ -13,7 +13,10 @@
         <template #search>
 
           <div>
-            <el-button type="primary" @click="onChatGpt">chatGpt</el-button>
+            <el-button type="primary" @click="onChatGpt">chatGpt-text-davinci-003</el-button>
+          </div>
+                    <div>
+            <el-button type="primary" @click="onChatGptOpenAI">chatGpt-gpt-3.5-turbo</el-button>
           </div>
           <div><el-button type="primary" @click="onExportChatGPTTxt">导出</el-button></div>
 
@@ -46,6 +49,9 @@ const router = useRouter();
 
 const onChatGpt = () => {
   window.open("/index-azure-chatgpt.html");
+};
+const onChatGptOpenAI = () => {
+  window.open("/index-azure-chatgpt-openai.html");
 };
 
 const menuClick = val => {

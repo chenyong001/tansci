@@ -56,6 +56,21 @@ public class ChatGPTController {
     return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, result);
   }
 
+  @PostMapping("/send2OpenAi")
+  @ResponseBody
+  public Wrapper<String> send2OpenAi(String prompt,String speechText) {
+    log.info("send====ChatGPT=======,prompt={},speechText={}", prompt,speechText);
+    if (StringUtils.isBlank(prompt)) {
+      //      如果数据为空，则不处理，直接返回
+      return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+    }
+    String result = chatGPTService.send2OpenAi(prompt,speechText);
+    //    String translate = translateService.translate(srcLanguage,targetLanguage, content);
+
+    //    recordParamService.del(recordParam);
+    return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, result);
+  }
+
   @ApiOperation(value = "chatGPT列表", notes = "chatGPT列表")
   @Log(modul = "列表", type = Constants.SELECT, desc = "列表")
   @ResponseBody
