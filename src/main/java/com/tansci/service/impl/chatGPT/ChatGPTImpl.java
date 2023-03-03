@@ -107,7 +107,6 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
     }
   }
 
-
   @Override
   public String send2OpenAi(String prompt, String speechText) {
     String result = "";
@@ -126,35 +125,22 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
 
       Map<String, String> headerParams = Maps.newHashMap();
       headerParams.put("Content-Type", "application/json");
-      headerParams.put("Authorization", "Bearer "+apiKey);
+      headerParams.put("Authorization", "Bearer " + apiKey);
       Map<String, Object> bodyParams = Maps.newHashMap();
       bodyParams.put("model", "gpt-3.5-turbo");
-      List<ChatGPTImpl.ChatGPTMessage> messages=new ArrayList<>();
-      messages.add(new ChatGPTImpl.ChatGPTMessage("user",prompt));
+      List<ChatGPTImpl.ChatGPTMessage> messages = new ArrayList<>();
+      messages.add(new ChatGPTImpl.ChatGPTMessage("user", prompt));
       bodyParams.put("messages", messages);
       bodyParams.put("max_tokens", 1024);
       bodyParams.put("n", 1);
       String responseString = HttpClientUtil.sendPostRequest2(uri, headerParams, bodyParams);
 
-//      HttpClient httpClient = HttpClientBuilder.create().build();
-//      HttpPost request = new HttpPost(uri);
-//      request.addHeader("Content-Type", "application/json");
-//      request.addHeader("Authorization", "Bearer " + apiKey);
-//      JSONObject requestBody = new JSONObject();
-//      requestBody.put("prompt", prompt);
-//      requestBody.put("max_tokens", 1024);
-//      requestBody.put("temperature", 0.7);
-//      requestBody.put("n", 1);
-//
-//      StringEntity requestEntity = new StringEntity(requestBody.toString(), "UTF-8");
-//      request.setEntity(requestEntity);
-//
-//      HttpResponse response = httpClient.execute(request);
-//      String responseString = EntityUtils.toString(response.getEntity());
       JSONObject responseJson = new JSONObject(responseString);
       JSONArray choices = responseJson.getJSONArray("choices");
-      result = choices.getJSONObject(0).getString("text");
+      JSONObject message = choices.getJSONObject(0).getJSONObject("message");
+      result = message.getString("content");
       result = result.trim();
+
     } catch (Exception e) {
       log.error("Exception:", e);
     } finally {
@@ -172,7 +158,6 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
       return result;
     }
   }
-
 
   @Override
   public IPage<ChatGPT> page(Page page, ChatGPT chatGPT) {
@@ -214,6 +199,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
         .orderByDesc(ChatGPT::getCreateTime);
     return this.baseMapper.selectList(eq);
   }
+
   @Data
   static class ChatGPTMessage implements Serializable {
     private static final long serialVersionUID = -8593133888176767391L;
