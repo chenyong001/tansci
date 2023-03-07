@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tansci.mapper.chatGPT.ChatGPTMapper">
+
+  <select id="page" parameterType="com.tansci.domain.system.ChatGPT" resultType="com.tansci.domain.system.ChatGPT">
+    select u.*,o.org_id from chat_gpt_data u
+    left join sys_user_org o on o.user_id = u.user_id
+    <where>
+      <if test="dto.userId != null and dto.userId != ''">
+        and u.user_id =#{dto.userId}
+      </if>
+      <if test="dto.orgIds != null and dto.orgIds.size > 0">
+        and o.org_id in
+        <foreach collection="dto.orgIds" index="index" item="item" open="(" close=")" separator=",">
+          #{item}
+        </foreach>
+      </if>
+      and u.status =1
+    </where>
+    order by u.create_time desc
+  </select>
+
+</mapper>

@@ -12,9 +12,9 @@
       >
         <template #search>
 
-          <div>
+          <!-- <div>
             <el-button type="primary" @click="onChatGpt">chatGpt-text-davinci-003</el-button>
-          </div>
+          </div> -->
                     <div>
             <el-button type="primary" @click="onChatGptOpenAI">chatGpt-gpt-3.5-turbo</el-button>
           </div>
@@ -27,7 +27,11 @@
             <el-button @click="onSearch" type="primary" icon="Search">查询</el-button>
           </div>
         </template>
-
+             <template #column="scope"    >
+                    <!-- <el-button @click="onEdit(scope)" type="success">编辑</el-button>
+                    <el-button @click="menuClick(scope)" type="success" >详情</el-button> -->
+                    <el-button @click="onDelete(scope)" type="warning" >删除</el-button>
+                </template>
       
       </Table>
     </el-card>
@@ -40,7 +44,7 @@
 import { onMounted, reactive, nextTick, ref, unref, toRefs } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import Table from "../../components/Table.vue";
-import { chatGPTPage,exportChatGPTTxt } from "../../api/systemApi.js";
+import { chatGPTPage,exportChatGPTTxt ,deleteChatGPT} from "../../api/systemApi.js";
 import { useRouter } from "vue-router";
 import { timeFormate2 } from "../../utils/utils.js";
 
@@ -103,7 +107,9 @@ const state = reactive({
   tableTitle: [
     { prop: "id", label: "ID", width: 50 },
     { prop: "createTime", label: "创建时间", width: 180 },
-    { prop: "prompt", label: "提问", width: 300 },
+    { prop: "userName", label: "创建者", width: 120 },
+     { prop: "speechText", label: "识别原文", width: 180 },
+    { prop: "prompt", label: "提问", width: 180 },
     { prop: "content", label: "内容" }
   ],
   tableData: [],
@@ -215,9 +221,9 @@ const onDelete = val => {
   })
     .then(() => {
       let param = {
-        docId: val.column.row.docId
+        id: val.column.row.id
       };
-      deleteNote(param).then(res => {
+      deleteChatGPT(param).then(res => {
         if (res) {
           ElMessage.success("删除成功!");
           onPage();

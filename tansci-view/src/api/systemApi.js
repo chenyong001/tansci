@@ -580,4 +580,14 @@ export function exportChatGPTTxt(params) {
       });
 
 }
+
+/**
+ * 删除管理
+ * @param {*} params 
+ * @returns 
+ */
+export function deleteChatGPT(params) {
+    return axios.post('/tansci/chatGPT/deleteChatGPT', params);
+}
+
 /** ===chatGPT====end */

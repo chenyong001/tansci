@@ -50,4 +50,8 @@ public class ChatGPT {
 
   @ApiModelProperty(value = "备注")
   private String remark;
+
+  @ApiModelProperty(value = "值IDS")
+  @TableField(exist = false)
+  private List<Integer> orgIds;
 }

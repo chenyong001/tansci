@@ -10,6 +10,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Maps;
 import com.tansci.domain.system.ChatGPT;
 import com.tansci.domain.system.SysDic;
+import com.tansci.domain.system.SysUser;
 import com.tansci.domain.system.dto.SysDicDto;
 import com.tansci.mapper.chatGPT.ChatGPTMapper;
 import com.tansci.service.chatGPT.ChatGPTService;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -162,18 +164,26 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
   @Override
   public IPage<ChatGPT> page(Page page, ChatGPT chatGPT) {
 
-    IPage<ChatGPT> iPage = this.baseMapper.selectPage(page,
-        Wrappers.<ChatGPT>lambdaQuery().eq(ChatGPT::getUserId, SecurityUserUtils.getUser().getId())
-            .eq(ChatGPT::getStatus, 1)
-            //        .eq(StringUtils.isNotBlank(chatGPT.getDocId()), ChatGPT::getDocId, chatGPT.getDocId())
-            //        .eq(ChatGPT::getType, chatGPT.getType())
-            .orderByDesc(ChatGPT::getCreateTime));
+    SysUser user = SecurityUserUtils.getUser();
+    if (!Objects.equals(0, user.getType())) {
+      chatGPT.setOrgIds(user.getOrgIds());
+    }
+    if (Objects.equals(user.getType(), 2)) {
+      //      如果类型是普通用户，才通过账号ID过滤
+      chatGPT.setUserId(user.getId());
+    }
 
-    //    iPage.getRecords().forEach(item -> {
-    //      //      遍历查询每个会话的用户信息
-    //      SysUser sysUser = sysUserService.selectByUserId(item.getUserId());
-    //      item.setUserName(sysUser == null ? "" : sysUser.getUsername());
-    //    });
+    IPage<ChatGPT> iPage = this.baseMapper.page(page, chatGPT);
+    //    IPage<ChatGPT> iPage = this.baseMapper.selectPage(page,
+    //        Wrappers.<ChatGPT>lambdaQuery().eq(ChatGPT::getUserId, SecurityUserUtils.getUser().getId())
+    //            .eq(ChatGPT::getStatus, 1)
+    //            .orderByDesc(ChatGPT::getCreateTime));
+
+    iPage.getRecords().forEach(item -> {
+      //      遍历查询每个会话的用户信息
+      SysUser sysUser = sysUserService.selectByUserId(item.getUserId());
+      item.setUserName(sysUser == null ? "" : sysUser.getUsername());
+    });
     return iPage;
   }
 

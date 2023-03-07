@@ -16,10 +16,12 @@ import com.tansci.utils.ExportUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -86,5 +88,18 @@ public class ChatGPTController {
     List<ChatGPT> chatGPTList = chatGPTService.selectList(chatGPT);
     ExportUtil.exportChatGPTTxt(response, chatGPTList);
   }
+
+  @PostMapping("/deleteChatGPT")
+  @ResponseBody
+  public Wrapper<Boolean> deleteChatGPT(@RequestBody ChatGPT chatGPT) {
+    log.info("deleteChatGPT===========,chatGPT={}",chatGPT);
+    if (StringUtils.isBlank(chatGPT.getId())) {
+      //      如果数据为空，则不处理，直接返回
+      return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+    }
+    chatGPTService.del(chatGPT);
+    return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+  }
+
 
 }

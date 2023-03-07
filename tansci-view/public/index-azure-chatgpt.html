@@ -882,14 +882,14 @@
             }
         }
         function onChatGPT(prompt) {
-            $('#response').append(getCurrentTime() + "  提问：" + prompt + "\r\n");
+            $('#response').append(getCurrentTime() + "  你的提问：" + prompt + "\r\n");
             // todo
             // 入库数据
             var token = localStorage.getItem('token');
             // 生产 +"&remark="+remark
-            var url = "https://opencast.tsi.edu.sg/tansci/chatGPT/send?prompt=" + prompt+"&speechText="+speechText;
+            // var url = "https://opencast.tsi.edu.sg/tansci/chatGPT/send?prompt=" + prompt+"&speechText="+speechText;
             // 开发
-            // var url = "http://localhost:8005/tansci/chatGPT/send?prompt=" + prompt+"&speechText="+speechText;
+            var url = "http://localhost:8005/tansci/chatGPT/send?prompt=" + prompt+"&speechText="+speechText;
 
 
 
@@ -905,7 +905,7 @@
                 var data = this.responseText;
                 const reply = JSON.parse(data).result;
                 // $('#response').text(reply);
-                $('#response').append(getCurrentTime() + '  AI:' + reply + "\r\n\r\n");
+                $('#response').append(getCurrentTime() + '  AI助手：' + reply + "\r\n\r\n");
             }
         }
 
