@@ -105,7 +105,7 @@ const state = reactive({
     total: 1
   },
   tableTitle: [
-    { prop: "id", label: "ID", width: 50 },
+    { prop: "id", label: "ID", width: 100 },
     { prop: "createTime", label: "创建时间", width: 180 },
     { prop: "userName", label: "创建者", width: 120 },
      { prop: "speechText", label: "识别原文", width: 180 },
