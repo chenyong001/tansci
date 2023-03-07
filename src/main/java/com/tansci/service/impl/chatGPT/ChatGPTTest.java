@@ -64,31 +64,30 @@ public class ChatGPTTest {
   }
 
   private static void chatgpt3() throws JSONException, IOException {
-    String apiKey = "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";
-    HttpClient httpClient = HttpClientBuilder.create().build();
-    HttpPost request = new HttpPost("https://api.openai.com/v1/engines/text-davinci-003/completions");
-    request.addHeader("Content-Type", "application/json");
-    request.addHeader("Authorization", "Bearer " + apiKey);
-
-    JSONObject requestBody = new JSONObject();
-    String prompt = "今天是什么日子？";
-    requestBody.put("prompt", prompt);
-    requestBody.put("max_tokens", 500);
-    requestBody.put("temperature", 0.7);
-    requestBody.put("n", 1);
-    //    requestBody.put("model", "ada");
-    //    model="text-davinci-003"
-
-    StringEntity requestEntity = new StringEntity(requestBody.toString(), "UTF-8");
-    request.setEntity(requestEntity);
-
-    HttpResponse response = httpClient.execute(request);
-    String responseString = EntityUtils.toString(response.getEntity());
-    JSONObject responseJson = new JSONObject(responseString);
-    JSONArray choices = responseJson.getJSONArray("choices");
-    String text = choices.getJSONObject(0).getString("text");
-    System.out.println(text);
-    //    System.out.println("Response: " + responseJson.getString("choices").split("\n")[0]);
+//    String apiKey = "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";
+//    HttpClient httpClient = HttpClientBuilder.create().build();
+//    HttpPost request = new HttpPost("https://api.openai.com/v1/engines/text-davinci-003/completions");
+//    request.addHeader("Content-Type", "application/json");
+//    request.addHeader("Authorization", "Bearer " + apiKey);
+//
+//    JSONObject requestBody = new JSONObject();
+//    String prompt = "今天是什么日子？";
+//    requestBody.put("prompt", prompt);
+//    requestBody.put("max_tokens", 500);
+//    requestBody.put("temperature", 0.7);
+//    requestBody.put("n", 1);
+//    //    requestBody.put("model", "ada");
+//    //    model="text-davinci-003"
+//
+//    StringEntity requestEntity = new StringEntity(requestBody.toString(), "UTF-8");
+//    request.setEntity(requestEntity);
+//
+//    HttpResponse response = httpClient.execute(request);
+//    String responseString = EntityUtils.toString(response.getEntity());
+//    JSONObject responseJson = new JSONObject(responseString);
+//    JSONArray choices = responseJson.getJSONArray("choices");
+//    String text = choices.getJSONObject(0).getString("text");
+//    System.out.println(text);
   }
 }
 
