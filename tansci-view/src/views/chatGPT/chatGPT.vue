@@ -14,10 +14,10 @@
 
     
            <div>
-            <el-button type="primary" @click="onChatGpt">chatGpt文字版</el-button>
+            <el-button type="primary" @click="onChatGpt">ChatGPT文字版</el-button>
           </div>
                     <div>
-            <el-button type="primary" @click="onChatGptOpenAI">chatGpt语音版</el-button>
+            <el-button type="primary" @click="onChatGptOpenAI">ChatGPT语音版</el-button>
           </div>
           <div><el-button type="primary" @click="onExportChatGPTTxt">导出</el-button></div>
 
