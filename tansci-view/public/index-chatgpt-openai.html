@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>ASR</title>
+    <title>ChatGPT</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
@@ -43,7 +43,7 @@
                 </td>
             </tr>
             <tr style="display:none" >
-                <td align="right">Recognition language:</td>
+                <td align="right">选择语言</td>
                 <td align="left">
                     <!-- For the full list of supported languages see:
                         https://docs.microsoft.com/azure/cognitive-services/speech-service/supported-languages -->
@@ -915,7 +915,7 @@
                 var data = this.responseText;
                 const reply = JSON.parse(data).result;
                 // $('#response').text(reply);
-                var thisResponse=getCurrentTime() + '  AI助手：' + reply + "\r\n\r\n";
+                var thisResponse=getCurrentTime() + '  ChatGPT回答：' + reply + "\r\n\r\n";
                 // $('#response').append(getCurrentTime() + '  AI助手：' + reply + "\r\n\r\n");
                 $('#response').html(thisPrompt);
                 $('#response').append(thisResponse);
