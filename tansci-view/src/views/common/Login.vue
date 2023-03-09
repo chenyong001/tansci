@@ -114,7 +114,15 @@
 				// 存储用户信息和token
 				userStore.setUser(res.result);
 				tokenStore.setToken(res.result.token);
-				router.push({path: 'main'});
+				var chatFlag=localStorage.getItem('chat');
+				if(chatFlag){
+					//  window.location.href= "http://localhost/index-chatgpt-openai.html";
+					window.open("/chatGPT.html");
+					localStorage.removeItem('chat');
+				}else{
+					router.push({path: 'main'});
+				}
+				
 			}
 		}).catch(()=>{
 			state.loginForm.verifyStatus = null;
