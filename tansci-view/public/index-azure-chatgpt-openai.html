@@ -632,6 +632,7 @@
 
             $('#submit').click(function () {
                 onChatGPT($('#prompt').val());
+                $('#prompt').val('');
             });
 
             enumerateMicrophones();

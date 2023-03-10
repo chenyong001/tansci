@@ -117,7 +117,8 @@
 				var chatFlag=localStorage.getItem('chat');
 				if(chatFlag){
 					//  window.location.href= "http://localhost/index-chatgpt-openai.html";
-					window.open("/chatGPT.html");
+					// window.open("/chatGPT.html");
+					window.location.href="/chatGPT.html";
 					localStorage.removeItem('chat');
 				}else{
 					router.push({path: 'main'});

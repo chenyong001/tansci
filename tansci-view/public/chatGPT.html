@@ -3,7 +3,7 @@
 
 <head>
     <!-- 手机版 -->
-    <title>ChatGPT</title>
+    <title>TsiChat</title>
     <meta charset="utf-8" />
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
@@ -11,16 +11,16 @@
 
 <body style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:13px;">
     <div id="content" style="display:none">
-        <table border="0" align="center">
+        <table border="1" align="center" style="display:none">
             <!-- <tr>
                 <td></td>
                 <td>
                     <h2 style="font-weight:500;">ChatGPT, model: "gpt-3.5-turbo"</h2>
                 </td>
             </tr> -->
-            <th colspan="3" >
+            <!-- <th colspan="3" >
                 <h2>欢迎使用 Touchstone 版 ChatGPT！ </br>为了最好的体验，请想好问题才提问。</h2>
-            </th>
+            </th> -->
             <tr style="display:none">
                 <td align="right">
                     <!-- <a href="https://www.microsoft.com/cognitive-services/sign-up"
@@ -257,11 +257,11 @@
                     </textarea>
                 </td>
             </tr>
-            <tr align="center">
+            <!-- <tr align="center">
            
                 <td  colspan="2" style="width:80%;height:100%"> 
 
-                        <textarea id="prompt" name="prompt" rows="5" cols="10" 
+                        <textarea id="prompt" name="prompt" rows="5" cols="40" 
                         style="display: inline-block;width:95%;height:100%;font-size:18px" placeholder="请输入您的问题?"></textarea>
 
                 </td>
@@ -274,10 +274,55 @@
                 </tr>
             <tr align="center">
             
-                <td colspan="2"> <textarea id="response" name="response"  disabled="disabled" contenteditable="true"
-                        style="display: inline-block;width:95%;height:400px;font-size:18px" placeholder="结果在此显示"></textarea></td>
+                <td  colspan="2" > 
+
+                    <textarea id="response" name="response" rows="20" cols="40"  
+                    style="width:95%;height:100%;font-size:18px" placeholder="结果在此显示"></textarea>
+
+            </td> -->
+
+                <!-- <td colspan="2" style="width:80%;height:100%"> <textarea id="response" name="response"  disabled="disabled"
+                        style="display: inline-block;width:95%;height:400px;font-size:18px" placeholder="结果在此显示"></textarea></td> -->
             </tr>
         </table>
+        <table border="0" align="center">
+            <!-- <tr>
+                <td></td>
+                <td>
+                    <h2 style="font-weight:500;">ChatGPT, model: "gpt-3.5-turbo"</h2>
+                </td>
+            </tr> -->
+            <th  >
+                <h2>欢迎使用 Touchstone 版 TsiChat！ </br>为了最好的体验，请想好问题才提问。</h2>
+            </th>
+            <tr align="center">
+           
+                <td   style="width:100%;height:100%"> 
+
+                        <textarea id="prompt" name="prompt" rows="5" cols="40" 
+                        style="display: inline-block;width:99%;height:100%;font-size:18px" placeholder="请输入您的问题?"></textarea>
+
+                </td>
+                <!-- ;resize:none -->
+            </tr>
+            <tr align="center">
+       
+                    <td  > <button id="submit" style="display: inline-block;width:40%;height:80%">点击此处提交问题</button>
+                    </td>
+                </tr>
+            <tr align="center">
+            
+                <td  style="width:100%;height:100%" > 
+
+                    <textarea id="response" name="response" rows="20" cols="40"   disabled="disabled"
+                    style="width:99%;height:100%;font-size:18px" placeholder="结果在此显示"></textarea>
+
+            </td>
+
+                <!-- <td colspan="2" style="width:80%;height:100%"> <textarea id="response" name="response"  disabled="disabled"
+                        style="display: inline-block;width:95%;height:400px;font-size:18px" placeholder="结果在此显示"></textarea></td> -->
+            </tr>
+    </table>
     </div>
 
     <!-- Speech SDK REFERENCE -->
@@ -330,6 +375,8 @@
                 // document.getElementById('warning').style.display = 'none';
                 onComplete(window.SpeechSDK);
             }
+            var promptText=  localStorage.getItem('promptText');
+            $('#prompt').val(promptText);
         }
     </script>
 
@@ -628,7 +675,10 @@
             });
 
             $('#submit').click(function () {
-                onChatGPT($('#prompt').val());
+                var promptText=$('#prompt').val();
+                localStorage.setItem('promptText',promptText);
+                onChatGPT(promptText);
+                $('#prompt').val('');
             });
 
             enumerateMicrophones();
@@ -885,14 +935,15 @@
             }
         }
         function onChatGPT(prompt) {
-            if(!prompt){
+            if(!prompt){ 
                 return;
             }
             var token = localStorage.getItem('token');
             if(!token){
                 // window.location.href= "https://opencast.tsi.edu.sg";
                 localStorage.setItem('chat',1);
-                window.open("/");
+                // window.open("/");
+                window.location.href="/";
 
                 return;
             }
@@ -923,10 +974,11 @@
                 var data = this.responseText;
                 const reply = JSON.parse(data).result;
                 // $('#response').text(reply);
-                var thisResponse=getCurrentTime() + '  ChatGPT回答：' + reply + "\r\n\r\n";
+                var thisResponse=getCurrentTime() + '  AIGC回答：' + reply + "\r\n\r\n";
                 // $('#response').append(getCurrentTime() + '  AI助手：' + reply + "\r\n\r\n");
                 $('#response').html(thisPrompt);
                 $('#response').append(thisResponse);
+                $('#response').append("***回答完毕***"+"\r\n\r\n");
                 // $('#response').append("<span style='color: red'>"+thisResponse+"</span>");
                 // var oText4=document.createTextNode(thisResponse); 
                 // $('#response').css('color','blue');
