@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>ChatGPT</title>
+    <title>AIGC-Chat</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
@@ -17,7 +17,7 @@
                 </td>
             </tr> -->
             <th colspan="3">
-                <h2>欢迎使用 Touchstone 版 ChatGPT！ 为了最好的体验，请想好问题才提问。</h2>
+                <h2>欢迎使用 Touchstone 版 AIGC-Chat！ 为了最好的体验，请想好问题才提问。</h2>
             </th>
             <tr>
                 <td align="right">
@@ -916,7 +916,7 @@
                 var data = this.responseText;
                 const reply = JSON.parse(data).result;
                 // $('#response').text(reply);
-                var thisResponse=getCurrentTime() + '  ChatGPT回答：' + reply + "\r\n\r\n";
+                var thisResponse=getCurrentTime() + '  AIGC-Chat回答：' + reply + "\r\n\r\n";
                 // $('#response').append(getCurrentTime() + '  AI助手：' + reply + "\r\n\r\n");
                 $('#response').html(thisPrompt);
                 $('#response').append(thisResponse);
