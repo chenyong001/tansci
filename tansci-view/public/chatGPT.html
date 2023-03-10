@@ -3,7 +3,7 @@
 
 <head>
     <!-- 手机版 -->
-    <title>TsiChat</title>
+    <title>AIGC-Chat</title>
     <meta charset="utf-8" />
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
@@ -293,7 +293,7 @@
                 </td>
             </tr> -->
             <th  >
-                <h2>欢迎使用 Touchstone 版 TsiChat！ </br>为了最好的体验，请想好问题才提问。</h2>
+                <h2>欢迎使用 Touchstone 版 AIGC-Chat！ </br>为了节省计算资源，请表述好问题才提交。</h2>
             </th>
             <tr align="center">
            
@@ -307,14 +307,14 @@
             </tr>
             <tr align="center">
        
-                    <td  > <button id="submit" style="display: inline-block;width:40%;height:80%">点击此处提交问题</button>
+                    <td  > <button id="submit" style="display: inline-block;width:40%;height:50px">点击此处提交问题</button>
                     </td>
                 </tr>
             <tr align="center">
             
                 <td  style="width:100%;height:100%" > 
 
-                    <textarea id="response" name="response" rows="20" cols="40"   disabled="disabled"
+                    <textarea id="response" name="response" rows="19" cols="40"   disabled="disabled"
                     style="width:99%;height:100%;font-size:18px" placeholder="结果在此显示"></textarea>
 
             </td>
@@ -976,7 +976,7 @@
                 // $('#response').text(reply);
                 var thisResponse=getCurrentTime() + '  AIGC回答：' + reply + "\r\n\r\n";
                 // $('#response').append(getCurrentTime() + '  AI助手：' + reply + "\r\n\r\n");
-                $('#response').html(thisPrompt);
+                $('#response').html(thisPrompt+ "\r\n");
                 $('#response').append(thisResponse);
                 $('#response').append("***回答完毕***"+"\r\n\r\n");
                 // $('#response').append("<span style='color: red'>"+thisResponse+"</span>");
