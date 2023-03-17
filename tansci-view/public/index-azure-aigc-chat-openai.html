@@ -263,6 +263,14 @@
                 </td>
             </tr>
             <tr>
+                <td></td>
+                <td> <label for="promptTips" id='promptTips'>提问最大支持1000个字符长度！</label>
+
+                </td>
+                <td align="left">
+                </td>
+            </tr>
+            <tr>
                 <td> <label for="prompt">文字提问: </label></td>
                 <td> 
                     <!-- <input type="text" id="prompt" name="prompt"
@@ -631,7 +639,17 @@
             });
 
             $('#submit').click(function () {
-                onChatGPT($('#prompt').val());
+                var prompt = $('#prompt').val();
+                if (!prompt) {
+                    return;
+                }
+                if (prompt.length > 1000) {
+                    $('#promptTips').html('<span style="color:red">当前长度为' + prompt.length + ',已超出最大1000字符长度限制！请检查后再提交。</span>');
+                    return;
+                }else{
+                    $('#promptTips').html('提问最大支持1000个字符长度！');
+                }
+                onChatGPT(prompt);
                 $('#prompt').val('');
             });
 
@@ -916,7 +934,7 @@
                 var data = this.responseText;
                 const reply = JSON.parse(data).result;
                 // $('#response').text(reply);
-                var thisResponse=getCurrentTime() + '  AIGC-Chat回答：' + reply + "\r\n\r\n";
+                var thisResponse=getCurrentTime() + '  AIGC回答：' + reply + "\r\n\r\n";
                 // $('#response').append(getCurrentTime() + '  AI助手：' + reply + "\r\n\r\n");
                 $('#response').html(thisPrompt);
                 $('#response').append(thisResponse);

@@ -42,7 +42,7 @@
                     </select>
                 </td>
             </tr>
-            <tr style="display:none" >
+            <tr style="display:none">
                 <td align="right">选择语言</td>
                 <td align="left">
                     <!-- For the full list of supported languages see:
@@ -263,12 +263,20 @@
                 </td>
             </tr>
             <tr>
+                <td></td>
+                <td> <label for="promptTips" id='promptTips'>提问最大支持1000个字符长度！</label>
+
+                </td>
+                <td align="left">
+                </td>
+            </tr>
+            <tr>
                 <td> <label for="prompt">文字提问: </label></td>
-                <td> 
+                <td>
                     <!-- <input type="text" id="prompt" name="prompt"
                         style="display: inline-block;width:800px;height:50px" /> -->
 
-                        <textarea id="prompt" name="prompt" rows="5" cols="10" 
+                    <textarea id="prompt" name="prompt" rows="5" cols="10"
                         style="display: inline-block;width:800px;height:100px;font-size:18px"></textarea>
 
                 </td>
@@ -278,7 +286,7 @@
             <tr>
                 <td> <label for="response">响应:</label></td>
                 <td colspan="2"> <textarea id="response" name="response" rows="5" cols="50" disabled="disabled"
-                        style="display: inline-block;width:1000px;height:500px;font-size:18px"></textarea></td>
+                        style="display: inline-block;width:1000px;height:480px;font-size:18px"></textarea></td>
             </tr>
         </table>
     </div>
@@ -631,7 +639,17 @@
             });
 
             $('#submit').click(function () {
-                onChatGPT($('#prompt').val());
+                var prompt = $('#prompt').val();
+                if (!prompt) {
+                    return;
+                }
+                if (prompt.length > 1000) {
+                    $('#promptTips').html('<span style="color:red">当前长度为' + prompt.length + ',已超出最大1000字符长度限制！请检查后再提交。</span>');
+                    return;
+                }else{
+                    $('#promptTips').html('提问最大支持1000个字符长度！');
+                }
+                onChatGPT(prompt);
                 $('#prompt').val('');
             });
 
@@ -659,8 +677,8 @@
         //     import {collectPage, collect} from '../../api/systemApi.js'
         // import { useRouter } from 'vue-router'
         // import axios from '../src/utils/axios.js'
-        var speechText='';
-        var prompt='';
+        var speechText = '';
+        var prompt = '';
 
 
         function getAudioConfig() {
@@ -878,7 +896,7 @@
 
                     if (resultText !== null && resultText !== '') {
                         // onChatGPT(resultText);
-                        speechText=resultText;
+                        speechText = resultText;
                         $('#prompt').val(resultText);
 
                     }
@@ -889,9 +907,10 @@
             }
         }
         function onChatGPT(prompt) {
-            var contentCache=$('#response').val();
-            var thisPrompt=getCurrentTime() + "  你的提问：" + prompt + "\r\n";
-            $('#response').html(thisPrompt+ "\r\n");
+
+            var contentCache = $('#response').val();
+            var thisPrompt = getCurrentTime() + "  你的提问：" + prompt + "\r\n";
+            $('#response').html(thisPrompt + "\r\n");
             $('#response').append(contentCache);
             // $('#response').append(getCurrentTime() + "  你的提问：" + prompt + "\r\n");
             // todo
@@ -900,7 +919,7 @@
             // 生产 +"&remark="+remark
             var url = "https://opencast.tsi.edu.sg/tansci/chatGPT/send2OpenAi?prompt=" + encodeURIComponent(prompt)+"&speechText="+encodeURIComponent(speechText);
             // 开发
-            // var url = "http://localhost:8005/tansci/chatGPT/send2OpenAi?prompt=" + encodeURIComponent(prompt)+"&speechText="+encodeURIComponent(speechText);
+            // var url = "http://localhost:8005/tansci/chatGPT/send2OpenAi?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText);
 
 
 
@@ -916,7 +935,7 @@
                 var data = this.responseText;
                 const reply = JSON.parse(data).result;
                 // $('#response').text(reply);
-                var thisResponse=getCurrentTime() + '  AIGC-Chat回答：' + reply + "\r\n\r\n";
+                var thisResponse = getCurrentTime() + '  AIGC回答：' + reply + "\r\n\r\n";
                 // $('#response').append(getCurrentTime() + '  AI助手：' + reply + "\r\n\r\n");
                 $('#response').html(thisPrompt);
                 $('#response').append(thisResponse);
