@@ -264,7 +264,7 @@
             </tr>
             <tr>
                 <td></td>
-                <td> <label for="promptTips" id='promptTips'>提问最大支持1000个字符长度！</label>
+                <td> <label for="promptTips" id='promptTips'>提问最大支持2000个字符长度！</label>
 
                 </td>
                 <td align="left">
@@ -643,11 +643,11 @@
                 if (!prompt) {
                     return;
                 }
-                if (prompt.length > 1000) {
-                    $('#promptTips').html('<span style="color:red">当前长度为' + prompt.length + ',已超出最大1000字符长度限制！请检查后再提交。</span>');
+                if (prompt.length > 2000) {
+                    $('#promptTips').html('<span style="color:red">当前长度为' + prompt.length + ',已超出最大2000字符长度限制！请检查后再提交。</span>');
                     return;
                 }else{
-                    $('#promptTips').html('提问最大支持1000个字符长度！');
+                    $('#promptTips').html('提问最大支持2000个字符长度！');
                 }
                 onChatGPT(prompt);
                 $('#prompt').val('');
