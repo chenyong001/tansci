@@ -125,7 +125,7 @@ parent.appendChild(div);
               console.log("this.responseText: " + this.responseText);
               var data = this.responseText;
               // 验证token过期，返回401，则跳转到登录界面
-              if(data.code='401'){
+              if(data.code=='401'){
                 localStorage.setItem('chat',1);
               // window.open("/");
               window.location.href="/";
