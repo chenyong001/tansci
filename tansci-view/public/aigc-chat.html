@@ -124,13 +124,14 @@ parent.appendChild(div);
           a.onload = function () {
               console.log("this.responseText: " + this.responseText);
               var data = this.responseText;
+              var jsonData=JSON.parse(data);
               // 验证token过期，返回401，则跳转到登录界面
-              if(data.code=='401'){
+              if(jsonData.code==401){
                 localStorage.setItem('chat',1);
               // window.open("/");
               window.location.href="/";
               }
-              const reply = JSON.parse(data).result;
+              const reply = jsonData.result;
               // $('#response').text(reply);
               var thisResponse=getCurrentTime() + '  <br>' + reply + "\r\n\r\n";
               // $('#response').append(getCurrentTime() + '  AI助手：' + reply + "\r\n\r\n");
