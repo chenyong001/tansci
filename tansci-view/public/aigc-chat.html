@@ -30,21 +30,10 @@
    
    
         <div class="chatBox" id='chatBox'>
-          <!-- <div class="message my_message">
-            <p>最近，我看了一些幽默笑话。<br><span>12:15</span></p>
-          </div>
-          <div class="message frnd_message">
-            <p>嗯，然后呢？<br><span>12:16</span></p>
-          </div>
-          <div class="message my_message">
-            <p>你想听吗？我可以给你讲一讲<br><span>12:17</span></p>
-          </div> -->
-         
         </div>
         
         <div><label for="promptTips" id='promptTips'>提问最大支持2000个字符长度！</label></div>
         <div class="chatBox_input">
-          <!-- <input type="text" placeholder="输入聊天内容"> -->
           <textarea id="prompt" name="prompt" rows="5" cols="40" 
           style="width:80%;height:100%;font-size:18px;border: none;border-radius: 8px;" placeholder="请输入您的问题?"></textarea>
          
@@ -95,17 +84,12 @@ var parent = document.getElementById('chatBox');
               //添加div
 var div = document.createElement("div");
 //设置div属性
-// div.setAttribute("id","newDiv");//给div一个id
-// div.style.background = 'yellow';//添加背景色
+
 div.className="message frnd_message";
 div.innerHTML ="<p>"+ getCurrentTime() + "</br>" +prompt+"</p>";//添加文字
 parent.scrollTop=parent.scrollHeight+parent.clientHeight;
 parent.appendChild(div);
-          // var thisPrompt=getCurrentTime() + "  你的提问：" + prompt + "\r\n";
-          // $('#response').html(thisPrompt+ "\r\n");
-          // $('#response').append(contentCache);
-          // $('#response').append(getCurrentTime() + "  你的提问：" + prompt + "\r\n");
-          // todo
+  
           // 入库数据
 
           // 生产 +"&remark="+remark
@@ -130,38 +114,18 @@ parent.appendChild(div);
                 localStorage.setItem('chat',1);
               // window.open("/");
               window.location.href="/";
+              return;
               }
               const reply = jsonData.result;
-              // $('#response').text(reply);
               var thisResponse=getCurrentTime() + '  <br>' + reply + "\r\n\r\n";
-              // $('#response').append(getCurrentTime() + '  AI助手：' + reply + "\r\n\r\n");
 
               //添加div
               var div = document.createElement("div");
 //设置div属性
-// div.setAttribute("id","newDiv");//给div一个id
-// div.style.background = 'yellow';//添加背景色
 div.className="message my_message";
 div.innerHTML ="<p>"+ thisResponse+"</p>";//添加文字
 parent.scrollTop=parent.scrollHeight+parent.clientHeight;
 parent.appendChild(div);
-              // $('.chatBox').insertAfter()
-              // $('#response').html(thisPrompt+ "\r\n");
-              // $('#response').append(thisResponse);
-              // $('#response').append("***回答完毕***"+"\r\n\r\n");
-              // $('#response').append("<span style='color: red'>"+thisResponse+"</span>");
-              // var oText4=document.createTextNode(thisResponse); 
-              // $('#response').css('color','blue');
-              // var oText4= document.createTextNode(thisResponse);
-              // oText4.css('color','blue');
-              // $('#response').appendChild(oText4);
-              // var oFont4=document.createElement("FONT"); 
-              // var oText4=document.createTextNode(thisResponse); 
-              // oFont4.style.color="#00ee00"; 
-              // document.getElementById("response").appendChild(oFont4); 
-              // oFont4.appendChild(oText4); 
-
-              // $('#response').append(contentCache);
           }
       }
         /**
