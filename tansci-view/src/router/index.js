@@ -56,9 +56,9 @@ router.beforeEach(async (to, from, next) => {
         }
         ,error=>{
             // token 过期
-            // localStorage.removeItem("token")
+            localStorage.removeItem("token")
             // localStorage.setItem("token","")
-            localStorage.clear();
+            // localStorage.clear();
             router.push({path: 'login'})
             console.log("token 过期,error="+error)
             // next({ ...to, replace: true })
