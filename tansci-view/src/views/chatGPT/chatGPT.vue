@@ -53,7 +53,7 @@ import { timeFormate2 } from "../../utils/utils.js";
 const router = useRouter();
 
 const onChatGpt = () => {
-  window.open("/index-aigc-chat-openai.html");
+  window.open("/aigc-chat.html");
 };
 const onChatGptOpenAI = () => {
   window.open("/index-azure-aigc-chat-openai.html");
