@@ -56,7 +56,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
   String uri = "https://api.openai.com/v1/engines/text-davinci-003/completions";
 
   String apiKey;
-
+  String azureApiKey;
   @Override
   public String send(String prompt, String speechText) {
     String result = "";
@@ -167,7 +167,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
     String result = "";
     String uri = "https://tsigpt.openai.azure.com/openai/deployments/tsigpt4/chat/completions?api-version=2023-03-15-preview";
     try {
-      if (StringUtils.isBlank(apiKey)) {
+      if (StringUtils.isBlank(azureApiKey)) {
         SysDicDto sysDicDto = new SysDicDto();
         sysDicDto.setKeyword("chat_gpt_azure_apikey");
         List<SysDic> sysDics = sysDicService.dicList(sysDicDto);
@@ -175,12 +175,12 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
           log.warn("chatGPT apikey is not get!!!");
           return result;
         }
-        apiKey = sysDics.get(0).getRemarks();
+        azureApiKey = sysDics.get(0).getRemarks();
       }
 
       Map<String, String> headerParams = Maps.newHashMap();
       headerParams.put("Content-Type", "application/json");
-      headerParams.put("api-key", apiKey);
+      headerParams.put("api-key", azureApiKey);
       Map<String, Object> bodyParams = Maps.newHashMap();
 //      bodyParams.put("model", "gpt-3.5-turbo");
       List<ChatGPTImpl.ChatGPTMessage> messages = new ArrayList<>();
