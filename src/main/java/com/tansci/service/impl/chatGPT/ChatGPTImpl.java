@@ -131,6 +131,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
       Map<String, Object> bodyParams = Maps.newHashMap();
       bodyParams.put("model", "gpt-3.5-turbo");
       List<ChatGPTImpl.ChatGPTMessage> messages = new ArrayList<>();
+      messages.add(new ChatGPTImpl.ChatGPTMessage("system", "You are a helpful assistant."));
       messages.add(new ChatGPTImpl.ChatGPTMessage("user", prompt));
       bodyParams.put("messages", messages);
       bodyParams.put("max_tokens", 1024);
@@ -161,6 +162,58 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
     }
   }
 
+  @Override
+  public String send2Azure(String prompt, String speechText) {
+    String result = "";
+    String uri = "https://tsigpt.openai.azure.com/openai/deployments/tsigpt4/chat/completions?api-version=2023-03-15-preview";
+    try {
+      if (StringUtils.isBlank(apiKey)) {
+        SysDicDto sysDicDto = new SysDicDto();
+        sysDicDto.setKeyword("chat_gpt_azure_apikey");
+        List<SysDic> sysDics = sysDicService.dicList(sysDicDto);
+        if (CollectionUtil.isEmpty(sysDics)) {
+          log.warn("chatGPT apikey is not get!!!");
+          return result;
+        }
+        apiKey = sysDics.get(0).getRemarks();
+      }
+
+      Map<String, String> headerParams = Maps.newHashMap();
+      headerParams.put("Content-Type", "application/json");
+      headerParams.put("api-key", apiKey);
+      Map<String, Object> bodyParams = Maps.newHashMap();
+//      bodyParams.put("model", "gpt-3.5-turbo");
+      List<ChatGPTImpl.ChatGPTMessage> messages = new ArrayList<>();
+      messages.add(new ChatGPTImpl.ChatGPTMessage("system", "You are a helpful assistant."));
+      messages.add(new ChatGPTImpl.ChatGPTMessage("user", prompt));
+      bodyParams.put("messages", messages);
+      bodyParams.put("max_tokens", 1024);
+      bodyParams.put("temperature", 0);
+      String responseString = HttpClientUtil.sendPostRequest2(uri, headerParams, bodyParams);
+
+      JSONObject responseJson = new JSONObject(responseString);
+      JSONArray choices = responseJson.getJSONArray("choices");
+      JSONObject message = choices.getJSONObject(0).getJSONObject("message");
+      result = message.getString("content");
+      result = result.trim();
+
+    } catch (Exception e) {
+      log.error("Exception:", e);
+    } finally {
+      //      添加记录
+      ChatGPT chatGPT = new ChatGPT();
+      chatGPT.setUserId(SecurityUserUtils.getUser().getId());
+      chatGPT.setPrompt(prompt);
+      if (StringUtils.isNotBlank(speechText)) {
+        chatGPT.setSpeechText(speechText);
+      }
+      chatGPT.setContent(result);
+      chatGPT.setCreateTime(new Date());
+      chatGPT.setUpdateTime(new Date());
+      save(chatGPT);
+      return result;
+    }
+  }
   @Override
   public IPage<ChatGPT> page(Page page, ChatGPT chatGPT) {
 

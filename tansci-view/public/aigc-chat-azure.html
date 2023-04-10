@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- 手机版 -->
+    <title>AIGC-Chat GPT4</title>
+    <meta charset="utf-8" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="css/aigcstyle.css">
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+      <div class="rightSide">
+      <div class="header" id='header'>
+        <div >
+     
+          <span style="text-align: center;display:block;">欢迎使用 Touchstone 版 AIGC-Chat GPT4！ 为了最好的体验，请想好问题才提问。</span>
+        </div>
+       
+      </div>
+
+  
+   
+   
+   
+   
+        <div class="chatBox" id='chatBox'>
+        </div>
+        
+        <div><label for="promptTips" id='promptTips'>提问最大支持2000个字符长度！</label></div>
+        <div class="chatBox_input">
+          <textarea id="prompt" name="prompt" rows="5" cols="40" 
+          style="width:80%;height:100%;font-size:18px;border: none;border-radius: 8px;" placeholder="请输入您的问题?"></textarea>
+         
+          <button id="submit" class='chat-send-btn' >Send</button>
+        </div>
+        
+      </div>
+      </div>
+    </div>
+  </body>
+
+  <script>
+      var speechText='';
+      var promptText=  localStorage.getItem('promptText');
+            $('#prompt').val(promptText);
+    $('#submit').click(function () {
+              var prompt = $('#prompt').val();
+              if (!prompt) {
+                  return;
+              }
+              if (prompt.length > 2000) {
+                  $('#promptTips').html('<span style="color:red">当前长度为' + prompt.length + ',已超出最大2000字符长度限制！</span>');
+                  return;
+              }else{
+                  $('#promptTips').html('提问最大支持2000个字符长度！');
+              }
+
+
+              localStorage.setItem('promptText',prompt);
+              onChatGPT(prompt);
+              $('#prompt').val('');
+          });
+          function onChatGPT(prompt) {
+          if(!prompt){ 
+              return;
+          }
+          var token = localStorage.getItem('token');
+          if(!token){
+              // window.location.href= "https://opencast.tsi.edu.sg";
+              localStorage.setItem('chat',2);
+              // window.open("/");
+              window.location.href="/";
+
+              return;
+          }
+          var contentCache=$('#response').val();
+var parent = document.getElementById('chatBox');
+              //添加div
+var div = document.createElement("div");
+//设置div属性
+
+div.className="message frnd_message";
+div.innerHTML ="<p>"+ getCurrentTime() + "</br>" +prompt+"</p>";//添加文字
+parent.scrollTop=parent.scrollHeight+parent.clientHeight;
+parent.appendChild(div);
+  
+          // 入库数据
+
+          // 生产 +"&remark="+remark
+          var url = "https://opencast.tsi.edu.sg/tansci/chatGPT/send2Azure?prompt=" + encodeURIComponent(prompt)+"&speechText="+encodeURIComponent(speechText);
+          // 开发
+          // var url = "http://localhost:8005/tansci/chatGPT/send2Azure?prompt=" + encodeURIComponent(prompt)+"&speechText="+encodeURIComponent(speechText);
+
+
+
+          var a = new XMLHttpRequest();
+          a.open("Post", url);
+          a.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+          a.setRequestHeader("Authorization", 'Bearer ' + token);
+
+          a.send();
+          a.onload = function () {
+              console.log("this.responseText: " + this.responseText);
+              var data = this.responseText;
+              var jsonData=JSON.parse(data);
+              // 验证token过期，返回401，则跳转到登录界面
+              if(jsonData.code==401){
+                localStorage.setItem('chat',1);
+              // window.open("/");
+              window.location.href="/";
+              return;
+              }
+              const reply = jsonData.result;
+              var thisResponse=getCurrentTime() + '  <br>' + reply + "\r\n\r\n";
+
+              //添加div
+              var div = document.createElement("div");
+//设置div属性
+div.className="message my_message";
+div.innerHTML ="<p>"+ thisResponse+"</p>";//添加文字
+parent.scrollTop=parent.scrollHeight+parent.clientHeight;
+parent.appendChild(div);
+          }
+      }
+        /**
+* 获取当前日期
+* @returns {string} 返回值类型”yyyy-MM-dd HH:mm:ss“，例如：2022-09-13 21:18:23。
+*/
+function getCurrentTime() {
+            var datetime = new Date();
+            var year = datetime.getFullYear();
+            var month = datetime.getMonth() + 1 < 10 ? "0" + (datetime.getMonth() + 1) : datetime.getMonth() + 1;
+            var date = datetime.getDate() < 10 ? "0" + datetime.getDate() : datetime.getDate();
+            var date = datetime.getDate() < 10 ? "0" + datetime.getDate() : datetime.getDate();
+            var hour = datetime.getHours() < 10 ? "0" + datetime.getHours() : datetime.getHours();
+            var minute = datetime.getMinutes() < 10 ? "0" + datetime.getMinutes() : datetime.getMinutes();
+            var second = datetime.getSeconds() < 10 ? "0" + datetime.getSeconds() : datetime.getSeconds();
+            return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
+        }
+</script>
+
+</html>

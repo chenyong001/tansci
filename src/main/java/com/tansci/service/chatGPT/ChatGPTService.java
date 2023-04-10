@@ -16,6 +16,8 @@ public interface ChatGPTService {
 
   String send2OpenAi(String prompt, String speechText);
 
+  String send2Azure(String prompt, String speechText);
+
   IPage<ChatGPT> page(Page page, ChatGPT chatGPT);
 
   boolean del(ChatGPT chatGPT);

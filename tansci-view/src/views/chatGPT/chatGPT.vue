@@ -19,6 +19,9 @@
                     <div>
             <el-button type="primary" @click="onChatGptOpenAI">AIGC-Chat语音版</el-button>
           </div>
+                     <div>
+            <el-button type="primary" @click="onChatGptAzure">AIGC-Chat Azure文字版</el-button>
+          </div>
           <div><el-button type="primary" @click="onExportChatGPTTxt">导出</el-button></div>
 
           <div>
@@ -58,6 +61,10 @@ const onChatGpt = () => {
 };
 const onChatGptOpenAI = () => {
   window.open("/index-azure-aigc-chat-openai.html");
+};
+const onChatGptAzure = () => {
+  window.open("/aigc-chat-azure");
+  // window.open("/aigc-chat-azure.html");
 };
 
 const menuClick = val => {

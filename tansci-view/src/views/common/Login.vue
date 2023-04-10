@@ -115,12 +115,18 @@
 				userStore.setUser(res.result);
 				tokenStore.setToken(res.result.token);
 				var chatFlag=localStorage.getItem('chat');
-				if(chatFlag){
+				if(chatFlag&&chatFlag==1){
 					//  window.location.href= "http://localhost/index-chatgpt-openai.html";
 					// window.open("/chatGPT.html");
 					window.location.href="/aigc-chat";
 					localStorage.removeItem('chat');
-				}else{
+				}else if(chatFlag&&chatFlag==2){
+					//  window.location.href= "http://localhost/index-chatgpt-openai.html";
+					// window.open("/chatGPT.html");
+					window.location.href="/aigc-chat-azure";
+					localStorage.removeItem('chat');
+				}
+				else{
 					router.push({path: 'main'});
 				}
 				
