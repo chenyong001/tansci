@@ -45,5 +45,17 @@ export default[
         name: 'noteDetail',
         meta: {title: "创建"},
         component: () => import('@/views/collect/NoteDetail.vue')
+    },
+    {
+        path: '/mobile/AIChat',
+        name: 'aiChat',
+        meta: {title: "AIChat"},
+        component: () => import('@/views/mobile/MobileAIChat.vue')
+    },
+    {
+        path: '/mobile/ASR',
+        name: 'aiASR',
+        meta: {title: "实时语音识别"},
+        component: () => import('@/views/mobile/MobileASR.vue')
     }
 ]

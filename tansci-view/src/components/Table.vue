@@ -77,7 +77,7 @@
     </div>
 </template>
 <script setup>
-    import {defineProps, reactive, toRefs} from 'vue'
+    import {reactive, toRefs} from 'vue'
     
     const prop = defineProps({
         loading: {

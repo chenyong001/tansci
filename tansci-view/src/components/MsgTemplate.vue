@@ -21,7 +21,7 @@
     </div>
 </template>
 <script setup>
-    import {defineProps, defineExpose, reactive, toRefs} from 'vue'
+    import { defineExpose, reactive, toRefs} from 'vue'
 
     const prop = defineProps({
         content: {

@@ -22,7 +22,7 @@ const router = createRouter({
 })
 
 NProgress.inc(0.2)
-NProgress.configure({ easing: 'ease', speed: 600, showSpinner: false })
+// NProgress.configure({ easing: 'ease', speed: 200, showSpinner: true })
 
 let flag = true // 刷新标识
 router.beforeEach(async (to, from, next) => {
@@ -30,9 +30,9 @@ router.beforeEach(async (to, from, next) => {
     NProgress.start()
 
     // 是否登陆
-    if (!localStorage.getItem('token') && to.path !== "/login") {
-        return next({ path: "/login" });
-    };
+    // if (!localStorage.getItem('token') && to.path !== "/login") {
+    //     return next({ path: "/login" });
+    // };
 
     // 设置头部
     if (to.meta.title) {
@@ -46,6 +46,7 @@ router.beforeEach(async (to, from, next) => {
         const menuStore = useMenuStore();
         await  menuList({types:'1,2,3', status: 1}).then((res)=>{
             let result = routerFilter(res.result)
+            console.log('rrrr->',result)
             result.push({path:'/:pathMatch(.*)*', redirect:'/404'})
             result.forEach((item) => {
                 router.addRoute(item)

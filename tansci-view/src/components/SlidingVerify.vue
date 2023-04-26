@@ -12,7 +12,7 @@
     </div>
 </template>
 <script setup>
-    import {defineProps, reactive, toRefs, nextTick} from 'vue'
+    import {reactive, toRefs, nextTick} from 'vue'
 
     const prop = defineProps({
         // 成功函数

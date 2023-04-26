@@ -2,7 +2,7 @@ import path from "path"
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-const url = 'http://127.0.0.1:8005';
+const url = 'http://opencast.tsi.edu.sg';//'http://127.0.0.1:8005';
 
 export default defineConfig({
     plugins: [vue()],
@@ -26,7 +26,7 @@ export default defineConfig({
             'Access-Control-Allow-Origin': '*',
         },
         disableHostCheck: true,
-        port: 80,
+        port: 8006,
         proxy: {
             '/tansci': {
                 target: url,

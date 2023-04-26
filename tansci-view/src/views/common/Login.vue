@@ -6,7 +6,7 @@
 					<el-image :src="loginLogo"  style="width: 100%; height: 100%;"></el-image>
 				</div> -->
 				<div class="login-form">
-					<el-form v-if="loginMode" :model="loginForm" :rules="rules" ref="loginRuleForm">
+					<el-form v-if="loginMode" :model="loginForm" ref="loginRuleForm">
 						<div class="login-form-title">欢迎登录 Touchstone AI</div>
 						<el-form-item prop="username" :rules="[
 								{required: true,message: '请输入用户名',trigger: 'blur'},
@@ -222,7 +222,7 @@
 			}
 			.login-form{
 				width: 20rem;
-				padding: 8rem 5rem;
+				// padding: 8rem 5rem;
 				.login-form-title{
 					font-size: 18px;
 					font-weight: 700;
