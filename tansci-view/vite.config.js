@@ -17,7 +17,8 @@ export default defineConfig({
             scss: {
                 additionalData: `@use "@/styles/element/index.scss" as *;`,
             },
-        }
+        },
+        // postcss:{}
     },
 
     // 反向代理
