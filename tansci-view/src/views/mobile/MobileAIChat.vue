@@ -17,7 +17,7 @@
       </div>
       
     </div>
-    <div class="container">
+    <div class="chat-container">
       <div 
         v-if="!showResult"
         class="guide"
@@ -173,7 +173,7 @@ export default {
     }
 
   }
-  .container{
+  .chat-container{
     width:100%;
     height: calc(100% - 3.6rem - 4.28rem);
     background: #ffffff;
