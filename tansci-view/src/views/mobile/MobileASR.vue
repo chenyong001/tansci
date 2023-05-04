@@ -1,32 +1,12 @@
 <template>
   <div class="ai-asr">
-    <div class="header">
-      <div class="box">
-        <div class="btn">
-          <ArrowLeftIcon class="h-6 w-6 text-slate-950" />
-        </div>
-        <div class="title">
-          <p class="main">实时语音识别</p>
-          <p class="sub">online</p>
-        </div>
-      </div>
-      <div class="box">
-        <div class="avatar">
-          <UserIcon class="h-6 w-6 text-slate-950" />
-        </div>
-      </div>
-      
-    </div>
+    <mobile-header title="实时语音识别"></mobile-header>
     <div class="asr-container">
       <div class="clear-btn">
         <p>清空识别内容</p>
         <XCircleIcon class="h-6 w-6 text-slate-950" />
       </div>
-      <textarea class="result-textarea"  readonly>可以吗？可以吗？
-你在听吗？在识别吗？
-好的。
-好的，好的。
-这里是实时语音识别测试</textarea>
+      <textarea class="result-textarea"  readonly>{{resultContent}}</textarea>
     </div>
     <div class="footer">
       <div class="upper">
@@ -49,16 +29,13 @@
 </template>
 
 <script>
-import '../../styles/reset.scss'
-import '../../styles/mobile.scss'
-import { ArrowLeftIcon } from '@heroicons/vue/24/solid'
-import { UserIcon } from '@heroicons/vue/24/solid'
 import {Languages} from './arg'
 import {SpeakerWaveIcon,SpeakerXMarkIcon,XCircleIcon} from '@heroicons/vue/24/solid'
+import MobileHeader from './component/MobileHeader.vue'
+
 export default {
 components:{
-    ArrowLeftIcon,
-    UserIcon,
+    MobileHeader,
     SpeakerWaveIcon,
     SpeakerXMarkIcon,
     XCircleIcon
@@ -66,7 +43,8 @@ components:{
   data(){
     return {
         languages:Languages,
-        selectedLanguages:{}
+        selectedLanguages:{},
+        resultContent:''
       }
     },
     created(){
@@ -76,63 +54,10 @@ components:{
 </script>
 
 <style lang="scss">
-#app{
-  width: 100%;
-  height: 100%;
-}
 .ai-asr{
   width: 100%;
   height: 100%;
-  .btn{
-      width: 3rem;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  .header{
-    width: 100%;
-    height: 3.6rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #fff;
-    border-bottom: 1px solid #efefef;
-    
-    .box {
-      width: auto;
-      height: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .title {
-      font-size: 1.14rem;
-      color: #333333;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: center;
-      .main{
-        font-weight: 600;
-      }
-      .sub{
-          font-size: 0.96rem;
-          color:#2BD3C2;
-      }
-    }
-    .avatar{
-          width: 3.12rem;
-          height: 3.12rem;
-          background: #D1D5DA;
-          border-radius: 1.71rem;
-          margin-right: 1rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-    }
-  }
+  
   .asr-container{
     position: relative;
     width: 100%;
@@ -150,10 +75,10 @@ components:{
       position: absolute;
       bottom: 1rem;
       right: 1.2rem;
-      
       display: flex;
       justify-content: center;
       align-items: center;
+      
       >p{
         margin-right: 4px;
         margin-top: 2px;
@@ -190,6 +115,7 @@ components:{
         appearance: none;
         font-size: 1rem;
         color: #333;
+        box-shadow: 0 8px 24px 0 rgba(18,97,255,.1);
       }
       input{
           width: 10.8rem;
@@ -201,6 +127,7 @@ components:{
          text-align: center;
          color: #333;
          font-size: 1rem;
+         box-shadow: 0 8px 24px 0 rgba(18,97,255,.1);
     }
     input::placeholder {
         font-weight: bold;
@@ -219,6 +146,7 @@ components:{
     background: #fff;
     height: 4.8rem;
     border-radius: 1rem;
+    box-shadow: 0 8px 24px 0 rgba(18,97,255,.1);
     > p{
       margin-left: 8px;
 

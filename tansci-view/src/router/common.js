@@ -57,5 +57,11 @@ export default[
         name: 'aiASR',
         meta: {title: "实时语音识别"},
         component: () => import('@/views/mobile/MobileASR.vue')
-    }
+    },
+    {
+        path: '/mobile/main',
+        name: 'mobileMain',
+        meta: { title: "首页" },
+        component: () => import('@/views/mobile/MobileMain.vue'),
+    },
 ]

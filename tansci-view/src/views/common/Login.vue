@@ -55,6 +55,7 @@
 	import {useUserStore, useTokenStore} from '@/store/settings'
 	import {login,wxLogin,wxCallback} from '@/api/systemApi'
 	import SlidingVerify from '@/components/SlidingVerify.vue'
+	import {isMobile} from '../../utils/utils'
 
 	const userStore = useUserStore();
 	const tokenStore = useTokenStore();
@@ -125,9 +126,13 @@
 					// window.open("/chatGPT.html");
 					window.location.href="/aigc-chat-azure";
 					localStorage.removeItem('chat');
-				}
-				else{
-					router.push({path: 'main'});
+				} else {
+					if((isMobile())){
+						router.push({path: 'mobile/main'});
+					} else {
+						router.push({path: 'main'});
+					}
+					
 				}
 				
 			}

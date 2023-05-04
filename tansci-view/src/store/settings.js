@@ -47,15 +47,15 @@ export const useTokenStore = defineStore('token', {
             return this.token;
         }
     },
-    actions: {
-        setToken (data) {
+    actions: {
+        setToken (data) {
             this.token = data
             localStorage.setItem('token', data)
         },
         delToken () {
             localStorage.clear()
         }
-    }
+    }
 })
 
 // 存储菜单信息
@@ -71,13 +71,13 @@ export const useMenuStore = defineStore('menu', {
             return this.menu;
         }
     },
-    actions: {
-        setMenu (data) {
+    actions: {
+        setMenu (data) {
             this.menu = data
             localStorage.setItem('menu', JSON.stringify(data))
         },
         delMenu () {
             localStorage.clear()
         }
-    }
+    }
 })

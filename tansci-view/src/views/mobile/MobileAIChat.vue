@@ -1,22 +1,6 @@
 <template>
   <div class="ai-chat">
-    <div class="header">
-      <div class="box">
-        <div class="btn">
-          <ArrowLeftIcon class="h-6 w-6 text-slate-950" />
-        </div>
-        <div class="title">
-          <p class="main">Chat AI</p>
-          <p class="sub">online</p>
-        </div>
-      </div>
-      <div class="box">
-        <div class="avatar">
-          <UserIcon class="h-6 w-6 text-slate-950" />
-        </div>
-      </div>
-      
-    </div>
+    <mobile-header title="Chat AI"></mobile-header>
     <div class="chat-container">
       <div 
         v-if="!showResult"
@@ -53,9 +37,9 @@
     <div class="footer">
       <FireIcon class="h-6 w-6 text-slate-950" style="color:#EC784A;"/>
       <div class="input-box">
-        <input placeholder="请输入最多200字" type="text" maxlength="200">
+        <input placeholder="请输入最多200字" v-model="textVal" type="text" maxlength="200">
       </div>
-      <div class="btn send">
+      <div class="btn send" @click="send">
         <PaperAirplaneIcon class="h-6 w-6 text-slate-950" />
       </div>
     </div>
@@ -63,62 +47,70 @@
 </template>
 
 <script>
-import '../../styles/reset.scss'
-import '../../styles/mobile.scss'
-import { ArrowLeftIcon } from '@heroicons/vue/24/solid'
-import { UserIcon } from '@heroicons/vue/24/solid'
-import { LightBulbIcon } from '@heroicons/vue/24/solid'
-import { FireIcon } from '@heroicons/vue/24/solid'
-import { PaperAirplaneIcon } from '@heroicons/vue/24/solid'
+import { LightBulbIcon,FireIcon,PaperAirplaneIcon } from '@heroicons/vue/24/solid'
 import aiHeadImg from '../../assets/image/avatar_ai.png'
 import userHeadImg from '../../assets/image/avatar_2.png'
 import {dateTimeFormat} from '../../utils/utils'
+import MobileHeader from './component/MobileHeader.vue'
 
 export default {
   components:{
-    ArrowLeftIcon,
-    UserIcon,
+    MobileHeader,
     LightBulbIcon,
     FireIcon,
     PaperAirplaneIcon
   },
   data(){
     return {
+      textVal:'',
       showResult:false,
       aiHeadImg,
       userHeadImg,
       resultList:[
-        {
-          avatar:userHeadImg,
-          timeStr:dateTimeFormat(new Date()),
-          content:'简单介绍你自己'
-        },
-        {
-          avatar:aiHeadImg,
-          timeStr:dateTimeFormat(new Date()),
-          content:'我是 Touchstone 训练的 AI 大型语言模型。我可以回答各种问题，并生成文本。如果您有任何问题，请告诉我，我将尽力帮助您'
-        },
-        {
-          avatar:userHeadImg,
-          timeStr:dateTimeFormat(new Date()),
-          content:'空气是什么?'
-        },
-        {
-          avatar:aiHeadImg,
-          timeStr:dateTimeFormat(new Date()),
-          content:'空气是一种由几种气体混合而成的物质，主要是氮气（约78％）和氧气（约21％）。剩余1％的空气由其他气体，如二氧化碳，氖和氩组成。空气对生命至关重要，因为它提供了生物呼吸所需的氧气。它还有助于调节温度和分配水分。空气在我们周围随处可见，它具有质量和重量。它是一种流体，这意味着它可以随着温度，压力和其他环境因素的变化流动和移动。空气还可以传播声音，有助于分配热和冷。空气污染是世界许多地区的一个主要问题，因为它可能对环境和人类健康产生严重影响。化石燃料的燃烧，森林砍伐和其他人类活动导致了空气污染物的增加，如烟雾，温室气体和颗粒物。采取行动以减少空气污染并保护我们呼吸的空气质量非常重要。'
-        },
+        // {
+        //   avatar:userHeadImg,
+        //   timeStr:dateTimeFormat(new Date()),
+        //   content:'简单介绍你自己'
+        // },
+        // {
+        //   avatar:aiHeadImg,
+        //   timeStr:dateTimeFormat(new Date()),
+        //   content:'我是 Touchstone 训练的 AI 大型语言模型。我可以回答各种问题，并生成文本。如果您有任何问题，请告诉我，我将尽力帮助您'
+        // },
+        // {
+        //   avatar:userHeadImg,
+        //   timeStr:dateTimeFormat(new Date()),
+        //   content:'空气是什么?'
+        // },
+        // {
+        //   avatar:aiHeadImg,
+        //   timeStr:dateTimeFormat(new Date()),
+        //   content:'空气是一种由几种气体混合而成的物质，主要是氮气（约78％）和氧气（约21％）。剩余1％的空气由其他气体，如二氧化碳，氖和氩组成。空气对生命至关重要，因为它提供了生物呼吸所需的氧气。它还有助于调节温度和分配水分。空气在我们周围随处可见，它具有质量和重量。它是一种流体，这意味着它可以随着温度，压力和其他环境因素的变化流动和移动。空气还可以传播声音，有助于分配热和冷。空气污染是世界许多地区的一个主要问题，因为它可能对环境和人类健康产生严重影响。化石燃料的燃烧，森林砍伐和其他人类活动导致了空气污染物的增加，如烟雾，温室气体和颗粒物。采取行动以减少空气污染并保护我们呼吸的空气质量非常重要。'
+        // },
       ]
     }
   },
+  methods:{
+    send(){
+      this.resultList.push({
+          avatar:userHeadImg,
+          timeStr:dateTimeFormat(new Date()),
+          content:this.textVal
+        },)
+      this.showResult = true
+      setTimeout(()=>{
+        this.resultList.push({
+          avatar:aiHeadImg,
+          timeStr:dateTimeFormat(new Date()),
+          content:'我是 Touchstone 训练的 AI 大型语言模型。我可以回答各种问题，并生成文本。如果您有任何问题，请告诉我，我将尽力帮助您'
+        })
+      },2000)
+    }
+  }
 }
 </script>
 
 <style lang="scss">
-#app{
-  width: 100%;
-  height: 100%;
-}
 .ai-chat{
   width: 100%;
   height: 100%;
@@ -129,58 +121,15 @@ export default {
       align-items: center;
       justify-content: center;
     }
-  .header{
-    width: 100%;
-    height: 3.6rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #fff;
-    border-bottom: 1px solid #efefef;
-    
-    .box {
-      width: auto;
-      height: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .title {
-      font-size: 1.14rem;
-      color: #333333;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: center;
-      .main{
-        font-weight: 600;
-      }
-      .sub{
-          font-size: 0.96rem;
-          color:#2BD3C2;
-      }
-    }
-    .avatar{
-          width: 3.12rem;
-          height: 3.12rem;
-          background: #D1D5DA;
-          border-radius: 1.71rem;
-          margin-right: 1rem;
-          display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-  }
   .chat-container{
     width:100%;
     height: calc(100% - 3.6rem - 4.28rem);
     background: #ffffff;
-        display: flex;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    
     .guide{
       display: flex;
       flex-direction: column;
@@ -198,11 +147,11 @@ export default {
       }
       .example-tip{
         width: 80%;
-    text-align: center;
-    background: rgba(36, 189, 184, 0.4);//#24BDB8;
-    padding: 1rem;
-    border-radius: 1rem;
-    color: #fff;
+        text-align: center;
+        background: rgba(36, 189, 184, 0.4);//#24BDB8;
+        padding: 1rem;
+        border-radius: 1rem;
+        color: #fff;
       }
     }
     .result {
