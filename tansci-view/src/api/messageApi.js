@@ -1,5 +1,5 @@
 import axios from '../utils/axios'
-
+import env from '../config/env'
 // ==============邮件===============================================
 
 /**
@@ -8,7 +8,7 @@ import axios from '../utils/axios'
  * @returns 
  */
 export function templatePage(params) {
-    return axios.get('/tansci/template/page', { params: params });
+    return axios.get(env.host.base + '/tansci/template/page', { params: params });
 }
 
 /**
@@ -17,7 +17,7 @@ export function templatePage(params) {
  * @returns 
  */
 export function templateSave(params) {
-    return axios.post('/tansci/template/save', params);
+    return axios.post(env.host.base + '/tansci/template/save', params);
 }
 
 /**
@@ -26,7 +26,7 @@ export function templateSave(params) {
  * @returns 
  */
 export function templateUpdate(params) {
-    return axios.post('/tansci/template/update', params);
+    return axios.post(env.host.base + '/tansci/template/update', params);
 }
 
 /**
@@ -35,7 +35,7 @@ export function templateUpdate(params) {
  * @returns 
  */
 export function templateDel(params) {
-    return axios.get('/tansci/template/delete', { params: params });
+    return axios.get(env.host.base + '/tansci/template/delete', { params: params });
 }
 
 
@@ -45,5 +45,5 @@ export function templateDel(params) {
  * @returns 
  */
 export function logPage(params) {
-    return axios.get('/tansci/template/logPage', { params: params });
+    return axios.get(env.host.base + '/tansci/template/logPage', { params: params });
 }

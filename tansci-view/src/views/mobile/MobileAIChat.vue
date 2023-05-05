@@ -16,16 +16,16 @@
       class="result">
         <ul>
           <li v-for="(item,index) in resultList"
-            :style="{'flex-direction':index % 2 === 0 ? 'row':'row-reverse'}">
+            :style="{'flex-direction':item.isUser ? 'row':'row-reverse'}">
             <div
               class="avatar"
               :style="[{backgroundImage:`url(${item.avatar})`}]"
             />
             <div class="box"
-            :style="[{'flex-direction':index % 2 === 0 ? 'row':'row-reverse'},{'margin-left':index % 2 === 0 ? '0.4rem':'0'},{'margin-right':index % 2 !== 0 ? '0.4rem':'0'}]">
-              <div :class="[{'arrow-l':index % 2 === 0 },{'arrow-r':index % 2 !== 0 }]"></div>
+            :style="[{'flex-direction':item.isUser ? 'row':'row-reverse'},{'margin-left':item.isUser ? '0.4rem':'0'},{'margin-right':item.isAI ? '0.4rem':'0'}]">
+              <div :class="[{'arrow-l':item.isUser },{'arrow-r':item.isAI }]"></div>
               <div class="inner-box"
-              :style="[{'align-items': index % 2 === 0 ?'flex-start':'flex-end'},{'margin-right': index % 2 !== 0 ? '6px':'0'},{'margin-left': index % 2 === 0 ? '6px':'0'}]">
+              :style="[{'align-items': item.isUser ?'flex-start':'flex-end'},{'margin-right': item.isAI ? '6px':'0'},{'margin-left': item.isUser ? '6px':'0'}]">
                 <p class="time">时间:<span>{{item.timeStr}}</span></p>
                 <div class="desc">{{item.content}}</div>
               </div>
@@ -39,7 +39,7 @@
       <div class="input-box">
         <input placeholder="请输入最多200字" v-model="textVal" type="text" maxlength="200">
       </div>
-      <div class="btn send" @click="send">
+      <div class="btn send" @click="requestAI">
         <PaperAirplaneIcon class="h-6 w-6 text-slate-950" />
       </div>
     </div>
@@ -52,6 +52,7 @@ import aiHeadImg from '../../assets/image/avatar_ai.png'
 import userHeadImg from '../../assets/image/avatar_2.png'
 import {dateTimeFormat} from '../../utils/utils'
 import MobileHeader from './component/MobileHeader.vue'
+import {send} from '../../api/chatApi'
 
 export default {
   components:{
@@ -66,45 +67,34 @@ export default {
       showResult:false,
       aiHeadImg,
       userHeadImg,
-      resultList:[
-        // {
-        //   avatar:userHeadImg,
-        //   timeStr:dateTimeFormat(new Date()),
-        //   content:'简单介绍你自己'
-        // },
-        // {
-        //   avatar:aiHeadImg,
-        //   timeStr:dateTimeFormat(new Date()),
-        //   content:'我是 Touchstone 训练的 AI 大型语言模型。我可以回答各种问题，并生成文本。如果您有任何问题，请告诉我，我将尽力帮助您'
-        // },
-        // {
-        //   avatar:userHeadImg,
-        //   timeStr:dateTimeFormat(new Date()),
-        //   content:'空气是什么?'
-        // },
-        // {
-        //   avatar:aiHeadImg,
-        //   timeStr:dateTimeFormat(new Date()),
-        //   content:'空气是一种由几种气体混合而成的物质，主要是氮气（约78％）和氧气（约21％）。剩余1％的空气由其他气体，如二氧化碳，氖和氩组成。空气对生命至关重要，因为它提供了生物呼吸所需的氧气。它还有助于调节温度和分配水分。空气在我们周围随处可见，它具有质量和重量。它是一种流体，这意味着它可以随着温度，压力和其他环境因素的变化流动和移动。空气还可以传播声音，有助于分配热和冷。空气污染是世界许多地区的一个主要问题，因为它可能对环境和人类健康产生严重影响。化石燃料的燃烧，森林砍伐和其他人类活动导致了空气污染物的增加，如烟雾，温室气体和颗粒物。采取行动以减少空气污染并保护我们呼吸的空气质量非常重要。'
-        // },
-      ]
+      resultList:[]
     }
   },
   methods:{
-    send(){
+    requestAI(){
       this.resultList.push({
           avatar:userHeadImg,
           timeStr:dateTimeFormat(new Date()),
-          content:this.textVal
+          content:this.textVal,
+          isUser:true
         },)
       this.showResult = true
-      setTimeout(()=>{
-        this.resultList.push({
-          avatar:aiHeadImg,
-          timeStr:dateTimeFormat(new Date()),
-          content:'我是 Touchstone 训练的 AI 大型语言模型。我可以回答各种问题，并生成文本。如果您有任何问题，请告诉我，我将尽力帮助您'
-        })
-      },2000)
+      
+      const item = {
+        avatar:aiHeadImg,
+        content:'抱歉,服务器无响应请稍后重试',
+        isAI:true
+      }
+      send(this.textVal).then(res=>{
+        if(res.code === 200){
+            item.content = res.result  
+        }
+        item.timeStr= dateTimeFormat(new Date())
+        this.resultList.push(item)
+      }).catch(()=>{
+        item.timeStr= dateTimeFormat(new Date())
+        this.resultList.push(item)
+      })
     }
   }
 }

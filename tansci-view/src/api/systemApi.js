@@ -1,5 +1,5 @@
 import axios from '../utils/axios'
-
+import env from '../config/env'
 // ==================登录=============================
 /**
  * 登录
@@ -7,7 +7,7 @@ import axios from '../utils/axios'
  * @returns {Promise<AxiosResponse<T>>}
  */
 export function login(params) {
-    return axios.post('/tansci/user/login', params);
+    return axios.post(env.host.base + '/tansci/user/login', params);
 }
 
 /**
@@ -16,7 +16,7 @@ export function login(params) {
  * @returns {Promise<AxiosResponse<T>>}
  */
 export function wxLogin(params) {
-    return axios.post('/tansci/auth/wxLogin', params);
+    return axios.post(env.host.base + '/tansci/auth/wxLogin', params);
 }
 
 /**
@@ -25,7 +25,7 @@ export function wxLogin(params) {
  * @returns {Promise<AxiosResponse<T>>}
  */
 export function wxCallback(params) {
-    return axios.post('/tansci/auth/wxCallback', params);
+    return axios.post(env.host.base + '/tansci/auth/wxCallback', params);
 }
 
 /**
@@ -34,7 +34,7 @@ export function wxCallback(params) {
  * @returns {Promise<AxiosResponse<T>>}
  */
 export function logout(params) {
-    return axios.post('/tansci/user/logout', params);
+    return axios.post(env.host.base + '/tansci/user/logout', params);
 }
 
 
@@ -45,7 +45,7 @@ export function logout(params) {
  * @returns 
  */
 export function dicList(params) {
-    return axios.get('/tansci/dic/dicList', { params: params });
+    return axios.get(env.host.base + '/tansci/dic/dicList', { params: params });
 }
 
 /**
@@ -54,7 +54,7 @@ export function dicList(params) {
  * @returns 
  */
 export function getGroupNameByList(params) {
-    return axios.get('/tansci/dic/getGroupNameByList', { params: params });
+    return axios.get(env.host.base + '/tansci/dic/getGroupNameByList', { params: params });
 }
 
 /**
@@ -63,7 +63,7 @@ export function getGroupNameByList(params) {
  * @returns 
  */
 export function dicSave(params) {
-    return axios.post('/tansci/dic/save', params);
+    return axios.post(env.host.base + '/tansci/dic/save', params);
 }
 
 /**
@@ -72,7 +72,7 @@ export function dicSave(params) {
  * @returns 
  */
 export function dicUpdate(params) {
-    return axios.post('/tansci/dic/update', params);
+    return axios.post(env.host.base + '/tansci/dic/update', params);
 }
 
 /**
@@ -81,7 +81,7 @@ export function dicUpdate(params) {
  * @returns 
  */
 export function dicDel(params) {
-    return axios.get('/tansci/dic/del', { params: params });
+    return axios.get(env.host.base + '/tansci/dic/del', { params: params });
 }
 
 // =================用户信息===========================
@@ -91,7 +91,7 @@ export function dicDel(params) {
  * @returns 
  */
 export function userPage(params) {
-    return axios.get('/tansci/user/page', { params: params });
+    return axios.get(env.host.base + '/tansci/user/page', { params: params });
 }
 
 /**
@@ -100,7 +100,7 @@ export function userPage(params) {
  * @returns 
  */
 export function userList(params) {
-    return axios.get('/tansci/user/list', { params: params });
+    return axios.get(env.host.base + '/tansci/user/list', { params: params });
 }
 
 /**
@@ -109,7 +109,7 @@ export function userList(params) {
  * @returns 
  */
 export function addUser(params) {
-    return axios.post('/tansci/user/save', params);
+    return axios.post(env.host.base + '/tansci/user/save', params);
 }
 
 /**
@@ -118,7 +118,7 @@ export function addUser(params) {
  * @returns 
  */
 export function updateUser(params) {
-    return axios.post('/tansci/user/update', params);
+    return axios.post(env.host.base + '/tansci/user/update', params);
 }
 
 /**
@@ -127,7 +127,7 @@ export function updateUser(params) {
  * @returns 
  */
 export function dicUser(params) {
-    return axios.get('/tansci/user/del', { params: params });
+    return axios.get(env.host.base + '/tansci/user/del', { params: params });
 }
 
 /**
@@ -136,7 +136,7 @@ export function dicUser(params) {
  * @returns 
  */
 export function modifyPass(params) {
-    return axios.post('/tansci/user/modifyPass', params);
+    return axios.post(env.host.base + '/tansci/user/modifyPass', params);
 }
 
 // =====================菜单管理==================================
@@ -147,7 +147,7 @@ export function modifyPass(params) {
  * @returns 
  */
 export function menuList(params) {
-    return axios.get('/tansci/menu/list', { params: params });
+    return axios.get(`${env.host.base}/tansci/menu/list`, { params: params });
 }
 
 /**
@@ -156,7 +156,7 @@ export function menuList(params) {
  * @returns 
  */
 export function delMenu(params) {
-    return axios.get('/tansci/menu/del', { params: params });
+    return axios.get(env.host.base + '/tansci/menu/del', { params: params });
 }
 
 /**
@@ -165,7 +165,7 @@ export function delMenu(params) {
  * @returns 
  */
 export function saveMenu(params) {
-    return axios.post('/tansci/menu/save', params);
+    return axios.post(env.host.base + '/tansci/menu/save', params);
 }
 
 /**
@@ -174,7 +174,7 @@ export function saveMenu(params) {
  * @returns 
  */
 export function updateMenu(params) {
-    return axios.post('/tansci/menu/update', params);
+    return axios.post(env.host.base + '/tansci/menu/update', params);
 }
 
 // =================角色管理============================
@@ -185,7 +185,7 @@ export function updateMenu(params) {
  * @returns 
  */
 export function rolePage(params) {
-    return axios.get('/tansci/role/page', { params: params });
+    return axios.get(env.host.base + '/tansci/role/page', { params: params });
 }
 
 /**
@@ -194,7 +194,7 @@ export function rolePage(params) {
  * @returns 
  */
 export function roleList(params) {
-    return axios.get('/tansci/role/list', { params: params });
+    return axios.get(env.host.base + '/tansci/role/list', { params: params });
 }
 
 /**
@@ -203,7 +203,7 @@ export function roleList(params) {
  * @returns 
  */
 export function delRole(params) {
-    return axios.get('/tansci/role/del', { params: params });
+    return axios.get(env.host.base + '/tansci/role/del', { params: params });
 }
 
 /**
@@ -212,7 +212,7 @@ export function delRole(params) {
  * @returns 
  */
 export function saveRole(params) {
-    return axios.post('/tansci/role/save', params);
+    return axios.post(env.host.base + '/tansci/role/save', params);
 }
 
 /**
@@ -221,7 +221,7 @@ export function saveRole(params) {
  * @returns 
  */
 export function updateRole(params) {
-    return axios.post('/tansci/role/update', params);
+    return axios.post(env.host.base + '/tansci/role/update', params);
 }
 
 /**
@@ -230,7 +230,7 @@ export function updateRole(params) {
  * @returns 
  */
 export function menuRoleList(params) {
-    return axios.get('/tansci/role/menuRoleList', { params: params });
+    return axios.get(env.host.base + '/tansci/role/menuRoleList', { params: params });
 }
 
 /**
@@ -239,7 +239,7 @@ export function menuRoleList(params) {
  * @returns 
  */
 export function menuRoleAdd(params) {
-    return axios.post('/tansci/role/menuRoleAdd', params);
+    return axios.post(env.host.base + '/tansci/role/menuRoleAdd', params);
 }
 
 /**
@@ -248,7 +248,7 @@ export function menuRoleAdd(params) {
  * @returns 
  */
 export function userRoleInfo(params) {
-    return axios.get('/tansci/role/userRoleInfo', { params: params });
+    return axios.get(env.host.base + '/tansci/role/userRoleInfo', { params: params });
 }
 
 /**
@@ -257,7 +257,7 @@ export function userRoleInfo(params) {
  * @returns 
  */
 export function userRoleAdd(params) {
-    return axios.post('/tansci/role/userRoleAdd', params);
+    return axios.post(env.host.base + '/tansci/role/userRoleAdd', params);
 }
 
 // ====================组织机构=========================
@@ -267,7 +267,7 @@ export function userRoleAdd(params) {
  * @returns 
  */
 export function orgList(params) {
-    return axios.get('/tansci/org/list', { params: params });
+    return axios.get(env.host.base + '/tansci/org/list', { params: params });
 }
 
 /**
@@ -276,7 +276,7 @@ export function orgList(params) {
  * @returns 
  */
 export function delOrg(params) {
-    return axios.get('/tansci/org/del', { params: params });
+    return axios.get(env.host.base + '/tansci/org/del', { params: params });
 }
 
 /**
@@ -285,7 +285,7 @@ export function delOrg(params) {
  * @returns 
  */
 export function saveOrg(params) {
-    return axios.post('/tansci/org/save', params);
+    return axios.post(env.host.base + '/tansci/org/save', params);
 }
 
 /**
@@ -294,7 +294,7 @@ export function saveOrg(params) {
  * @returns 
  */
 export function updateOrg(params) {
-    return axios.post('/tansci/org/update', params);
+    return axios.post(env.host.base + '/tansci/org/update', params);
 }
 
 /**
@@ -303,7 +303,7 @@ export function updateOrg(params) {
  * @returns 
  */
 export function orgRoleInfo(params) {
-    return axios.get('/tansci/role/orgRoleInfo', { params: params });
+    return axios.get(env.host.base + '/tansci/role/orgRoleInfo', { params: params });
 }
 
 /**
@@ -312,7 +312,7 @@ export function orgRoleInfo(params) {
  * @returns 
  */
 export function orgRoleAdd(params) {
-    return axios.post('/tansci/role/orgRoleAdd', params);
+    return axios.post(env.host.base + '/tansci/role/orgRoleAdd', params);
 }
 
 // ==============日志===============================================
@@ -323,7 +323,7 @@ export function orgRoleAdd(params) {
  * @returns 
  */
 export function logInfoPage(params) {
-    return axios.get('/tansci/log/logInfoPage', { params: params });
+    return axios.get(env.host.base + '/tansci/log/logInfoPage', { params: params });
 }
 
 /**
@@ -332,7 +332,7 @@ export function logInfoPage(params) {
  * @returns 
  */
 export function logErrorPage(params) {
-    return axios.get('/tansci/log/logErrorPage', { params: params });
+    return axios.get(env.host.base + '/tansci/log/logErrorPage', { params: params });
 }
 
 // ====================任务管理=========================
@@ -342,7 +342,7 @@ export function logErrorPage(params) {
  * @returns 
  */
 export function taskPage(params) {
-    return axios.get('/tansci/taskConfig/page', { params: params });
+    return axios.get(env.host.base + '/tansci/taskConfig/page', { params: params });
 }
 
 /**
@@ -351,7 +351,7 @@ export function taskPage(params) {
  * @returns 
  */
 export function delTask(params) {
-    return axios.get('/tansci/taskConfig/del', { params: params });
+    return axios.get(env.host.base + '/tansci/taskConfig/del', { params: params });
 }
 
 /**
@@ -360,7 +360,7 @@ export function delTask(params) {
  * @returns 
  */
 export function saveTask(params) {
-    return axios.post('/tansci/taskConfig/save', params);
+    return axios.post(env.host.base + '/tansci/taskConfig/save', params);
 }
 
 /**
@@ -369,7 +369,7 @@ export function saveTask(params) {
  * @returns 
  */
 export function updateTask(params) {
-    return axios.post('/tansci/taskConfig/update', params);
+    return axios.post(env.host.base + '/tansci/taskConfig/update', params);
 }
 
 /**
@@ -378,7 +378,7 @@ export function updateTask(params) {
  * @returns 
  */
 export function taskLogPage(params) {
-    return axios.get('/tansci/taskLog/page', { params: params });
+    return axios.get(env.host.base + '/tansci/taskLog/page', { params: params });
 }
 
 /**
@@ -387,7 +387,7 @@ export function taskLogPage(params) {
  * @returns 
  */
 export function taskLogClear(params) {
-    return axios.get('/tansci/taskLog/clear', { params: params });
+    return axios.get(env.host.base + '/tansci/taskLog/clear', { params: params });
 }
 
 // ====================采集管理=========================
@@ -397,7 +397,7 @@ export function taskLogClear(params) {
  * @returns 
  */
 export function collectPage(params) {
-    return axios.get('/tansci/collect/page', { params: params });
+    return axios.get(env.host.base + '/tansci/collect/page', { params: params });
 }
 /**
  * 采集数据分页
@@ -405,7 +405,7 @@ export function collectPage(params) {
  * @returns 
  */
 export function collectDataPage(params) {
-    return axios.get('/tansci/collect/dataPage', { params: params });
+    return axios.get(env.host.base + '/tansci/collect/dataPage', { params: params });
 }
 /**
  * 导出采集数据分页
@@ -415,7 +415,7 @@ export function collectDataPage(params) {
 export function exportTxt(params) {
     return axios({
         method: 'get',
-        url: '/tansci/collect/exportTxt',
+        url: env.host.base + '/tansci/collect/exportTxt',
         responseType: 'blob',
         params: params
       });
@@ -425,7 +425,7 @@ export function exportTxt(params) {
 export function exportSrt(params) {
     return axios({
         method: 'get',
-        url: '/tansci/collect/exportSrt',
+        url: env.host.base + '/tansci/collect/exportSrt',
         responseType: 'blob',
         params: params
       });
@@ -434,7 +434,7 @@ export function exportSrt(params) {
 export function exportWAV(params) {
     return axios({
         method: 'get',
-        url: '/tansci/collect/exportWAV',
+        url: env.host.base + '/tansci/collect/exportWAV',
         responseType: 'blob',
         params: params
       });
@@ -446,7 +446,7 @@ export function exportWAV(params) {
  * @returns 
  */
 export function collect(params) {
-    return axios.get('/tansci/collect/record', { params: params });
+    return axios.get(env.host.base + '/tansci/collect/record', { params: params });
 }
 /**
  * 采集管理
@@ -454,12 +454,12 @@ export function collect(params) {
  * @returns 
  */
 export function sendNote(params) {
-    return axios.get('/tansci/collect/sendNote', { params: params });
+    return axios.get(env.host.base + '/tansci/collect/sendNote', { params: params });
 
 }
 
 export function updateNote(params) {
-    return axios.get('/tansci/collect/updateNote', { params: params });
+    return axios.get(env.host.base + '/tansci/collect/updateNote', { params: params });
 }
 
 
@@ -470,7 +470,7 @@ export function updateNote(params) {
  * @returns 
  */
 export function createNote(params) {
-    return axios.get('/tansci/collect/createNote', { params: params });
+    return axios.get(env.host.base + '/tansci/collect/createNote', { params: params });
   
 }
 
@@ -480,7 +480,7 @@ export function createNote(params) {
  * @returns 
  */
 export function cuttingRecord(params) {
-    return axios.post('/tansci/collect/cuttingRecord', params);
+    return axios.post(env.host.base + '/tansci/collect/cuttingRecord', params);
 }
 /**
  * 合并
@@ -488,7 +488,7 @@ export function cuttingRecord(params) {
  * @returns 
  */
 export function mergeRecord(params) {
-    return axios.post('/tansci/collect/mergeRecord', params);
+    return axios.post(env.host.base + '/tansci/collect/mergeRecord', params);
 }
 /**
  * 删除管理
@@ -496,7 +496,7 @@ export function mergeRecord(params) {
  * @returns 
  */
 export function deleteNote(params) {
-    return axios.post('/tansci/collect/deleteNote', params);
+    return axios.post(env.host.base + '/tansci/collect/deleteNote', params);
 }
 
 /**
@@ -505,13 +505,13 @@ export function deleteNote(params) {
  * @returns 
  */
 export function getMyData(params) {
-    // return axios.get('/tansci/collect/record', params);
-    // return axios.post('/tansci/taskConfig/save', params);
+    // return axios.get(env.host.base + '/tansci/collect/record', params);
+    // return axios.post(env.host.base + '/tansci/taskConfig/save', params);
 
-    return axios.get('/tansci/collect/getMyData', { params: params });
+    return axios.get(env.host.base + '/tansci/collect/getMyData', { params: params });
     // return axios({
     //     method: 'get',
-    //     url: '/tansci/collect/record',
+    //     url: env.host.base + '/tansci/collect/record',
     //     params: params
     //   });
 }
@@ -522,7 +522,7 @@ export function getMyData(params) {
  * @returns 
  */
 export function getMarksByDocId(params) {
-    return axios.get('/tansci/collect/getMarksByDocId', { params: params });
+    return axios.get(env.host.base + '/tansci/collect/getMarksByDocId', { params: params });
 }
 
 /**
@@ -531,11 +531,11 @@ export function getMarksByDocId(params) {
  * @returns 
  */
 export function paramPage(params) {
-    return axios.get('/tansci/recordParam/page', { params: params });
+    return axios.get(env.host.base + '/tansci/recordParam/page', { params: params });
 }
 
 export function updateParam(params) {
-    return axios.get('/tansci/recordParam/updateParam', { params: params });
+    return axios.get(env.host.base + '/tansci/recordParam/updateParam', { params: params });
 }
 
 /**
@@ -544,7 +544,7 @@ export function updateParam(params) {
  * @returns 
  */
 export function createParam(params) {
-    return axios.get('/tansci/recordParam/createParam', { params: params });
+    return axios.get(env.host.base + '/tansci/recordParam/createParam', { params: params });
   
 }
 
@@ -554,7 +554,7 @@ export function createParam(params) {
  * @returns 
  */
 export function deleteParam(params) {
-    return axios.post('/tansci/recordParam/deleteParam', params);
+    return axios.post(env.host.base + '/tansci/recordParam/deleteParam', params);
 }
 
 /** ===chatGPT====start */
@@ -564,7 +564,7 @@ export function deleteParam(params) {
  * @returns 
  */
 export function chatGPTPage(params) {
-    return axios.get('/tansci/chatGPT/page', { params: params });
+    return axios.get(env.host.base + '/tansci/chatGPT/page', { params: params });
 }
 /**
  * 导出采集数据分页
@@ -574,7 +574,7 @@ export function chatGPTPage(params) {
 export function exportChatGPTTxt(params) {
     return axios({
         method: 'get',
-        url: '/tansci/chatGPT/exportChatGPTTxt',
+        url: env.host.base + '/tansci/chatGPT/exportChatGPTTxt',
         responseType: 'blob',
         params: params
       });
@@ -587,7 +587,7 @@ export function exportChatGPTTxt(params) {
  * @returns 
  */
 export function deleteChatGPT(params) {
-    return axios.post('/tansci/chatGPT/deleteChatGPT', params);
+    return axios.post(env.host.base + '/tansci/chatGPT/deleteChatGPT', params);
 }
 
 /** ===chatGPT====end */

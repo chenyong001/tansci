@@ -30,9 +30,9 @@ router.beforeEach(async (to, from, next) => {
     NProgress.start()
 
     // 是否登陆
-    // if (!localStorage.getItem('token') && to.path !== "/login") {
-    //     return next({ path: "/login" });
-    // };
+    if (!localStorage.getItem('token') && to.path !== "/login") {
+        return next({ path: "/login" });
+    };
 
     // 设置头部
     if (to.meta.title) {
