@@ -2,26 +2,32 @@
   <div class="ai-asr">
     <mobile-header title="实时语音识别"></mobile-header>
     <div class="asr-container">
+      <div class="language-choose">
+        <p class="title">请选择语言</p>
+        <select class="languages">
+          <option v-for="(item,index) in languages" :value="item.val" :selected="selectedLanguages.val === item.val">{{item.name}}</option>
+        </select>
+      </div>
+      <input class="remark" v-model="remarkStr" placeholder="请输入备注：">
+      <textarea id="result_textarea" class="result-textarea" readonly placeholder="识别结果：">{{resultContent}}</textarea>
       <div class="clear-btn" @click="clearContent">
         <p>清空识别内容</p>
         <XCircleIcon class="h-6 w-6 text-slate-950" />
       </div>
-      <textarea class="result-textarea"  readonly>{{resultContent}}</textarea>
     </div>
     <div class="footer">
-      <div class="upper">
-        <select id="languageOptions">
-          <option v-for="(item,index) in languages" :value="item.val" :selected="selectedLanguages.val === item.val">{{item.name}}</option>
-        </select>
-        <input v-model="remarkStr" placeholder="请输入备注：">
-      </div>
       <div class="down">
-        <div class="s-btn" @click="start">
-          <SpeakerWaveIcon class="h-6 w-6 text-slate-950" />
-          <p>开始识别</p></div>
-        <div class="s-btn" @click="stop">
+        <div class="s-btn" @click="recognize">
+          <div class="icon">
+            <SpeakerWaveIcon v-if="!isRecognizing" class="h-6 w-6 text-slate-950" />
+            <SpeakerXMarkIcon v-else class="h-6 w-6 text-slate-950" />
+          </div>
+          <p>{{isRecognizing?'停止识别':'开始识别'}}</p>
+        </div>
+        <!-- <div class="s-btn" @click="stop">
           <SpeakerXMarkIcon class="h-6 w-6 text-slate-950" />
-          <p>停止识别</p></div>
+          <p>停止识别</p>
+        </div> -->
       </div>
       
     </div>
@@ -57,9 +63,10 @@ components:{
         speechRecognizer:null,
         sessionId:null,
         remarkStr:'',//备注
-        timeID:null,
+        tokenTimer:null,
         regionOption:"eastasia",
         mp3Blob:null,
+        isRecognizing:false,//识别中
       }
     },
     created(){
@@ -78,14 +85,12 @@ components:{
           this.createRecorder()
           return
         }
-        console.log('9999')
         'http://opencast.tsi.edu.sg/SpeechSDK-JavaScript-1.24.0/microsoft.cognitiveservices.speech.sdk.bundle.js'
         'http://opencast.tsi.edu.sg/js/recordmp3.js'
         const speechSDK =  `${env.host.base}/SpeechSDK-JavaScript-1.24.0/microsoft.cognitiveservices.speech.sdk.bundle.js`
         const mp3SDK = `${env.host.base}/js/recordmp3.js`
         delayLoad.delayLoadJS(speechSDK).then(()=>{
           delayLoad.delayLoadJS(mp3SDK).then(()=>{
-            console.log('load',window.SpeechSDK)
               this.getInitAzureToken()
               this.createRecorder()
           })
@@ -93,19 +98,18 @@ components:{
       },
       getInitAzureToken(){
         getAzureToken().then(res=>{
-          console.log('1',res)
           this.azureTokenStr = res
         })
       },
       createRecorder(){
           this.recorder = new MP3Recorder({
             debug:true,
-            funOk: function () {
+            funOk: () => {
                 console.log('初始化成功');
             },
-            funCancel: function (msg) {
+            funCancel: (msg) => {
                 console.log(msg);
-                recorder = null;
+                this.recorder = null;
             }
         });
       },
@@ -148,15 +152,17 @@ components:{
         })
       },
       stop(){
+        if(this.recorder){
+          // 停止录音&上传录音
+          this.recorder.stop();
+          const fileName='audio_recording_' + this.sessionId + "_" + this.getDate();
+          this.recorder.getMp3Blob((blob) => {
+              this.mp3Blob = blob;
+              this.uploadMP3File(fileName);
+          })
+        }
         // stop  speechRecognizerContinuous
-        // 停止录音
-        this.recorder.stop();
-        const fileName='audio_recording_' + this.sessionId + "_" + this.getDate();
-        this.recorder.getMp3Blob((blob) => {
-            this.mp3Blob = blob;
-            this.uploadMP3File(fileName);
-        })
-        clearTimeout(this.timeID);
+        clearTimeout(this.tokenTimer);
         if(this.speechRecognizer != undefined) {
             this.speechRecognizer.stopContinuousRecognitionAsync(() => {
                     this.speechRecognizer.close();
@@ -169,10 +175,17 @@ components:{
             );
         }
       },
-      start(){
+      recognize(){
+        if(this.isRecognizing){//停止识别
+          this.stop()
+          this.isRecognizing = false
+        } else { // 开始识别
           // start speechRecognizerContinuous
-          const uuid = this.getUUID()
+          // const uuid = this.getUUID()
           this.doContinuousRecognition()
+          this.isRecognizing = true
+        }
+          
           
       },
       doContinuousRecognition() {
@@ -223,13 +236,14 @@ components:{
       },
       onRecognizing(sender, recognitionEventArgs) {
           console.log("onRecognizing============");
-          const result = recognitionEventArgs.result;
-          this.resultContent = this.resultContent.replace(/(.*)(^|[\r\n]+).*\[\.\.\.\][\r\n]+/, '$1$2') + `${result.text} [...]\r\n`;
-          
+          // const result = recognitionEventArgs.result;
+          // this.resultContent = this.resultContent.replace(/(.*)(^|[\r\n]+).*\[\.\.\.\][\r\n]+/, '$1$2') + `${result.text} [...]\r\n`;
+          //  this.resultContent += `${result.text}\r\n`;
       },
       onRecognized(sender, recognitionEventArgs) {
           console.log("onRecognized====result========");
           this.onRecognizedResult(recognitionEventArgs.result);
+          this.scrollToBottom()
       },
       onRecognizedResult(result) {
           switch (result.reason) {
@@ -299,9 +313,12 @@ components:{
       },
       renewToken() {
         this.getInitAzureToken()
-        this.timeID = setTimeout(this.renewToken, 9*60*1000);
+        this.tokenTimer = setTimeout(this.renewToken, 9*60*1000);
+      },
+      scrollToBottom(){
+        const textarea = document.getElementById('result_textarea');
+        textarea.scrollTop = textarea.scrollHeight
       }
-        
     },
     
 }
@@ -311,33 +328,77 @@ components:{
 .ai-asr{
   width: 100%;
   height: 100%;
-  
-  .asr-container{
+  .asr-container {
     position: relative;
     width: 100%;
     height: calc(100% - 32%);
     background: #fff;
     border-bottom-left-radius: 2rem;
     border-bottom-right-radius: 2rem;
-    .result-textarea{
+    .result-textarea {
       width: 90%;
-      margin:2rem 5%;
-      height: 80%;
+      margin: 1rem 5%;
+      height: 60%;
       resize: none;
+      background: #f3f4f6;
+      border-radius: 4px;
+      text-indent: 0.6rem;
+      padding-top: 0.4rem;
     }
-    .clear-btn{
+    .clear-btn {
       position: absolute;
       bottom: 1rem;
       right: 1.2rem;
       display: flex;
       justify-content: center;
       align-items: center;
-      
       >p{
         margin-right: 4px;
         margin-top: 2px;
       }
     }
+    .language-choose{
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      border-bottom: 1px solid #9ca3af;
+      padding-left: 2rem;
+      background: #fff;
+      .title{
+        font-size: 1rem;
+        color: #333;
+        font-weight: bold;
+      }
+      .languages {
+        background: #fff;
+        width: auto;
+        height: 2rem;
+        padding: 0 1.6rem;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+        font-size: 1rem;
+        color: #333;
+        font-weight: bold;
+      }
+    }
+    
+      .remark {
+        width: 100%;
+        height: 2rem;
+        background: #fff;
+        resize: none;
+        color: #333;
+        font-size: 1rem;
+        text-indent: 2rem;
+        border-bottom: 1px solid #9ca3af;
+        &::placeholder {
+          font-weight: bold;
+          opacity: 0.5;
+          color: #333;
+          line-height: 2rem;
+        }
+      }
   }
   .footer{
     position: absolute;
@@ -348,63 +409,33 @@ components:{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 1rem 0 1.5rem 0;
-    .upper,.down{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 2rem;
-    }
-    .upper{
-      width: 100%;
-      margin-bottom: 1rem;
-      select{
-        width: 10.8rem;
-        height: 4.8rem;
-        border-radius: 1rem;
-         padding: 0 1.6rem;
-        background: #fff;
-        -moz-appearance: none;
-        -webkit-appearance: none;
-        appearance: none;
-        font-size: 1rem;
-        color: #333;
-        box-shadow: 0 8px 24px 0 rgba(18,97,255,.1);
-      }
-      input{
-          width: 10.8rem;
-        height: 4.8em;
-        border-radius: 1rem;
-        background: #fff;
-         padding: .6rem 1.6rem;
-         resize: none;
-         text-align: center;
-         color: #333;
-         font-size: 1rem;
-         box-shadow: 0 8px 24px 0 rgba(18,97,255,.1);
-    }
-    input::placeholder {
-        font-weight: bold;
-        opacity: 0.5;
-        color: #333;
-        line-height: 4.8rem;
-    }
-    }
     .down{
       width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
       .s-btn{
         display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 10.8rem;
-    background: #fff;
-    height: 4.8rem;
-    border-radius: 1rem;
-    box-shadow: 0 8px 24px 0 rgba(18,97,255,.1);
-    > p{
-      margin-left: 8px;
-
-    }
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 7rem;
+        height: 7rem;
+        border-radius: 3.5rem;
+        background: #0284c7;
+        box-shadow: 0 8px 24px 0 rgba(18,97,255,.1);
+        .icon {
+          transform: scale(1.5);
+          > svg {
+            color: #fff;
+          }
+        }
+        > p {
+          margin-top: 0.6rem;
+          color: #fff;
+          font-weight: bold;
+        }
       }
       
       }
