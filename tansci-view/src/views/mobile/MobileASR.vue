@@ -328,6 +328,7 @@ components:{
 .ai-asr{
   width: 100%;
   height: 100%;
+  background: #fff;
   .asr-container {
     position: relative;
     width: 100%;
@@ -335,12 +336,14 @@ components:{
     background: #fff;
     border-bottom-left-radius: 2rem;
     border-bottom-right-radius: 2rem;
+    border-bottom: 1px solid #f0f2f8;
+    box-shadow: 0 2px 2px 2px #f0f2f8;
     .result-textarea {
       width: 90%;
       margin: 1rem 5%;
       height: 60%;
       resize: none;
-      background: #f3f4f6;
+      background: #f0f2f8;
       border-radius: 4px;
       text-indent: 0.6rem;
       padding-top: 0.4rem;
