@@ -46,7 +46,6 @@ router.beforeEach(async (to, from, next) => {
         const menuStore = useMenuStore();
         await  menuList({types:'1,2,3', status: 1}).then((res)=>{
             let result = routerFilter(res.result)
-            console.log('rrrr->',result)
             result.push({path:'/:pathMatch(.*)*', redirect:'/404'})
             result.forEach((item) => {
                 router.addRoute(item)

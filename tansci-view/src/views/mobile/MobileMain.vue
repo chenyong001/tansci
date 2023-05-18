@@ -6,12 +6,12 @@
     <p class="h-sub-title">Chat with the smartest AI -</p>
     <p class="h-sub-title">Experience the power of AI with us</p>
     <ul class="menus">
-        <li @click="goto('/mobile/AIChat')">
+        <li v-if="hasChatGPT" @click="goto('/mobile/AIChat')">
             <div class="img-box" :style="image1Style"/>
             <p>AIGC ChAT</p>
             <ArrowRightIcon class="h-6 w-6 text-slate-950" />
         </li>
-        <li @click="goto('/mobile/ASR')">
+        <li v-if="hasASRNote" @click="goto('/mobile/ASR')">
             <div class="img-box" :style="image2Style"/>
             <p>实时语音识别</p>
             <ArrowRightIcon class="h-6 w-6 text-slate-950" />
@@ -35,6 +35,7 @@ import MobileHeader from './component/MobileHeader.vue'
 import { ArrowRightIcon } from '@heroicons/vue/24/solid'
 import icon1 from '../../assets/image/home_icon_1.jpg'
 import icon2 from '../../assets/image/home_icon_2.jpg'
+import {menuList} from '@/api/systemApi'
 export default {
     components:{
         MobileHeader,
@@ -45,12 +46,48 @@ export default {
             icon1,
             icon2,
             image1Style:{background: 'url(' + icon1 + ')' + 'center center/contain no-repeat'},
-            image2Style:{background: 'url(' + icon2 + ')' + 'center center/contain no-repeat'}
+            image2Style:{background: 'url(' + icon2 + ')' + 'center center/contain no-repeat'},
+            hasChatGPT:false,
+            hasASRNote:false,
+
         }
+    },
+    created(){
+        this.getMenuList()
     },
     methods:{
         goto(path){
             this.$router.push({path:path})
+        },
+        getMenuList(){
+            menuList({types:'1,2,3', status: 1}).then((res)=>{
+                const chatGPT = "/chatGPT/chatGPT"
+                const asr = '/collect/Note'
+                const list = res.result
+                
+                const findURL = (arr,url)=>{
+                    return !!arr.find(v=>v.url === url)
+                }
+                const chatGPTBoolean = []
+                const hasASRNoteBoolean = []
+                for(let i = 0; i < Array.from(list).length; i++){
+                    const v = list[i]
+                    if(v.children){
+                        chatGPTBoolean.push(findURL(v.children,chatGPT))
+                        hasASRNoteBoolean.push(findURL(v.children,asr))
+                    } else {
+                        chatGPTBoolean.push(v.url === chatGPT)
+                        hasASRNoteBoolean.push(v.url === asr)
+                    }
+                }
+                // console.log(chatGPTBoolean)
+                // console.log(hasASRNoteBoolean)
+                this.hasChatGPT = chatGPTBoolean.some(v=> v === true)
+                this.hasASRNote = hasASRNoteBoolean.some(v=> v === true)
+            }).catch(()=>{
+
+            })
+        
         }
     }
 }
