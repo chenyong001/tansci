@@ -14,10 +14,12 @@ import com.tansci.service.chatGPT.ChatGPTService;
 import com.tansci.utils.ExportUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -60,28 +62,43 @@ public class ChatGPTController {
 
   @PostMapping("/send2OpenAi")
   @ResponseBody
-  public Wrapper<String> send2OpenAi(String prompt,String speechText) {
+  public Wrapper<String> send2OpenAi(String prompt,@RequestParam(required=false) String speechText,@RequestParam(required=false) String system) {
     log.info("send====ChatGPT=======,prompt={},speechText={}", prompt,speechText);
     if (StringUtils.isBlank(prompt)) {
       //      如果数据为空，则不处理，直接返回
       return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
     }
-    String result = chatGPTService.send2OpenAi(prompt,speechText);
+    String result = chatGPTService.send2OpenAi(prompt,speechText,system);
     //    String translate = translateService.translate(srcLanguage,targetLanguage, content);
 
     //    recordParamService.del(recordParam);
     return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, result);
   }
 
+//  @PostMapping("/send2Azure")
+//  @ResponseBody
+//  public Wrapper<String> send2Azure(String prompt,String speechText) {
+//    log.info("==send2Azure==ChatGPT=======,prompt={},speechText={}", prompt,speechText);
+//    if (StringUtils.isBlank(prompt)) {
+//      //      如果数据为空，则不处理，直接返回
+//      return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+//    }
+//    String result = chatGPTService.send2Azure(prompt,speechText,null);
+//    //    String translate = translateService.translate(srcLanguage,targetLanguage, content);
+//
+//    //    recordParamService.del(recordParam);
+//    return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, result);
+//  }
+
   @PostMapping("/send2Azure")
   @ResponseBody
-  public Wrapper<String> send2Azure(String prompt,String speechText) {
+  public Wrapper<String> send2Azure(String prompt,@RequestParam(required=false) String speechText,@RequestParam(required=false) String system) {
     log.info("==send2Azure==ChatGPT=======,prompt={},speechText={}", prompt,speechText);
     if (StringUtils.isBlank(prompt)) {
       //      如果数据为空，则不处理，直接返回
       return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
     }
-    String result = chatGPTService.send2Azure(prompt,speechText);
+    String result = chatGPTService.send2Azure(prompt,speechText,system);
     //    String translate = translateService.translate(srcLanguage,targetLanguage, content);
 
     //    recordParamService.del(recordParam);

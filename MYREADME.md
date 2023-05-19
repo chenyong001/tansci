@@ -16,7 +16,7 @@ https://github.com/NLPIR-team/NLPIR/blob/master/License/license%20for%20a%20mont
 #docker build -t tansci-view:v1 .
 #docker run -p 8001:80 --name=tansci-view -d tansci-view:v1
 #更新部署
-#cd /home/ubuntu/tansci/tansci-view && git pull
+#cd /home/ubuntu/tansci/tansci-view && git pull && docker ps
 #docker build -t tansci-view:v2.5.1.0 .
 #docker stop tansci-view && docker rm tansci-view
 #docker run -p 8001:80 --name=tansci-view -d tansci-view:v2.5.1.0
