@@ -57,6 +57,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
 
   String apiKey;
   String azureApiKey;
+
   @Override
   public String send(String prompt, String speechText) {
     String result = "";
@@ -110,7 +111,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
   }
 
   @Override
-  public String send2OpenAi(String prompt, String speechText) {
+  public String send2OpenAi(String prompt, String speechText, String system) {
     String result = "";
     String uri = "https://api.openai.com/v1/chat/completions";
     try {
@@ -131,7 +132,10 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
       Map<String, Object> bodyParams = Maps.newHashMap();
       bodyParams.put("model", "gpt-3.5-turbo");
       List<ChatGPTImpl.ChatGPTMessage> messages = new ArrayList<>();
-      messages.add(new ChatGPTImpl.ChatGPTMessage("system", "You are a helpful assistant."));
+      if (StringUtils.isBlank(system)) {
+        system = "You are a helpful assistant.";
+      }
+      messages.add(new ChatGPTImpl.ChatGPTMessage("system", system));
       messages.add(new ChatGPTImpl.ChatGPTMessage("user", prompt));
       bodyParams.put("messages", messages);
       bodyParams.put("max_tokens", 1024);
@@ -163,7 +167,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
   }
 
   @Override
-  public String send2Azure(String prompt, String speechText) {
+  public String send2Azure(String prompt, String speechText, String system) {
     String result = "";
     String uri = "https://tsigpt.openai.azure.com/openai/deployments/tsigpt4/chat/completions?api-version=2023-03-15-preview";
     try {
@@ -182,9 +186,12 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
       headerParams.put("Content-Type", "application/json");
       headerParams.put("api-key", azureApiKey);
       Map<String, Object> bodyParams = Maps.newHashMap();
-//      bodyParams.put("model", "gpt-3.5-turbo");
+      //      bodyParams.put("model", "gpt-3.5-turbo");
       List<ChatGPTImpl.ChatGPTMessage> messages = new ArrayList<>();
-      messages.add(new ChatGPTImpl.ChatGPTMessage("system", "You are a helpful assistant."));
+      if (StringUtils.isBlank(system)) {
+        system = "You are a helpful assistant.";
+      }
+      messages.add(new ChatGPTImpl.ChatGPTMessage("system", system));
       messages.add(new ChatGPTImpl.ChatGPTMessage("user", prompt));
       bodyParams.put("messages", messages);
       bodyParams.put("max_tokens", 1024);
@@ -214,6 +221,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
       return result;
     }
   }
+
   @Override
   public IPage<ChatGPT> page(Page page, ChatGPT chatGPT) {
 
