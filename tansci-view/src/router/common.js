@@ -59,9 +59,9 @@ export default[
         component: () => import('@/views/mobile/MobileASR.vue')
     },
     {
-        path: '/mobile/main',
+        path: '/mobile/',
         name: 'mobileMain',
-        meta: { title: "首页" },
+        meta: { title: "HOME" },
         component: () => import('@/views/mobile/MobileMain.vue'),
     },
 ]

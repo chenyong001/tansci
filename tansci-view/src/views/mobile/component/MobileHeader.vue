@@ -38,7 +38,7 @@ export default {
     },
     methods:{
         goBack(){
-            this.$router.push({path:'/mobile/main'})
+            this.$router.push({path:'/mobile/'})
         }
     }
 }

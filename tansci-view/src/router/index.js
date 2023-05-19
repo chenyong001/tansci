@@ -5,6 +5,7 @@ import 'nprogress/nprogress.css'
 import Layout from '@/layout/Layout.vue'
 import {menuList} from '@/api/systemApi'
 import {useMenuStore} from '@/store/settings'
+import {isMobile} from '../utils/utils'
 
 // 路由按模块分类
 import common from './common'
@@ -20,15 +21,18 @@ const router = createRouter({
         ...common
     ]
 })
+if(!isMobile()){
+    NProgress.inc(0.2)
+}
 
-NProgress.inc(0.2)
 // NProgress.configure({ easing: 'ease', speed: 200, showSpinner: true })
 
 let flag = true // 刷新标识
 router.beforeEach(async (to, from, next) => {
     // 启动进度条
-    NProgress.start()
-
+    if(!isMobile()){
+        NProgress.start()
+    }
     // 是否登陆
     if (!localStorage.getItem('token') && to.path !== "/login") {
         return next({ path: "/login" });
@@ -71,8 +75,10 @@ router.beforeEach(async (to, from, next) => {
 })
 
 router.afterEach(() => {
-    // 关闭进度条
-    NProgress.done()
+    if(!isMobile()){
+        // 关闭进度条
+        NProgress.done()
+    }
 })
 
 

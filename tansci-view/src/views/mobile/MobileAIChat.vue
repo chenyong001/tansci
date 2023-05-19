@@ -126,6 +126,17 @@ export default {
   methods:{
     selectExample(item){
       this.currentExample = item
+      const fakeData = {
+        avatar:aiHeadImg,
+        content:this.currentExample.desc,
+        isAI:true,
+        timeStr:dateTimeFormat(new Date()),
+      }
+      this.showResult = true
+      setTimeout(() => {
+          this.resultList.push(fakeData)
+      }, 500);
+      
     },
     requestAI(){
       this.resultList.push({

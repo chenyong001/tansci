@@ -127,8 +127,9 @@
 					window.location.href="/aigc-chat-azure";
 					localStorage.removeItem('chat');
 				} else {
+					console.log('========')
 					if((isMobile())){
-						router.push({path: 'mobile/main'});
+						router.push({path: 'mobile/'});
 					} else {
 						router.push({path: 'main'});
 					}

@@ -1,20 +1,20 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import router from '../router'
-import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
+// import NProgress from 'nprogress'
+// import 'nprogress/nprogress.css'
 
 axios.defaults.withCredentials = true
 axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest'
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
-NProgress.inc(0.2)
+// NProgress.inc(0.2)
 // NProgress.configure({ easing: 'ease', speed: 600, showSpinner: false })
 
 axios.interceptors.request.use(function (config) {
     config.headers.Authorization = 'Bearer '+ localStorage.getItem('token') || ''
     // 启动进度条
-    NProgress.start()
+    // NProgress.start()
     return config
 })
 
@@ -27,11 +27,11 @@ axios.interceptors.response.use(res => {
     // 下载文件特殊处理
     if(res.config.responseType&&res.config.responseType == 'blob'){
         // 关闭进度条
-        NProgress.done();
+        // NProgress.done();
         return res;
     } else {
         if (res.data.code != 200) {
-            NProgress.done();
+            // NProgress.done();
             ElMessage.error(res.data.message)
             if (res.data.code == 403 || res.data.code == 401) router.push({path: '/login'})
             return Promise.reject(res.data)
@@ -39,7 +39,7 @@ axios.interceptors.response.use(res => {
     }
     
     // 关闭进度条
-    NProgress.done();
+    // NProgress.done();
     return res.data;
 })
 
