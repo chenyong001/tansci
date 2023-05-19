@@ -1,6 +1,6 @@
 <template>
   <div class="mobile-main">
-    <mobile-header title="首页" :no-back="Boolean(true)"></mobile-header>
+    <mobile-header title="HOME" :no-back="Boolean(true)"></mobile-header>
     <p class="h-title">Unlock the power </p>
     <p class="h-title">of AI</p>
     <p class="h-sub-title">Chat with the smartest AI -</p>
@@ -8,12 +8,12 @@
     <ul class="menus">
         <li v-if="hasChatGPT" @click="goto('/mobile/AIChat')">
             <div class="img-box" :style="image1Style"/>
-            <p>AIGC ChAT</p>
+            <p class="name">AIGC-Chat</p>
             <ArrowRightIcon class="h-6 w-6 text-slate-950" />
         </li>
         <li v-if="hasASRNote" @click="goto('/mobile/ASR')">
             <div class="img-box" :style="image2Style"/>
-            <p>实时语音识别</p>
+            <p class="name">实时语音识别</p>
             <ArrowRightIcon class="h-6 w-6 text-slate-950" />
         </li>
         <li class="disable">
@@ -33,8 +33,8 @@
 <script>
 import MobileHeader from './component/MobileHeader.vue'
 import { ArrowRightIcon } from '@heroicons/vue/24/solid'
-import icon1 from '../../assets/image/home_icon_1.jpg'
-import icon2 from '../../assets/image/home_icon_2.jpg'
+import icon1 from '../../assets/image/home_icon_2.jpg'
+import icon2 from '../../assets/image/home_icon_1.jpg'
 import {menuList} from '@/api/systemApi'
 export default {
     components:{
@@ -120,7 +120,7 @@ export default {
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
-        border: 1px solid #f0f2f8;
+        // border: 1px solid #f0f2f8;
         border-radius: 0.6rem;
         >li {
             width: 80%;
@@ -129,7 +129,7 @@ export default {
             display: flex;
             align-items: center;
             justify-content: space-around;
-            box-shadow: 0 2px 8px 2px rgba(18, 97, 255, 0.1);
+            box-shadow: 0 2px 2px 2px rgba(18, 97, 255, 0.1);
             font-size: 1.2rem;
             margin: 1rem 0.2rem;
             border-radius: 0.6rem;
@@ -142,6 +142,10 @@ export default {
             .wait{
                 font-size: 1rem;
                 color: #a1a1aa;
+            }
+            .name{
+                font-weight: 800;
+                color:#333;
             }
         }
         .disable{

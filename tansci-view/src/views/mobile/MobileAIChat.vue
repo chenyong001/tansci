@@ -56,7 +56,7 @@
 
 <script>
 import { LightBulbIcon,FireIcon,PaperAirplaneIcon } from '@heroicons/vue/24/solid'
-import aiHeadImg from '../../assets/image/avatar_ai.png'
+import aiHeadImg from '../../assets/image/home_icon_2.jpg'
 import userHeadImg from '../../assets/image/avatar_2.png'
 import {dateTimeFormat} from '../../utils/utils'
 import MobileHeader from './component/MobileHeader.vue'

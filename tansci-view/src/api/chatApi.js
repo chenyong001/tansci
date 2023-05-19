@@ -10,7 +10,7 @@ export function send(promptText='',speechText='',system='') {
     if(!token){
         return Promise.reject()
     }
-    const url = `${env.host.base}/tansci/chatGPT/send2OpenAi?prompt=${encodeURIComponent(promptText)}&speechText=${encodeURIComponent(speechText)}&system=${encodeURIComponent(system)}`
+    const url = `${env.host.base}/tansci/chatGPT/send2Azure?prompt=${encodeURIComponent(promptText)}&speechText=${encodeURIComponent(speechText)}&system=${encodeURIComponent(system)}`
     return axios.post(url, {},{
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',

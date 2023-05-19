@@ -332,7 +332,7 @@ components:{
   .asr-container {
     position: relative;
     width: 100%;
-    height: calc(100% - 32%);
+    height: 78%;
     background: #fff;
     border-bottom-left-radius: 2rem;
     border-bottom-right-radius: 2rem;
@@ -341,7 +341,7 @@ components:{
     .result-textarea {
       width: 90%;
       margin: 1rem 5%;
-      height: 60%;
+      height: 78%;
       resize: none;
       background: #f0f2f8;
       border-radius: 4px;
