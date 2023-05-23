@@ -21,7 +21,7 @@
       </div>
       <div 
       v-if="showResult"
-      class="result">
+      class="result" id="resultBox">
         <ul>
           <li v-for="(item,index) in resultList"
             :style="{'flex-direction':item.isUser ? 'row':'row-reverse'}">
@@ -30,12 +30,21 @@
               :style="[{backgroundImage:`url(${item.avatar})`}]"
             />
             <div class="box"
-            :style="[{'flex-direction':item.isUser ? 'row':'row-reverse'},{'margin-left':item.isUser ? '0.4rem':'0'},{'margin-right':item.isAI ? '0.4rem':'0'}]">
+              :style="[
+              {'flex-direction':item.isUser ? 'row':'row-reverse'},
+              {'margin-left':item.isUser ? '0.4rem':'0'},
+              {'margin-right':item.isAI ? '0.4rem':'0'}]">
               <!-- <div :class="[{'arrow-l':item.isUser },{'arrow-r':item.isAI }]"></div> -->
               <div class="inner-box"
-              :style="[{'align-items': item.isUser ?'flex-start':'flex-end'},{'margin-right': item.isAI ? '6px':'0'},{'margin-left': item.isUser ? '6px':'0'},{'border-top-right-radius': item.isUser ? '1.6rem':'0.2rem'},{'border-top-left-radius': !item.isUser ? '1.6rem':'0.2rem'}]">
-                <p class="time">时间:<span>{{item.timeStr}}</span></p>
-                <div class="desc">{{item.content}}</div>
+                :style="[{'align-items': item.isUser ?'flex-start':'flex-end'},
+                {'margin-right': item.isAI ? '6px':'0'},
+                {'margin-left': item.isUser ? '6px':'0'},
+                {'border-top-right-radius': item.isUser ? '1.6rem':'0.2rem'},
+                {'border-top-left-radius': !item.isUser ? '1.6rem':'0.2rem'},
+                {'background': item.isAI ? '#3757FF':'#f0f2f8'}]">
+                <p v-if="!item.isLoading" class="time" :style="[{color:item.isAI?'#ccc':'#888'}]">时间:<span>{{item.timeStr}}</span></p>
+                <div v-if="!item.isLoading" class="desc" :style="[{color:item.isAI?'#fff':'#111'}]">{{item.content}}</div>
+                <loading v-if="item.isLoading" :dot-color="item.dotColor"></loading>
               </div>
             </div>
           </li>
@@ -67,12 +76,14 @@ import icon3 from '../../assets/image/3-4reading.png'
 import icon4 from '../../assets/image/3-5history.png'
 import icon5 from '../../assets/image/3-6technology-digital.png'
 import icon6 from '../../assets/image/3-7music-singer.png'
+import Loading from '../common/Loading.vue'
 export default {
   components:{
     MobileHeader,
     LightBulbIcon,
     FireIcon,
-    PaperAirplaneIcon
+    PaperAirplaneIcon,
+    Loading
   },
   data(){
     return {
@@ -121,7 +132,11 @@ export default {
       ],
       currentExample:null,
       showExample:true,
+      isRequesting:false,
     }
+  },
+  created(){
+    this.getHistory()
   },
   methods:{
     selectExample(item){
@@ -135,33 +150,86 @@ export default {
       this.showResult = true
       setTimeout(() => {
           this.resultList.push(fakeData)
+          this.scrollToBottom()
       }, 500);
       
     },
-    requestAI(){
-      this.resultList.push({
+    addUserQuestion(){
+      const question = {
           avatar:userHeadImg,
           timeStr:dateTimeFormat(new Date()),
           content:this.textVal,
-          isUser:true
-        },)
+          isUser:true,
+          dotColor:'#000'
+      }
+      this.resultList.push(question)
       this.showResult = true
-      
+    },
+    requestAI(){
+      if(this.isRequesting){
+        return
+      }
+      this.addUserQuestion()
+      this.addAIAnswer()
+    },
+    addAIAnswer(){
       const item = {
         avatar:aiHeadImg,
         content:'抱歉,服务器无响应请稍后重试',
-        isAI:true
+        isAI:true,
+        isLoading:true,
+        dotColor:'#fff'
       }
-      send(this.textVal,'',this.currentExample?.desc).then(res=>{
+      this.isRequesting = true
+      this.resultList.push(item)
+      this.scrollToBottom()
+      const sendPrompt = this.textVal
+      this.textVal = ''
+      this.sendToAI(sendPrompt)
+    },
+    sendToAI(sendPrompt){
+       send(sendPrompt,'',this.currentExample?.desc).then(res => {
+        const item = this.resultList[this.resultList.length - 1]
         if(res.code === 200){
-            item.content = res.result  
+          item.content = res.result 
         }
-        item.timeStr= dateTimeFormat(new Date())
-        this.resultList.push(item)
+        this.setResult(item)
       }).catch(()=>{
-        item.timeStr= dateTimeFormat(new Date())
-        this.resultList.push(item)
+        const item = this.resultList[this.resultList.length - 1]
+        this.setResult(item)
       })
+    },
+    setResult(item){
+        item.isLoading = false 
+        item.timeStr= dateTimeFormat(new Date())
+        // this.resultList.push(item)
+        this.scrollToBottom()
+        this.setHistory()
+        this.isRequesting = false
+    },
+    scrollToBottom(){
+      setTimeout(()=>{
+        const $resultBox = document.querySelector('#resultBox');
+        if($resultBox){
+          $resultBox.scrollTop = $resultBox.scrollHeight;
+        }
+      },200)
+    },
+    setHistory(){
+      if(this.resultList.length>0){
+        const top50item = [...this.resultList].reverse().slice(0,50)
+        sessionStorage.setItem("TANSCI_CHATGPT_HISTORY", JSON.stringify(top50item));
+      }
+      
+    },
+    getHistory(){
+      let data = sessionStorage.getItem("TANSCI_CHATGPT_HISTORY");
+      if(data){
+        const list = JSON.parse(data)
+        if(list && list.length>0){
+          this.resultList = list.reverse()
+        }
+      }
     }
   }
 }

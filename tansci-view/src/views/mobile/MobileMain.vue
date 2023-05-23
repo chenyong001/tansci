@@ -46,7 +46,7 @@ export default {
             icon1,
             icon2,
             image1Style:{background: 'url(' + icon1 + ')' + 'center center/contain no-repeat'},
-            image2Style:{background: 'url(' + icon2 + ')' + 'center center/contain no-repeat'},
+            image2Style:{backgroundImage: 'url(' + icon2 + ')',backgroundSize:'100% 100%','border-radius': '0.72rem'},
             hasChatGPT:false,
             hasASRNote:false,
 
