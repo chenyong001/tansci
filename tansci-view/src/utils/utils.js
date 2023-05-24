@@ -9,6 +9,65 @@ export const isMobile = () => {
         return false;
     }
 }
+const ua = window.navigator.userAgent.toLowerCase()
+/**
+ * 判断是否是Chrome
+ */
+const isChrome = /chrome/.test(ua)
+
+/**
+ * 判断是否是Firefox
+ */
+const isFirefox = /firefox/.test(ua)
+
+/**
+ * 判断是否是Safari
+ */
+const isSafari = /safari/.test(ua) && !/chrome/.test(ua)
+
+/**
+ * 判断是否是Edge
+ */
+const isEdge = /edg/.test(ua)
+
+/**
+ * 判断是否是opera
+ */
+const isOpera = /opera/.test(ua) || /opr/.test(ua)
+
+/**
+ * 判断是否是搜狗浏览器
+ */
+const isSougo = /metasr/.test(ua)
+
+/**
+ * 判断是否是QQ浏览器
+ */
+const isQQ = /tencenttraveler/.test(ua) || /qqbrowse/.test(ua)
+
+/**
+ * 判断是否是遨游浏览器
+ */
+const isAoyou = /maxthon/.test(ua)
+
+/**
+ * 判断是否是安卓
+ */
+export const isAndroid = navigator.userAgent.indexOf('Android') > -1 || navigator.userAgent.indexOf('Linux') > -1
+
+/**
+ * 判断是否是苹果
+ */
+export const isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)
+
+export function  isWeixin() {
+    // 如果需要可以增加判断电脑版微信和开发者工具:/WindowsWechat/i.test(ua) && /WechatDevTools/i.test(ua)
+    return (window.top === window && /MicroMessenger/i.test(window.navigator.userAgent));
+  }
+  
+export function isNotChrome() {
+    return isFirefox || isQQ || isSafari || isSougo || isOpera || isAoyou || isEdge
+}
 
 /**
  * 时间格式化

@@ -2,6 +2,12 @@
   <div class="ai-asr">
     <mobile-header title="实时语音识别"></mobile-header>
     <div class="asr-container">
+      <div 
+        v-if="showTip"
+        class="tip-box"
+      >
+        <p>为了让您享受最佳的AI体验,</p><p>推荐使用GOOGLE浏览器访问 <span class="link" style="color:#3D45FF;" @click="download">点击下载</span></p>
+      </div>
       <div class="language-choose">
         <p class="title">请选择语言</p>
         <select class="languages">
@@ -9,25 +15,17 @@
         </select>
       </div>
       <input class="remark" v-model="remarkStr" placeholder="请输入备注：">
-      <textarea id="result_textarea" class="result-textarea" readonly placeholder="识别结果：">{{resultContent}}</textarea>
-      <div class="clear-btn" @click="clearContent">
-        <p>清空识别内容</p>
-        <XCircleIcon class="h-6 w-6 text-slate-950" />
-      </div>
+      <textarea id="result_textarea" class="result-textarea" readonly placeholder="识别结果：" :style="{height: showTip ? '68%': '78%'}">{{resultContent}}</textarea>
     </div>
     <div class="footer">
       <div class="down">
         <div class="s-btn" @click="recognize">
           <div class="icon">
-            <SpeakerWaveIcon v-if="!isRecognizing" class="h-6 w-6 text-slate-950" />
-            <SpeakerXMarkIcon v-else class="h-6 w-6 text-slate-950" />
+            <img v-show="!isRecognizing" :src="icon1"/>
+            <img v-show="isRecognizing" :src="icon2"/>
           </div>
-          <p>{{isRecognizing?'停止识别':'开始识别'}}</p>
+          <p>{{isRecognizing?'Tap to stop recording':'Tap to start recording'}}</p>
         </div>
-        <!-- <div class="s-btn" @click="stop">
-          <SpeakerXMarkIcon class="h-6 w-6 text-slate-950" />
-          <p>停止识别</p>
-        </div> -->
       </div>
       
     </div>
@@ -36,22 +34,23 @@
 
 <script>
 import {Languages} from './arg'
-import {SpeakerWaveIcon,SpeakerXMarkIcon,XCircleIcon} from '@heroicons/vue/24/solid'
 import MobileHeader from './component/MobileHeader.vue'
 import delayLoad from '../../utils/delayLoad'
 import {getAzureToken,createNote,sendNote,uploadFile} from '../../api/asrApi'
 import env from '../../config/env'
 import {getUuid} from '../../utils/utils'
+import icon1 from '../../assets/image/recording.svg'
+import icon2 from '../../assets/image/stop.svg'
+import {isWeixin,isNotChrome,isMobile,isAndroid} from '../../utils/utils'
 
 export default {
 components:{
     MobileHeader,
-    SpeakerWaveIcon,
-    SpeakerXMarkIcon,
-    XCircleIcon
   },
   data(){
     return {
+        icon1,
+        icon2,
         languages:Languages,
         selectedLanguages:{},
         resultContent:'',
@@ -67,15 +66,34 @@ components:{
         regionOption:"eastasia",
         mp3Blob:null,
         isRecognizing:false,//识别中
+        showTip:false
       }
     },
     created(){
       this.selectedLanguages = this.languages[1]
+      this.checkAudioContent()
+      
     },
     mounted(){
       this.initSDK()
+      this.addListener()
     },
     methods:{
+      addListener(){
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === "visible") { // 页面未挂起
+            console.log('页面恢复')
+          } else {//页面被挂起
+              console.log('页面被挂起停止识别')
+              this.stop()
+              this.isRecognizing = false
+          }
+        });
+      },
+      download(){
+        console.log('todo')
+        window.open('http://www.google.com/chrome/','_blank')
+      },
       clearContent(){
           this.resultContent = ''
       },
@@ -99,6 +117,8 @@ components:{
       getInitAzureToken(){
         getAzureToken().then(res=>{
           this.azureTokenStr = res
+        }).catch(()=>{
+          this.tip = "当前服务不可用请稍后再试"
         })
       },
       createRecorder(){
@@ -130,6 +150,13 @@ components:{
         } catch (e) {
             window.console.log("no sound context found, no audio output. " + e);
         }
+        //手机端 非微信环境 也非Chrome浏览器 显示提示
+        console.log('??',isWeixin())
+        console.log('??',isNotChrome())
+        console.log('??',isMobile())
+        if(!isWeixin() && isNotChrome() && isMobile()){
+          this.showTip = true
+        }
       },
       getDate(){
         const date = new Date();
@@ -143,12 +170,17 @@ components:{
         return Y + M + D + h + m + s
       },
       uploadMP3File(fileName){
+        if(!this.mp3Blob){
+          return
+        }
         uploadFile({
           fileName,
           mp3Blob:this.mp3Blob,
           sessionId:this.sessionId
         }).then(res=>{
           console.log('uploadFile',res)
+        }).catch(()=>{
+          console.log('uploadFile fail')
         })
       },
       stop(){
@@ -176,6 +208,7 @@ components:{
         }
       },
       recognize(){
+        console.log('this.isRecognizing->',this.isRecognizing)
         if(this.isRecognizing){//停止识别
           this.stop()
           this.isRecognizing = false
@@ -184,9 +217,7 @@ components:{
           // const uuid = this.getUUID()
           this.doContinuousRecognition()
           this.isRecognizing = true
-        }
-          
-          
+        } 
       },
       doContinuousRecognition() {
             this.audioConfig = this.getAudioConfig();
@@ -255,18 +286,19 @@ components:{
               case SpeechSDK.ResultReason.TranslatedSpeech:
               case SpeechSDK.ResultReason.RecognizedIntent:
                   if (result.text) {
+                      console.log('result.text->',result.text)
                       this.resultContent += `${result.text}\r\n`;
                   }
-                  const intentJson = result.properties.getProperty(SpeechSDK.PropertyId.LanguageUnderstandingServiceResponse_JsonResult);
-                  if (intentJson) {
-                      this.resultContent += `${intentJson}\r\n`;
-                  }
-                  if (result.translations) {
-                      const resultJson = JSON.parse(result.json);
-                      resultJson['privTranslationPhrase']['Translation']['Translations'].forEach((translation) => {
-                          this.resultContent += ` [${translation.Language}] ${translation.Text}\r\n`;
-                      });
-                  }
+                  // const intentJson = result.properties.getProperty(SpeechSDK.PropertyId.LanguageUnderstandingServiceResponse_JsonResult);
+                  // if (intentJson) {
+                  //     this.resultContent += `${intentJson}\r\n`;
+                  // }
+                  // if (result.translations) {
+                  //     const resultJson = JSON.parse(result.json);
+                  //     resultJson['privTranslationPhrase']['Translation']['Translations'].forEach((translation) => {
+                  //         this.resultContent += ` [${translation.Language}] ${translation.Text}\r\n`;
+                  //     });
+                  // }
                   let resultText;
                   if (result.translations) {
                     const resultJson = JSON.parse(result.json);
@@ -329,6 +361,16 @@ components:{
   width: 100%;
   height: 100%;
   background: #fff;
+  .tip-box{
+    padding: 1rem;
+    background: #f59e0b;
+    color: #fff;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
   .asr-container {
     position: relative;
     width: 100%;
@@ -423,18 +465,18 @@ components:{
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        width: 7rem;
-        height: 7rem;
-        border-radius: 3.5rem;
-        background: #0284c7;
+        width: 12rem;
+        height: 12rem;
+        border-radius: 6rem;
+        background: #3D45FF;
+        // background: #8C90FE;
         box-shadow: 0 8px 24px 0 rgba(18,97,255,.1);
         .icon {
-          transform: scale(1.5);
-          > svg {
-            color: #fff;
-          }
+          transform: scale(2);
+          width: 0.8rem;
         }
         > p {
+          // margin-left: 0.6rem;
           margin-top: 0.6rem;
           color: #fff;
           font-weight: bold;
