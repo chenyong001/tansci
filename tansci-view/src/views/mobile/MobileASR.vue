@@ -108,8 +108,8 @@ components:{
         }
         'http://opencast.tsi.edu.sg/SpeechSDK-JavaScript-1.24.0/microsoft.cognitiveservices.speech.sdk.bundle.js'
         'http://opencast.tsi.edu.sg/js/recordmp3.js'
-        const speechSDK =  `${env.host.base}/SpeechSDK-JavaScript-1.24.0/microsoft.cognitiveservices.speech.sdk.bundle.js`
-        const mp3SDK = `${env.host.base}/js/recordmp3.js`
+        const speechSDK =  `${env.host.asrBase}/SpeechSDK-JavaScript-1.24.0/microsoft.cognitiveservices.speech.sdk.bundle.js`
+        const mp3SDK = `${env.host.asrBase}/js/recordmp3.js`
         delayLoad.delayLoadJS(speechSDK).then(()=>{
           delayLoad.delayLoadJS(mp3SDK).then(()=>{
               this.getInitAzureToken()
@@ -230,6 +230,10 @@ components:{
         } 
       },
       doContinuousRecognition() {
+          if(!SpeechSDK){
+            alert('SpeechSDK fail')
+            return
+          }
             this.audioConfig = this.getAudioConfig();
             this.speechConfig = this.getSpeechConfig(SpeechSDK.SpeechConfig);
             if (!this.speechConfig) {

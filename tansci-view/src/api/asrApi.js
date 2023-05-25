@@ -11,7 +11,7 @@ export function getAzureToken() {
     if(!token){
         return Promise.reject()
     }
-    const url = `${env.host.base}/tansci/collect/getAzureToken`
+    const url = `${env.host.asrBase}/tansci/collect/getAzureToken`
     // return axios.post(url, {},{
     //     headers: {
     //         'Content-Type': 'application/x-www-form-urlencoded;',
@@ -42,7 +42,7 @@ export function createNote({sessionId,remark}) {
     if(!token){
         return Promise.reject()
     }
-    const url = `${env.host.base}/tansci/collect/createNote?docId=${sessionId}&remark=${remark}`
+    const url = `${env.host.asrBase}/tansci/collect/createNote?docId=${sessionId}&remark=${remark}`
     return axios.get(url, {},{
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded;',
@@ -61,7 +61,7 @@ export function sendNote({resultText,language,sessionId,offset,duration}) {
     if(!token){
         return Promise.reject()
     }
-    const url = `${env.host.base}/tansci/collect/sendNote?resultText=${resultText}&language=${language}&docId=${sessionId}&offset=${offset}&duration=${duration}`
+    const url = `${env.host.asrBase}/tansci/collect/sendNote?resultText=${resultText}&language=${language}&docId=${sessionId}&offset=${offset}&duration=${duration}`
     return axios.get(url, {},{
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded;',
@@ -80,7 +80,7 @@ export function uploadFile({fileName,mp3Blob,sessionId}) {
     if(!token){
         return Promise.reject()
     }
-    const url = `${env.host.base}/tansci/collect/upload`
+    const url = `${env.host.asrBase}/tansci/collect/upload`
     const data = new FormData()
     const mp3Name = encodeURIComponent(fileName + '.mp3');
     data.append('fileName', mp3Name);
