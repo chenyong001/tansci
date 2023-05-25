@@ -485,7 +485,7 @@ components:{
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         width: 12rem;
         height: 12rem;
         border-radius: 6rem;
@@ -494,7 +494,9 @@ components:{
         box-shadow: 0 8px 24px 0 rgba(18,97,255,.1);
         .icon {
           transform: scale(2);
-          width: 0.8rem;
+          width: 1.5rem;
+          margin-bottom: 0.6rem;
+          margin-top: 3rem;
         }
         > p {
           // margin-left: 0.6rem;
