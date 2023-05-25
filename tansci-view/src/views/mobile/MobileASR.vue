@@ -21,10 +21,12 @@
       <div class="down">
         <div class="s-btn" @click="recognize">
           <div class="icon">
+            <!--开始-->
             <img v-show="!isRecognizing" :src="icon1"/>
+            <!--停止-->
             <img v-show="isRecognizing" :src="icon2"/>
           </div>
-          <p>{{isRecognizing?'Tap to stop recording':'Tap to start recording'}}</p>
+          <p>{{ btnName }}</p>
         </div>
       </div>
       
@@ -66,7 +68,8 @@ components:{
         regionOption:"eastasia",
         mp3Blob:null,
         isRecognizing:false,//识别中
-        showTip:false
+        showTip:false,
+        btnName:'Tap to start recording'
       }
     },
     created(){
@@ -118,18 +121,19 @@ components:{
         getAzureToken().then(res=>{
           this.azureTokenStr = res
         }).catch(()=>{
-          this.tip = "当前服务不可用请稍后再试"
+          alert("getAzureToken fail")
         })
       },
       createRecorder(){
           this.recorder = new MP3Recorder({
             debug:true,
             funOk: () => {
-                console.log('初始化成功');
+                console.log('Recorder 初始化成功');
             },
             funCancel: (msg) => {
                 console.log(msg);
                 this.recorder = null;
+                alert("Recorder 初始化失败")
             }
         });
       },
@@ -185,17 +189,21 @@ components:{
       },
       stop(){
         if(this.recorder){
-          // 停止录音&上传录音
-          this.recorder.stop();
-          const fileName='audio_recording_' + this.sessionId + "_" + this.getDate();
-          this.recorder.getMp3Blob((blob) => {
-              this.mp3Blob = blob;
-              this.uploadMP3File(fileName);
-          })
+          if(typeof this.recorder.stop === 'function'){
+            this.recorder.stop();
+          }
+          if(typeof this.recorder.getMp3Blob === 'function'){
+            const fileName='audio_recording_' + this.sessionId + "_" + this.getDate();
+            this.recorder.getMp3Blob((blob) => {
+                this.mp3Blob = blob;
+                this.uploadMP3File(fileName);
+            })
+          }
+          
         }
         // stop  speechRecognizerContinuous
         clearTimeout(this.tokenTimer);
-        if(this.speechRecognizer != undefined) {
+        if(this.speechRecognizer != undefined && typeof this.speechRecognizer.stopContinuousRecognitionAsync === 'function') {
             this.speechRecognizer.stopContinuousRecognitionAsync(() => {
                     this.speechRecognizer.close();
                     this.speechRecognizer = undefined;
@@ -208,15 +216,17 @@ components:{
         }
       },
       recognize(){
-        console.log('this.isRecognizing->',this.isRecognizing)
         if(this.isRecognizing){//停止识别
-          this.stop()
+          this.btnName = 'Tap to start recording'
           this.isRecognizing = false
-        } else { // 开始识别
-          // start speechRecognizerContinuous
+          this.stop()
+          
+        } else { // 开始识别 // start speechRecognizerContinuous
+          this.btnName = 'Tap to stop recording'
+          this.isRecognizing = true
           // const uuid = this.getUUID()
           this.doContinuousRecognition()
-          this.isRecognizing = true
+          
         } 
       },
       doContinuousRecognition() {
@@ -233,10 +243,12 @@ components:{
             // driven, as use of continuation (as is in the single-shot sample) isn't applicable when there's not a
             // single result.
             this.speechRecognizer.startContinuousRecognitionAsync();
-            this.recorder.start();
-            // scenarioStopButton.disabled = false;
+            
+            if(this.recorder && typeof this.recorder.start === 'function'){
+              this.recorder.start();
+            }
+            
             this.renewToken();
-
       },
       getAudioConfig() {
           return SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
@@ -299,16 +311,16 @@ components:{
                   //         this.resultContent += ` [${translation.Language}] ${translation.Text}\r\n`;
                   //     });
                   // }
-                  let resultText;
-                  if (result.translations) {
-                    const resultJson = JSON.parse(result.json);
-                    resultText=resultJson['privTranslationPhrase']['Translation']['Translations'][0].Text
-                  }else{
-                      resultText=result.text;
-                  }
-                  const offset=  result.offset;
-                  const duration=   result.duration;
-
+                  // let resultText;
+                  // if (result.translations) {
+                  //   const resultJson = JSON.parse(result.json);
+                  //   resultText=resultJson['privTranslationPhrase']['Translation']['Translations'][0].Text
+                  // }else{
+                  //     resultText=result.text;
+                  // }
+                  const resultText = result.text;
+                  const offset = result.offset;
+                  const duration = result.duration;
                   if(resultText !== null  && resultText !== '' ){
                       sendNote({
                         resultText,
@@ -318,6 +330,8 @@ components:{
                         duration
                       }).then(res=>{
                         console.log('send note',res)
+                      }).catch(()=>{
+                        alert('sendNote fail')
                       })
                   }
                   break;
@@ -330,13 +344,16 @@ components:{
           sessionId:this.sessionId,
           remark:this.remarkStr
           }).then(res=>{
-          console.log('create note',res)
+            console.log('create note',res)
+          }).catch(()=>{
+            alert('createNote fail')
           })
       },
       onCanceled (sender, cancellationEventArgs) {
           window.console.log(e);
           if (e.reason === SpeechSDK.CancellationReason.Error) {
               console.log(e.errorDetails);
+              alert(e.errorDetails)
           }
       },
       onSessionStopped(sender, sessionEventArgs) {
@@ -362,7 +379,7 @@ components:{
   height: 100%;
   background: #fff;
   .tip-box{
-    padding: 1rem;
+    padding: 0.6rem;
     background: #f59e0b;
     color: #fff;
     font-weight: bold;
