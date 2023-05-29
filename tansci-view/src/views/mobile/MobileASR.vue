@@ -133,7 +133,7 @@ components:{
             funCancel: (msg) => {
                 console.log(msg);
                 this.recorder = null;
-                alert("Recorder 初始化失败")
+                // alert("Recorder 初始化失败")
             }
         });
       },
