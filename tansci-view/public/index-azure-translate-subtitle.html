@@ -289,7 +289,7 @@
         // An authorization token is a more secure method to authenticate for a browser deployment as
         // it allows the subscription keys to be kept secure on a server and a 10 minute use token to be
         // handed out to clients from an endpoint that can be protected from unauthorized access.
-        var authorizationEndpoint = "https://opencast.tsi.edu.sg/tansci/collect/getAzureToken";
+        var authorizationEndpoint = "https://opencast.tet-ai.com.sg/tansci/collect/getAzureToken";
         // var authorizationEndpoint = "http://localhost:8005/tansci/collect/getAzureToken";
 
         function RequestAuthorizationToken() {
@@ -555,7 +555,7 @@
             fd.append('docId', thisSessionId);
             var token=localStorage.getItem('token');
 
-            var url="https://opencast.tsi.edu.sg/tansci/collect/upload";
+            var url="https://opencast.tet-ai.com.sg/tansci/collect/upload";
                         // 开发
             // var url="http://localhost:8005/tansci/collect/upload";
 
@@ -851,7 +851,7 @@
                             subtitleDiv.innerHTML ='';
                             subtitleDiv.innerHTML = resultText;
                         // 生产
-                        var url="https://opencast.tsi.edu.sg/tansci/collect/sendNote?resultText="+resultText+"&language="+result.language+"&docId="+thisSessionId+"&offset="+offset+"&duration="+duration;
+                        var url="https://opencast.tet-ai.com.sg/tansci/collect/sendNote?resultText="+resultText+"&language="+result.language+"&docId="+thisSessionId+"&offset="+offset+"&duration="+duration;
                         // 开发
                         // var url="http://localhost:8005/tansci/collect/sendNote?resultText="+result.text+"&language="+result.language+"&docId="+thisSessionId+"&offset="+offset+"&duration="+duration;
 
@@ -892,7 +892,7 @@
 
 
                         // 生产 +"&remark="+remark
-                        var url="https://opencast.tsi.edu.sg/tansci/collect/createNote?docId="+thisSessionId+"&remark="+remark.value;
+                        var url="https://opencast.tet-ai.com.sg/tansci/collect/createNote?docId="+thisSessionId+"&remark="+remark.value;
                         // 开发
                         // var url="http://localhost:8005/tansci/collect/createNote?docId="+thisSessionId+"&remark="+remark.value;
 

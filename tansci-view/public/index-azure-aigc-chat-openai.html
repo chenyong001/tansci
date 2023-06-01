@@ -306,7 +306,7 @@
         // An authorization token is a more secure method to authenticate for a browser deployment as
         // it allows the subscription keys to be kept secure on a server and a 10 minute use token to be
         // handed out to clients from an endpoint that can be protected from unauthorized access.
-        var authorizationEndpoint = "https://opencast.tsi.edu.sg/tansci/collect/getAzureToken";
+        var authorizationEndpoint = "https://opencast.tet-ai.com.sg/tansci/collect/getAzureToken";
         // var authorizationEndpoint = "http://localhost:8005/tansci/collect/getAzureToken";
 
         function RequestAuthorizationToken() {
@@ -916,7 +916,7 @@
             // 入库数据
             var token = localStorage.getItem('token');
             // 生产 +"&remark="+remark
-            var url = "https://opencast.tsi.edu.sg/tansci/chatGPT/send2OpenAi?prompt=" + encodeURIComponent(prompt)+"&speechText="+encodeURIComponent(speechText);
+            var url = "https://opencast.tet-ai.com.sg/tansci/chatGPT/send2OpenAi?prompt=" + encodeURIComponent(prompt)+"&speechText="+encodeURIComponent(speechText);
             // 开发
             // var url = "http://localhost:8005/tansci/chatGPT/send2OpenAi?prompt=" + encodeURIComponent(prompt)+"&speechText="+encodeURIComponent(speechText);
 
