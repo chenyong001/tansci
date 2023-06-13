@@ -45,6 +45,9 @@
 					</div> -->
 				</div>
 			</div>
+			<div style="text-align:center;">
+				<a href="https://beian.miit.gov.cn" target="_blank" >蜀ICP备2023011562号 </a>
+			</div>
 		</el-card>
 	</div>
 </template>
