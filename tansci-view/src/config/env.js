@@ -1,5 +1,5 @@
 const host = {
-    base:'',// //opencast.tsi.edu.sg
+    base:'',// //opencast.tet-ai.com.sg
     asrBase:''
 }
 console.log('env.MODE-',import.meta.env.MODE)

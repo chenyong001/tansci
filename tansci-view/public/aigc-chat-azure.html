@@ -72,7 +72,7 @@
           }
           var token = localStorage.getItem('token');
           if(!token){
-              // window.location.href= "https://opencast.tsi.edu.sg";
+              // window.location.href= "https://opencast.tet-ai.com.sg";
               localStorage.setItem('chat',2);
               // window.open("/");
               window.location.href="/";
@@ -93,7 +93,7 @@ parent.appendChild(div);
           // 入库数据
 
           // 生产 +"&remark="+remark
-          var url = "https://opencast.tsi.edu.sg/tansci/chatGPT/send2Azure?prompt=" + encodeURIComponent(prompt)+"&speechText="+encodeURIComponent(speechText);
+          var url = "https://opencast.tet-ai.com.sg/tansci/chatGPT/send2Azure?prompt=" + encodeURIComponent(prompt)+"&speechText="+encodeURIComponent(speechText);
           // 开发
           // var url = "http://localhost:8005/tansci/chatGPT/send2Azure?prompt=" + encodeURIComponent(prompt)+"&speechText="+encodeURIComponent(speechText);
 
