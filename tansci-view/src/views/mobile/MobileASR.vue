@@ -88,6 +88,7 @@ components:{
             console.log('页面恢复')
           } else {//页面被挂起
               console.log('页面被挂起停止识别')
+              this.btnName = 'Tap to start recording'
               this.stop()
               this.isRecognizing = false
           }
