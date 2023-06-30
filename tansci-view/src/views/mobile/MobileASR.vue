@@ -43,7 +43,7 @@ import env from '../../config/env'
 import {getUuid} from '../../utils/utils'
 import icon1 from '../../assets/image/recording.svg'
 import icon2 from '../../assets/image/stop.svg'
-// import NoSleep from "NoSleep.js";
+import NoSleep from "NoSleep.js";
 import {isWeixin,isNotChrome,isMobile,isAndroid} from '../../utils/utils'
 import { getCurrentInstance } from "vue";
 
