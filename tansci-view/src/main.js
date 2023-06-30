@@ -8,6 +8,7 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import * as ElIcons from '@element-plus/icons-vue'
 import './styles/index.scss'
 import ECharts from 'vue-echarts';
+import NoSleep from "NoSleep.js";
 
 const app = createApp(App)
 app.use(store)
@@ -23,6 +24,26 @@ for(let icon in ElIcons){
 app.component('VChart', ECharts);
 
 app.mount('#app')
+
+app.config.globalProperties.$NoSleep = NoSleep;
+// var noSleep = NoSleep;
+
+// var wakeLockEnabled = false;
+// var toggleEl = document.querySelector("#toggle");
+// toggleEl.addEventListener('click', function() {
+//   if (!wakeLockEnabled) {
+//     noSleep.enable(); // keep the screen on!
+//     wakeLockEnabled = true;
+//     toggleEl.value = "Wake Lock is enabled";
+//     document.body.style.backgroundColor = "green";
+//   } else {
+//     noSleep.disable(); // let the screen turn off.
+//     wakeLockEnabled = false;
+//     toggleEl.value = "Wake Lock is disabled";
+//     document.body.style.backgroundColor = "";
+//   }
+// }, false);
+
 
   
   

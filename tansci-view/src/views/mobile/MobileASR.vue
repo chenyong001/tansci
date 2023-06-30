@@ -43,7 +43,9 @@ import env from '../../config/env'
 import {getUuid} from '../../utils/utils'
 import icon1 from '../../assets/image/recording.svg'
 import icon2 from '../../assets/image/stop.svg'
+import NoSleep from "NoSleep.js";
 import {isWeixin,isNotChrome,isMobile,isAndroid} from '../../utils/utils'
+import { getCurrentInstance } from "vue";
 
 export default {
 components:{
@@ -77,9 +79,12 @@ components:{
       this.checkAudioContent()
       
     },
+   
     mounted(){
       this.initSDK()
       this.addListener()
+      //在mounted调用
+      this.noSleep()
     },
     methods:{
       addListener(){
@@ -101,6 +106,16 @@ components:{
       clearContent(){
           this.resultContent = ''
       },
+    //屏幕常亮
+  noSleep () {
+    const noSleep2 = getCurrentInstance()?.appContext.config.globalProperties.$NoSleep
+    document.addEventListener('click',
+      function enableNoSleep () {
+        noSleep2.enable();
+        document.removeEventListener('click', enableNoSleep, false);
+      },
+      false);
+  },
       initSDK(){
         if(window.SpeechSDK){
           this.getInitAzureToken()
