@@ -8,7 +8,9 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import * as ElIcons from '@element-plus/icons-vue'
 import './styles/index.scss'
 import ECharts from 'vue-echarts';
-import NoSleep from "NoSleep.js";
+// import NoSleep from "NoSleep.js";
+import NoSleep from "nosleep.js/dist/NoSleep.min.js";
+
 
 const app = createApp(App)
 app.use(store)
