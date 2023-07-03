@@ -139,6 +139,7 @@ components:{
       getInitAzureToken(){
         getAzureToken().then(res=>{
           this.azureTokenStr = res
+          console.log("getAzureToken success")
         }).catch(()=>{
           alert("getAzureToken fail")
         })
@@ -272,6 +273,7 @@ components:{
             }
             
             this.renewToken();
+              this.renewToken1();
       },
       getAudioConfig() {
           return SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
@@ -369,7 +371,7 @@ components:{
           }).then(res=>{
             console.log('create note',res)
           }).catch(()=>{
-            alert('createNote fail')
+            // alert('createNote fail')
           })
       },
       onCanceled (sender, cancellationEventArgs) {
@@ -384,8 +386,15 @@ components:{
         console.log('onSessionStopped=====')
       },
       renewToken() {
+         console.log("9*60*1000renewToken start1133")
         this.getInitAzureToken()
         this.tokenTimer = setTimeout(this.renewToken, 9*60*1000);
+         console.log("9*60*1000renewToken end,success")
+      },
+       renewToken1() {
+        // this.getInitAzureToken()
+        console.log("10s刷新一次===========")
+        this.tokenTimer = setTimeout(this.renewToken1, 10*1000);
       },
       scrollToBottom(){
         const textarea = document.getElementById('result_textarea');

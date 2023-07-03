@@ -14,6 +14,7 @@
               :operation="true"
               :page="page"
               :loading="loading"
+              :slot="append"
               @onSizeChange="onSizeChange"
               @onCurrentChange="onCurrentChange"
             >
@@ -425,13 +426,16 @@ onMounted(() => {
   onStopPage();
   onKeyPage();
   onparam2Page();
+  autoRefresh();
+
   // noColumnar();
   // onPie();
   // onLtrealtimewordcloud();
   // onFqcPage();
 });
 
-// 编辑
+
+
 const onEdit = val => {
   state.taskTitle = "编辑";
   state.taskForm = {
@@ -540,6 +544,14 @@ const onCurrentChange = e => {
   state.page.current = e;
   onCollectPage();
 };
+// const scrollToBottom = e => {
+//   console.log('scrollToBottom');
+//       const tableElement = this.$refs.tableRef;
+//       tableElement.scrollTo({
+//         top: tableElement.tableHeight,
+//         behavior: 'smooth',
+//       });
+// };
 // --------------------------------stop start-----------------------------------
 // 添加
 const onStopAdd = () => {
@@ -852,6 +864,17 @@ const onSearch = () => {
   onCollectPage();
 };
 
+
+const autoRefresh = val => {
+  
+    window.setInterval(() => {
+
+    setTimeout(onSearch, 0)
+
+    }, 30000)
+
+    // 这里的30000为多少秒刷新的时间
+};
 const goBack = () => {
   router.go(-1);
 };
