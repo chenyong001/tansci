@@ -43,7 +43,7 @@ import env from '../../config/env'
 import {getUuid} from '../../utils/utils'
 import icon1 from '../../assets/image/recording.svg'
 import icon2 from '../../assets/image/stop.svg'
-// import NoSleep from "NoSleep.js";
+import NoSleep from "nosleep.js/dist/NoSleep.min.js";
 import {isWeixin,isNotChrome,isMobile,isAndroid} from '../../utils/utils'
 import { getCurrentInstance } from "vue";
 
@@ -108,13 +108,16 @@ components:{
       },
     //屏幕常亮
   noSleep () {
-    const noSleep2 = getCurrentInstance()?.appContext.config.globalProperties.$NoSleep
-    document.addEventListener('click',
-      function enableNoSleep () {
-        noSleep2.enable();
+     var noSleep2 = new NoSleep();
+    // Enable wake lock.
+    // (must be wrapped in a user input event handler e.g. a mouse or touch handler)
+    //  noSleep.enable()初始化方法必须绑定在鼠标事件或触摸事件内，
+    //  当点击页面时就会激活不休眠功能
+    document.addEventListener('click', function enableNoSleep() {
         document.removeEventListener('click', enableNoSleep, false);
-      },
-      false);
+        noSleep2.enable();
+        console.log('enable noSleep');
+    }, false);
   },
       initSDK(){
         if(window.SpeechSDK){
