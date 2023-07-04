@@ -139,6 +139,11 @@ components:{
       getInitAzureToken(){
         getAzureToken().then(res=>{
           this.azureTokenStr = res
+          // debugger
+           if(this.speechRecognizer){
+            //  刷新的token更新到speechSDK中，持续识别
+                        this.speechRecognizer.authorizationToken=this.azureTokenStr;
+              }
           console.log("getAzureToken success")
         }).catch(()=>{
           alert("getAzureToken fail")
@@ -386,10 +391,10 @@ components:{
         console.log('onSessionStopped=====')
       },
       renewToken() {
-         console.log("5*60*1000renewToken start1133")
+         console.log("9*60*1000renewToken start1133")
         this.getInitAzureToken()
-        this.tokenTimer = setTimeout(this.renewToken, 5*60*1000);
-         console.log("5*60*1000renewToken end,success")
+        this.tokenTimer = setTimeout(this.renewToken, 9*60*1000);
+         console.log("9*60*1000renewToken end,success")
       },
        renewToken1() {
         // this.getInitAzureToken()

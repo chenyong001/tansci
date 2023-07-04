@@ -2,8 +2,8 @@ import path from "path"
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-const url = 'https://opencast.tet-ai.com.sg';
-const testUrl = 'https://opencast.site'
+const url = 'http://opencast.tet-ai.com.sg';
+const testUrl = 'http://opencast.site'
 const localUrl='http://localhost:8005'
 
 export default defineConfig({
