@@ -386,10 +386,10 @@ components:{
         console.log('onSessionStopped=====')
       },
       renewToken() {
-         console.log("9*60*1000renewToken start1133")
+         console.log("5*60*1000renewToken start1133")
         this.getInitAzureToken()
-        this.tokenTimer = setTimeout(this.renewToken, 9*60*1000);
-         console.log("9*60*1000renewToken end,success")
+        this.tokenTimer = setTimeout(this.renewToken, 5*60*1000);
+         console.log("5*60*1000renewToken end,success")
       },
        renewToken1() {
         // this.getInitAzureToken()

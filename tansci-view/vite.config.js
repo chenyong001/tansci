@@ -2,8 +2,9 @@ import path from "path"
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-const url = 'http://opencast.tet-ai.com.sg';
-const testUrl = 'http://opencast.site'
+const url = 'https://opencast.tet-ai.com.sg';
+const testUrl = 'https://opencast.site'
+const localUrl='http://localhost:8005'
 
 export default defineConfig({
     plugins: [vue()],
@@ -31,7 +32,7 @@ export default defineConfig({
         port: 8006,
         proxy: {
             '/tansci': {
-                target: url,//url,testUrl
+                target: url,//url,testUrl,localUrl
                 changeOrigin: true,
                 pathRewrite: {
                     '^/tansci': '/tansci'
