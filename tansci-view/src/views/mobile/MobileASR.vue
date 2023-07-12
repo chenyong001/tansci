@@ -82,23 +82,23 @@ components:{
    
     mounted(){
       this.initSDK()
-      this.addListener()
+      // this.addListener()
       //在mounted调用
       this.noSleep()
     },
     methods:{
-      addListener(){
-        document.addEventListener("visibilitychange", () => {
-          if (document.visibilityState === "visible") { // 页面未挂起
-            console.log('页面恢复')
-          } else {//页面被挂起
-              console.log('页面被挂起停止识别')
-              this.btnName = 'Tap to start recording'
-              this.stop()
-              this.isRecognizing = false
-          }
-        });
-      },
+      // addListener(){
+      //   document.addEventListener("visibilitychange", () => {
+      //     if (document.visibilityState === "visible") { // 页面未挂起
+      //       console.log('页面恢复')
+      //     } else {//页面被挂起
+      //         console.log('页面被挂起停止识别')
+      //         this.btnName = 'Tap to start recording'
+      //         this.stop()
+      //         this.isRecognizing = false
+      //     }
+      //   });
+      // },
       download(){
         console.log('todo')
         window.open('http://www.google.com/chrome/','_blank')
