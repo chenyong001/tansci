@@ -10,8 +10,8 @@
       </div>
       <div class="language-choose">
         <p class="title">请选择语言</p>
-        <select class="languages">
-          <option v-for="(item,index) in languages" :value="item.val" :selected="selectedLanguages.val === item.val">{{item.name}}</option>
+        <select    v-model="this.selectedLanguage" class="languages">
+          <option v-for="(item,index) in languages" :value="item.val" >{{item.name}}</option>
         </select>
       </div>
       <input class="remark" v-model="remarkStr" placeholder="请输入备注：">
@@ -56,7 +56,7 @@ components:{
         icon1,
         icon2,
         languages:Languages,
-        selectedLanguages:{},
+        selectedLanguage:'',
         resultContent:'',
         azureTokenStr:'',//azure token
         recorder:null,// mp3 recorder
@@ -71,11 +71,12 @@ components:{
         mp3Blob:null,
         isRecognizing:false,//识别中
         showTip:false,
-        btnName:'Tap to start recording'
+        btnName:'Tap to start recording',
+        selectedG:''
       }
     },
     created(){
-      this.selectedLanguages = this.languages[1]
+      this.selectedLanguage = this.languages[1].val
       this.checkAudioContent()
       
     },
@@ -296,8 +297,7 @@ components:{
           if (sdkConfigType == SpeechSDK.SpeechTranslationConfig) {
               speechConfig.addTargetLanguage('en-US, ZiraRUS');
           }
-
-          speechConfig.speechRecognitionLanguage = this.selectedLanguages.val;
+          speechConfig.speechRecognitionLanguage = this.selectedLanguage;
           return speechConfig;
       },
       applyCommonConfigurationTo(recognizer) {
