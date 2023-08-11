@@ -40,7 +40,7 @@
     <div class="rightSide">
       <div class="header" id='header'>
         <div>
-          <span style="text-align: center;display:block;">欢迎使用 Touchstone 版 AIGC-Chat GPT4！ 为了最好的体验，请想好问题才提问。AI根据文章内容自动生成lams问题及答案,直接导入lams题库。</span>
+          <span style="text-align: center;display:block;">欢迎使用 Touchstone 版 AIGC-Chat GPT4！ 为了最好的体验，请想好问题才提问。AI根据文章内容自动生成lams问题及答案,点击下载后导入lams题库。</span>
         </div>
       </div>
 
@@ -177,7 +177,7 @@
     if (fileName) {
       $.ajax({
         type: 'get',
-        url: "https://opencast.tsi.edu.sg/tansci/chatGPT/download?fileName=" + fileName, //上传文件的请求路径必须是绝对路劲
+        url: "https://opencast.tet-ai.com.sg/tansci/chatGPT/download?fileName=" + fileName, //上传文件的请求路径必须是绝对路劲
         // url: "http://localhost:8005/tansci/chatGPT/download?fileName=" + fileName, //上传文件的请求路径必须是绝对路劲
         headers: { "Content-Type": "application/x-www-form-urlencoded", "Authorization": 'Bearer ' + token },
         xhrFields: { responseType: "blob" },
