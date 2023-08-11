@@ -6,6 +6,9 @@ import com.tansci.domain.system.ChatGPT;
 import com.tansci.domain.system.Record;
 import com.tansci.domain.system.RecordData;
 
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -20,6 +23,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 public class ExportUtil {
@@ -234,6 +238,43 @@ public class ExportUtil {
   //
   //  }
   //
+
+
+  public static void download(HttpServletResponse response, String fileName) {
+
+    try {
+      XWPFDocument document;
+      //      String outPath = outPath = "F:\\my_work\\youtu_pingtai\\export_dir\\a.docx";
+      File directory = new File("");//设定为当前文件夹
+      String parentDir =
+          directory.getAbsolutePath() + File.separator + "src" + File.separator + "main" + File.separator + "resources"
+              + File.separator + "static" + File.separator + "uploadFile";
+      String filePath = parentDir + File.separator + fileName;
+      //      String filePath="D:\\lams office\\test\\题目.docx";
+      //      String filePath="D:\\lams office\\test\\加涅信息加工系统是用于处理什么类型的数据的？.txt";
+      File file = new File(filePath);
+
+      String filename = file.getName();
+      FileInputStream fis = null;
+      fis = new FileInputStream(file);
+      //设置文件名及后缀
+      response
+          .setHeader("Content-Disposition", "attachment; filename=" + new String(filename.getBytes(), "ISO-8859-1"));
+      response.setHeader("content-Type", "docx");
+      response.setHeader("content-Type", "application/msword;charset=UTF-8");
+      String fileType = "docx";
+      ServletOutputStream outputStream = response.getOutputStream();
+      if ("docx".equals(fileType) || "doc".equals(fileType)) {//Office的doc与docx输出流，使用poi-ooxml 3.17可用
+        document = new XWPFDocument(OPCPackage.open(fis));
+        document.write(outputStream);
+      }
+      outputStream.flush();
+      outputStream.close();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
   public static void main(String[] args) {
 
     System.out.println("aaaaaaaaaa" + System.getProperty("line.separator") + "bbbbbbbbb");

@@ -13,14 +13,17 @@
         <template #search>
 
     
-           <div>
+           <!-- <div>
             <el-button type="primary" @click="onChatGpt">AIGC-Chat文字版</el-button>
           </div>
                     <div>
             <el-button type="primary" @click="onChatGptOpenAI">AIGC-Chat语音版</el-button>
-          </div>
+          </div> -->
                      <div>
             <el-button type="primary" @click="onChatGptAzure">AIGC-Chat Azure文字版</el-button>
+          </div>
+                         <div>
+            <el-button type="primary" @click="onChatGptAzureLams">AIGC LAMS 选择题版</el-button>
           </div>
           <div><el-button type="primary" @click="onExportChatGPTTxt">导出</el-button></div>
 
@@ -65,6 +68,10 @@ const onChatGptOpenAI = () => {
 const onChatGptAzure = () => {
   window.open("/aigc-chat-azure");
   // window.open("/aigc-chat-azure.html");
+};
+const onChatGptAzureLams = () => {
+  window.open("/aigc-chat-azure-lams");
+  // window.open("/aigc-chat-azure-lams.html");
 };
 
 const menuClick = val => {

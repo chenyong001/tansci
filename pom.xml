@@ -172,6 +172,11 @@
         <version>0.0.20131108.vaadin1</version>
         <scope>compile</scope>
       </dependency>
+        <dependency>
+            <groupId>com.deepoove</groupId>
+            <artifactId>poi-tl</artifactId>
+            <version>1.6.0</version>
+        </dependency>
     </dependencies>
 <!--    <repositories>-->
 <!--        <repository>-->

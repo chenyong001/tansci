@@ -9,12 +9,16 @@ ENV TZ Asia/Shanghai
 #加入jar包
 ADD  target/*.jar /app/tansci.jar
 #添加py脚本文件
+ADD py/convert2.0.py /
+#添加py脚本文件
 ADD py/analyseRecord_linux.py /
 ADD py/stopword.txt /
 ADD py/Userdict.txt /
 ADD py/NLPIR.user /usr/local/lib/python3.7/site-packages/pynlpir/Data
 #用于存放py文件参数数据目录
 RUN mkdir /temp
+#添加word支持
+RUN pip install python-docx
 #创建日志目录
 RUN mkdir /logs
 #暴露端口

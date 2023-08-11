@@ -104,6 +104,18 @@ public class ChatGPTController {
     //    recordParamService.del(recordParam);
     return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, result);
   }
+
+  @PostMapping("/send2AzureLams")
+  @ResponseBody
+  public Wrapper<String> send2AzureLams(String prompt,@RequestParam(required=false) String speechText,@RequestParam(required=false) String system) {
+    log.info("==send2Azure==ChatGPT=======,prompt={},speechText={}", prompt,speechText);
+    if (StringUtils.isBlank(prompt)) {
+      //      如果数据为空，则不处理，直接返回
+      return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+    }
+    String result = chatGPTService.send2AzureLams(prompt,speechText,system);
+    return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, result);
+  }
   @ApiOperation(value = "chatGPT列表", notes = "chatGPT列表")
   @Log(modul = "列表", type = Constants.SELECT, desc = "列表")
   @ResponseBody
@@ -130,6 +142,11 @@ public class ChatGPTController {
     }
     chatGPTService.del(chatGPT);
     return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+  }
+
+  @GetMapping("/download")
+  public void download(String fileName, HttpServletResponse response) {
+    ExportUtil.download(response, fileName);
   }
 
 
