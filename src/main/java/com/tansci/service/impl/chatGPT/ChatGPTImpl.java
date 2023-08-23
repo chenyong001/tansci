@@ -275,7 +275,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
         messages.add(new ChatGPTImpl.ChatGPTMessage("system", "根据文章提出选择题和答案"));
         messages.add(new ChatGPTImpl.ChatGPTMessage("user", "根据文章提出选择题和答案"));
         messages.add(new ChatGPTImpl.ChatGPTMessage("assistant",
-            "以JSON格式返回,每题4个选项A、B、C、D,JSON包含一个questions数组，每个json对象包含title,options,answer."));
+            "以JSON格式返回,每题4个选项A、B、C、D,JSON包含一个questions数组，每个json对象包含title,options,answer,feedback."));
       }
       messages.add(new ChatGPTImpl.ChatGPTMessage("user", prompt));
       bodyParams.put("messages", messages);
@@ -304,6 +304,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
         optionC = optionObject.getString("C");
         optionD = optionObject.getString("D");
         String answer = jsonObject.getString("answer");
+        String feedback = jsonObject.getString("feedback");
 
         sb.append(title).append("\n");
         sb.append("A).").append(optionA).append("\n");
@@ -311,7 +312,8 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
         sb.append("C).").append(optionC).append("\n");
         sb.append("D).").append(optionD).append("\n");
         sb.append("Answer: ").append(answer).append("\n");
-
+        sb.append("Feedback: ").append(feedback).append("\n");
+//只有题型为TF（判断题），才有正确和错误反馈
       }
       result = sb.toString();
       log.info(result);
@@ -319,6 +321,10 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
        lamsFileName = convert2lams(result, userId);
 
 //      messagesLamsMap.put(userId, messages);
+//      private String feedback;
+//      private String feedbackOnCorrect;
+//      private String feedbackOnPartiallyCorrect;
+//      private String feedbackOnIncorrect;
 
     } catch (Exception e) {
       log.error("Exception:", e);
@@ -400,7 +406,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
         //      FileUtils.write(new File(filePath), jsonStr, "utf-8");
         //        args1 = new String[] { "python", "E:\\tansci\\py/analyseRecord_windows.py", "--filePath=" + filePath,
         //            "--num=" + num, "--keywordsList" + keywordsList, "--stopwordsList" + stopwordsList };
-        args2.append("python  E://tansci//py//convert2.0.py  --fileName ").append(fileName)
+        args2.append("python  E://work//tansci//py//convert2.0.py  --fileName ").append(fileName)
             //            .append("\"")
             .append(" --targetName ").append(targetName)
         //            .append("\"")
@@ -453,7 +459,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
       if (code == 0) {
         log.info("执行脚本成功,times={}s", (endTime - startTime) / 1000f);
       } else {
-        log.info("执行脚本失败,times={}s", (endTime - startTime) / 1000f);
+        log.info("执行脚本失败,code={code},times={}s", (endTime - startTime) / 1000f);
       }
     } catch (Exception e) {
       result = false;
