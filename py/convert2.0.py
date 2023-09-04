@@ -27,6 +27,8 @@ def convertext(fileName,targetName):  #path指的是需要处理文档的路径�
         if item:
             if item[:7] == "Answer:":
                 ans += item
+            elif item[:9] == "Feedback:":
+                ans += item
             elif item[:2] not in ["A)", "B)", "C)", "D)","A.","B.","C.","D.","a)","b)","c)","d)","a.","b.","c.","d."] and item[:4] not in ["正确答案","答案：A", "答案：B", "答案：C", "答案：D","答案：a","答案：b","答案：c","答案：d"]:
                 ans += "Question: "
                 ans += item
@@ -42,10 +44,10 @@ def convertext(fileName,targetName):  #path指的是需要处理文档的路径�
                 else:
                     ans+=item[0]
                 ans += item[1:]
+#         ans += "\n"
+        doc.add_paragraph(ans)
+        ans=""
 
-            doc.add_paragraph(ans)
-            ans=""
-    #    ans += "\n"
 		
    # para = doc.add_paragraph(ans)
     doc.save(targetName)
