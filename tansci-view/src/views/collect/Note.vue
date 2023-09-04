@@ -102,12 +102,9 @@ import { timeFormate2 } from "../../utils/utils.js";
     const router = useRouter()
 
     const onAddNote = () => {
-        window.open('/index-azure.html' )
-        // window.open('/index.html' )
-
-    //   router.replace({
-    //     path: '/note/noteCreate'
-    //   })
+         window.open("/index-azure");
+        // window.open('/index-azure.html' )
+     
     }
        const onAddNoteTranslate = () => {
         window.open('/index-azure-translate.html' )
@@ -125,7 +122,8 @@ import { timeFormate2 } from "../../utils/utils.js";
         window.open('/mp3test.html' )
     }
        const onAddNoteSubtitle = () => {
-        window.open('/index-azure-subtitle.html' )
+        window.open('/index-azure-subtitle' )
+        // window.open('/index-azure-subtitle.html' )
     }
        const onAddNoteTranslateSubtitle = () => {
         window.open('/index-azure-translate-subtitle.html' )
