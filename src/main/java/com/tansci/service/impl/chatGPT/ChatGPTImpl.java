@@ -11,6 +11,7 @@ import com.tansci.domain.system.ChatGPT;
 import com.tansci.domain.system.SysDic;
 import com.tansci.domain.system.SysUser;
 import com.tansci.domain.system.dto.SysDicDto;
+import com.tansci.enums.QuestionTypeEnum;
 import com.tansci.mapper.chatGPT.ChatGPTMapper;
 import com.tansci.service.chatGPT.ChatGPTService;
 import com.tansci.service.system.SysDicService;
@@ -68,7 +69,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
    * chatGPT 用户消息集合
    */
   private Map<String, List<ChatGPTImpl.ChatGPTMessage>> messagesMap = new HashMap<>();
-  private Map<String, List<ChatGPTImpl.ChatGPTMessage>> messagesLamsMap = new HashMap<>();
+//  private Map<String, List<ChatGPTImpl.ChatGPTMessage>> messagesLamsMap = new HashMap<>();
 
   @Override
   public String send(String prompt, String speechText) {
@@ -241,10 +242,23 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
     }
   }
 
+  /**
+   * 题型：单选、多选、判断题、简答题
+   * 题数：10
+   * 参考答案：A
+   * 反馈：答案解释
+   * 语言：回答的语言 questionType questionNum questionLanguage
+   *
+   * @param prompt
+   * @param speechText
+   * @param system
+   * @return
+   */
   @Override
-  public String send2AzureLams(String prompt, String speechText, String system) {
+  public String send2AzureLams(String prompt, String speechText, String system, String questionType, String questionNum,
+      String questionLanguage) {
 
-    String lamsFileName="出题失败，请重试！！！";
+    String lamsFileName = "出题失败，请重试！！！";
     String result = "";
     String uri = "https://tsigpt.openai.azure.com/openai/deployments/tsigpt4/chat/completions?api-version=2023-03-15-preview";
     String userId = SecurityUserUtils.getUser().getId();
@@ -265,19 +279,22 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
       headerParams.put("api-key", azureApiKey);
       Map<String, Object> bodyParams = Maps.newHashMap();
       //      bodyParams.put("model", "gpt-3.5-turbo");
-      List<ChatGPTImpl.ChatGPTMessage> messages = new ArrayList<>();
-      if (StringUtils.isBlank(system)) {
-        system = "你是个擅长根据文章提出选择题和答案的专家.";
-      }
-      if (messagesLamsMap.containsKey(userId)) {
-        messages = messagesLamsMap.get(userId);
-      } else {
-        messages.add(new ChatGPTImpl.ChatGPTMessage("system", "根据文章提出选择题和答案"));
-        messages.add(new ChatGPTImpl.ChatGPTMessage("user", "根据文章提出选择题和答案"));
-        messages.add(new ChatGPTImpl.ChatGPTMessage("assistant",
-            "以JSON格式返回,每题4个选项A、B、C、D,JSON包含一个questions数组，每个json对象包含title,options,answer,feedback."));
-      }
-      messages.add(new ChatGPTImpl.ChatGPTMessage("user", prompt));
+//      List<ChatGPTImpl.ChatGPTMessage> messages = new ArrayList<>();
+//      if (StringUtils.isBlank(system)) {
+//        system = "你是个擅长根据文章提出选择题和答案的专家.";
+//      }
+//      if (messagesLamsMap.containsKey(userId)) {
+//        messages = messagesLamsMap.get(userId);
+//        messages.add(new ChatGPTImpl.ChatGPTMessage("user", prompt));
+//      } else {
+      List<ChatGPTImpl.ChatGPTMessage> messages = getConfig(questionType,questionNum,questionLanguage,prompt);
+        //
+        //        messages.add(new ChatGPTImpl.ChatGPTMessage("system", "根据文章提出选择题和答案"));
+        //        messages.add(new ChatGPTImpl.ChatGPTMessage("user", "根据文章提出选择题和答案"));
+        //        messages.add(new ChatGPTImpl.ChatGPTMessage("assistant",
+        //            "以JSON格式返回,每题4个选项A、B、C、D,JSON包含一个questions数组，每个json对象包含title,options,answer,feedback."));
+//      }
+//      messages.add(new ChatGPTImpl.ChatGPTMessage("user", prompt));
       bodyParams.put("messages", messages);
       bodyParams.put("max_tokens", 1024);
       bodyParams.put("temperature", 0);
@@ -313,18 +330,18 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
         sb.append("D).").append(optionD).append("\n");
         sb.append("Answer: ").append(answer).append("\n");
         sb.append("Feedback: ").append(feedback).append("\n");
-//只有题型为TF（判断题），才有正确和错误反馈
+        //只有题型为TF（判断题），才有正确和错误反馈
       }
       result = sb.toString();
       log.info(result);
-//      将结果转为lams能接受的docx文档
-       lamsFileName = convert2lams(result, userId);
+      //      将结果转为lams能接受的docx文档
+      lamsFileName = convert2lams(result, userId);
 
-//      messagesLamsMap.put(userId, messages);
-//      private String feedback;
-//      private String feedbackOnCorrect;
-//      private String feedbackOnPartiallyCorrect;
-//      private String feedbackOnIncorrect;
+      //      messagesLamsMap.put(userId, messages);
+      //      private String feedback;
+      //      private String feedbackOnCorrect;
+      //      private String feedbackOnPartiallyCorrect;
+      //      private String feedbackOnIncorrect;
 
     } catch (Exception e) {
       log.error("Exception:", e);
@@ -342,6 +359,44 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
       save(chatGPT);
       return lamsFileName;
     }
+  }
+
+  private List<ChatGPTMessage> getConfig(String questionType, String questionNum,
+      String questionLanguage,String prompt) {
+    List<ChatGPTMessage> messages = new ArrayList<>();
+    if (questionType.equalsIgnoreCase(QuestionTypeEnum.SINGLE_CHOICE.getType())) {
+//      单选题
+      messages.add(new ChatGPTMessage("system", "你是个擅长根据文章提出选择题和答案的专家"));
+      messages.add(new ChatGPTMessage("user", "请用"+questionLanguage+",根据文章提出"+questionNum+"道单项选择题和答案"));
+      messages.add(new ChatGPTMessage("assistant",
+          "以JSON格式返回,每题4个选项A、B、C、D,JSON包含一个questions数组，每个json对象包含title,options,answer,feedback."));
+      messages.add(new ChatGPTMessage("user",  prompt));
+
+    } else if (questionType.equalsIgnoreCase(QuestionTypeEnum.MULTIPLE_CHOICE.getType())) {
+//      多选题
+      messages.add(new ChatGPTMessage("system", "你是一名助手，旨在根据文章提出多项选择题和答案"));
+      messages.add(new ChatGPTMessage("user", "请帮我出一道多项选择题"));
+      messages.add(new ChatGPTMessage("assistant",
+          "题目：以下哪些国家是世界上面积前三的国家？ A. 中国 B. 美国 C. 加拿大 D. 俄罗斯 答案：ABC"));
+      String suffix = "---请用"+questionLanguage+",我需要的是多项选择题，以JSON格式返回,JSON包含一个questions数组，每个json对象包含title,options,answer,feedback,答案必须在2个选项以上，每题4个选项A、B、C、D。请重新出"+questionNum+"道多项选择题";
+      messages.add(new ChatGPTMessage("user",  prompt+ suffix));
+
+    } else if (questionType.equalsIgnoreCase(QuestionTypeEnum.TF_CHOICE.getType())) {
+//      判断题
+      messages.add(new ChatGPTMessage("system", "你是个擅长根据文章提出问题和答案的专家"));
+      messages.add(new ChatGPTMessage("user", "请用"+questionLanguage+",根据文章提出"+questionNum+"道判断题和答案"));
+      messages.add(new ChatGPTMessage("assistant",
+          "以JSON格式返回,JSON包含一个questions数组，每个json对象包含title,options,answer,feedback,选项为‘是’和‘否’"));
+      messages.add(new ChatGPTMessage("user",  prompt));
+    } else if (questionType.equalsIgnoreCase(QuestionTypeEnum.SHORT_ANSWER_CHOICE.getType())) {
+//      简答题
+      messages.add(new ChatGPTMessage("system", "你是个擅长根据文章提出问题和答案的专家"));
+      messages.add(new ChatGPTMessage("user", "请用"+questionLanguage+",根据文章提出"+questionNum+"道简答题和答案"));
+      messages.add(new ChatGPTMessage("assistant",
+          "以JSON格式返回,JSON包含一个questions数组，每个json对象包含title,answer,feedback."));
+      messages.add(new ChatGPTMessage("user",  prompt));
+    }
+    return messages;
   }
 
   private String convert2lams(String result, String userId) throws IOException {
@@ -372,7 +427,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
       //2、调用python脚本转换为docx，返回下载链接
       if (!convert2py(txtFile.getAbsolutePath(), resultFilePath)) {
         //        txtFile.delete();
-        resultName=null;
+        resultName = null;
         //不成功
         return resultName;
       }

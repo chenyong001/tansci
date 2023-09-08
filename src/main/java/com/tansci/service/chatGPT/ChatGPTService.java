@@ -21,7 +21,7 @@ public interface ChatGPTService {
 
   String send2Azure(String prompt, String speechText,String system);
 
-  String send2AzureLams(String prompt, String speechText, String system);
+  String send2AzureLams(String prompt, String speechText, String system, String questionType, String questionNum, String questionLanguage);
 
   IPage<ChatGPT> page(Page page, ChatGPT chatGPT);
 

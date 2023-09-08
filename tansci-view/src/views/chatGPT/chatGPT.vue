@@ -23,7 +23,7 @@
             <el-button type="primary" @click="onChatGptAzure">AIGC-Chat Azure文字版</el-button>
           </div>
                          <div>
-            <el-button type="primary" @click="onChatGptAzureLams">AIGC LAMS 选择题版</el-button>
+            <el-button type="primary" @click="onChatGptAzureLams">AIGC LAMS 出题版</el-button>
           </div>
           <div><el-button type="primary" @click="onExportChatGPTTxt">导出</el-button></div>
 
@@ -70,8 +70,8 @@ const onChatGptAzure = () => {
   // window.open("/aigc-chat-azure.html");
 };
 const onChatGptAzureLams = () => {
-  window.open("/aigc-chat-azure-lams");
-  // window.open("/aigc-chat-azure-lams.html");
+  // window.open("/aigc-chat-azure-lams");
+  window.open("/aigc-chat-azure-lams.html");
 };
 
 const menuClick = val => {

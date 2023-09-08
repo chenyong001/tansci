@@ -40,13 +40,28 @@
     <div class="rightSide">
       <div class="header" id='header'>
         <div>
-          <span style="text-align: center;display:block;">欢迎使用 Touchstone 版 AIGC-Chat GPT4！ 为了最好的体验，请想好问题才提问。AI根据文章内容自动生成lams问题及答案,点击下载后导入lams题库。</span>
+          <span style="text-align: center;display:block;">欢迎使用 Touchstone 版 AIGC-Chat GPT4！
+            为了最好的体验，请想好问题才提问。AI根据文章内容自动生成lams问题及答案,点击下载后导入lams题库。</span>
         </div>
       </div>
 
       <div class="chatBox" id='chatBox'>
       </div>
-
+      <div class="chatConfig" id='chatConfig'>
+          题型：
+          <select id="questionType">
+              <option value="0" selected>单选题</option>
+              <option value="1">多选题</option>
+              <option value="2">判断题</option>
+              <option value="3">简答题</option>
+          </select>
+          题数：<input type="text" class="TextBox" style="width: 110px;ime-mode:disabled;" name="questionNum" id="questionNum"
+          value="5" oninput="value=value.replace(/[^\d]/g,'')" />
+          语言： <select id="questionLanguage">
+            <option value="中文" selected>中文</option>
+            <option value="English">English</option>
+        </select>
+      </div>
       <div><label for="promptTips" id='promptTips'>提问最大支持2000个字符长度！</label></div>
       <div class="chatBox_input">
         <textarea id="prompt" name="prompt" rows="5" cols="40"
@@ -110,12 +125,16 @@
     parent.appendChild(loadDiv);
     parent.scrollTop = parent.scrollHeight + parent.clientHeight;
 
+    var questionType = $('#questionType').val();
+    var questionNum = $('#questionNum').val();
+    var questionLanguage = $('#questionLanguage').val();
+
     // 入库数据
 
     // 生产 +"&remark="+remark
-    var url = "https://opencast.tet-ai.com.sg/tansci/chatGPT/send2AzureLams?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText);
+    // var url = "https://opencast.tet-ai.com.sg/tansci/chatGPT/send2AzureLams?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText);
     // 开发
-    // var url = "http://localhost:8005/tansci/chatGPT/send2AzureLams?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText);
+    var url = "http://localhost:8005/tansci/chatGPT/send2AzureLams?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText)+ "&questionType=" + encodeURIComponent(questionType)+ "&questionNum=" + encodeURIComponent(questionNum)+ "&questionLanguage=" + encodeURIComponent(questionLanguage);
 
     var a = new XMLHttpRequest();
     a.open("Post", url);
