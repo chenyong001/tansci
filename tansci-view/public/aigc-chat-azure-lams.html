@@ -132,7 +132,9 @@
     // 入库数据
 
     // 生产 +"&remark="+remark
-    var url = "https://opencast.tet-ai.com.sg/tansci/chatGPT/send2AzureLams?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText);
+    // var url = "https://opencast.tet-ai.com.sg/tansci/chatGPT/send2AzureLams?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText);
+       var url = "https://opencast.tet-ai.com.sg/tansci/chatGPT/send2AzureLams?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText)+ "&questionType=" + encodeURIComponent(questionType)+ "&questionNum=" + encodeURIComponent(questionNum)+ "&questionLanguage=" + encodeURIComponent(questionLanguage);
+
     // 开发
     // var url = "http://localhost:8005/tansci/chatGPT/send2AzureLams?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText)+ "&questionType=" + encodeURIComponent(questionType)+ "&questionNum=" + encodeURIComponent(questionNum)+ "&questionLanguage=" + encodeURIComponent(questionLanguage);
 
