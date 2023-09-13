@@ -374,10 +374,10 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
                     sb.append("D).").append(optionD).append("\n");
                 }
                 sb.append("Answer: ").append(answer).append("\n");
-
+                String feedback = jsonObject.getString("feedback");
+                sb.append("Feedback: ").append(feedback).append("\n");
             }
-            String feedback = jsonObject.getString("feedback");
-            sb.append("Feedback: ").append(feedback).append("\n");
+
             String lo = jsonObject.getString("lo");
             sb.append("LO: ").append(lo).append("\n");
 
