@@ -394,7 +394,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
             messages.add(new ChatGPTMessage("system", "你是个擅长根据文章提出选择题和答案的专家"));
             messages.add(new ChatGPTMessage("user", "请用" + questionLanguage + ",根据文章提出" + questionNum + "道单项选择题、答案和考点(lo)"));
             messages.add(new ChatGPTMessage("assistant",
-                    "以JSON格式返回,每题4个选项A、B、C、D,JSON包含一个questions数组，每个json对象包含title、options、answer、feedback、lo."));
+                    "以JSON格式返回,每题4个选项A、B、C、D,JSON包含一个questions数组，每个json对象包含title、options(json对象)、answer、feedback、lo."));
             messages.add(new ChatGPTMessage("user", prompt));
 
         } else if (questionType.equalsIgnoreCase(QuestionTypeEnum.MULTIPLE_CHOICE.getType())) {
@@ -403,7 +403,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
             messages.add(new ChatGPTMessage("user", "请帮我出一道多项选择题"));
             messages.add(new ChatGPTMessage("assistant",
                     "题目：以下哪些国家是世界上面积前三的国家？ A. 中国 B. 美国 C. 加拿大 D. 俄罗斯 答案：ABC"));
-            String suffix = "---请用" + questionLanguage + ",我需要的是多项选择题，以JSON格式返回,JSON包含一个questions数组，每个json对象包含title、options、answer、feedback、lo,答案必须在2个选项以上，每题4个选项A、B、C、D。请重新出" + questionNum + "道多项选择题";
+            String suffix = "---请用" + questionLanguage + ",我需要的是多项选择题，以JSON格式返回,JSON包含一个questions数组，每个json对象包含title、options(json对象)、answer、feedback、lo,答案必须在2个选项以上，每题4个选项A、B、C、D。请重新出" + questionNum + "道多项选择题";
             messages.add(new ChatGPTMessage("user", prompt + suffix));
 
         } else if (questionType.equalsIgnoreCase(QuestionTypeEnum.TF_CHOICE.getType())) {
@@ -411,7 +411,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
             messages.add(new ChatGPTMessage("system", "你是个擅长根据文章提出问题和答案的专家"));
             messages.add(new ChatGPTMessage("user", "请用" + questionLanguage + ",根据文章提出" + questionNum + "道判断题、答案和考点(lo)"));
             messages.add(new ChatGPTMessage("assistant",
-                    "以JSON格式返回,JSON包含一个questions数组，每个json对象包含title、options、answer、feedback、lo,选项为‘true’和‘false’"));
+                    "以JSON格式返回,JSON包含一个questions数组，每个json对象包含title、options(json对象)、answer、feedback、lo,选项为‘true’和‘false’"));
             messages.add(new ChatGPTMessage("user", prompt));
         } else if (questionType.equalsIgnoreCase(QuestionTypeEnum.SHORT_ANSWER_CHOICE.getType())) {
 //      简答题
