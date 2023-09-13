@@ -90,7 +90,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
             request.addHeader("Authorization", "Bearer " + apiKey);
             JSONObject requestBody = new JSONObject();
             requestBody.put("prompt", prompt);
-            requestBody.put("max_tokens", 1024);
+            requestBody.put("max_tokens", 1024*8);
             requestBody.put("temperature", 0.7);
             requestBody.put("n", 1);
 
@@ -210,7 +210,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
             }
             messages.add(new ChatGPTImpl.ChatGPTMessage("user", prompt));
             bodyParams.put("messages", messages);
-            bodyParams.put("max_tokens", 1024*8);
+            bodyParams.put("max_tokens", 1024*6);
             bodyParams.put("temperature", 0);
             String responseString = HttpClientUtil.sendPostRequest2(uri, headerParams, bodyParams);
 
@@ -294,7 +294,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
 //      }
 //      messages.add(new ChatGPTImpl.ChatGPTMessage("user", prompt));
             bodyParams.put("messages", messages);
-            bodyParams.put("max_tokens", 1024);
+            bodyParams.put("max_tokens", 1024*6);
             bodyParams.put("temperature", 0);
             String responseString = HttpClientUtil.sendPostRequest2(uri, headerParams, bodyParams);
             System.out.println("==========responseString=" + responseString);
