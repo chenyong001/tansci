@@ -210,7 +210,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
             }
             messages.add(new ChatGPTImpl.ChatGPTMessage("user", prompt));
             bodyParams.put("messages", messages);
-            bodyParams.put("max_tokens", 1024);
+            bodyParams.put("max_tokens", 1024*8);
             bodyParams.put("temperature", 0);
             String responseString = HttpClientUtil.sendPostRequest2(uri, headerParams, bodyParams);
 
