@@ -99,13 +99,12 @@
   });
 
 
-  debugger
   
     var wsId = getUUID();
     // var wsId = 333;
     // 创建一个Socket实例
-    debugger
-    var socket = new WebSocket('ws://localhost:8005/tansci/ws/' + wsId);
+    var socket = new WebSocket('ws://opencast.tet-ai.com.sg/tansci/ws/' + wsId);
+    // var socket = new WebSocket('ws://localhost:8005/tansci/ws/' + wsId);
     // 打开Socket 
     socket.onopen = function (event) {
       // 发送一个初始化消息
@@ -113,7 +112,6 @@
       // 监听消息
       socket.onmessage = function (event) {
         console.log('Client received a message', event);
-        debugger
         const reply = event.data;
       var thisTime = getCurrentTime() + '  <br>';
       var thisResponse = reply;
