@@ -103,7 +103,7 @@
     var wsId = getUUID();
     // var wsId = 333;
     // 创建一个Socket实例
-    var socket = new WebSocket('ws://opencast.tet-ai.com.sg/tansci/ws/' + wsId);
+    var socket = new WebSocket('wss://opencast.tet-ai.com.sg/tansci/ws/' + wsId);
     // var socket = new WebSocket('ws://localhost:8005/tansci/ws/' + wsId);
     // 打开Socket 
     socket.onopen = function (event) {
@@ -179,10 +179,10 @@
     // 入库数据
     
     // 生产 +"&remark="+remark
-    //  var url = "https://opencast.tet-ai.com.sg/tansci/chatGPT/send2AzureLamsWs?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText)+ "&questionType=" + encodeURIComponent(questionType)+ "&questionNum=" + encodeURIComponent(questionNum)+ "&questionLanguage=" + encodeURIComponent(questionLanguage)+ "&wsid=" + encodeURIComponent(wsid);
+     var url = "https://opencast.tet-ai.com.sg/tansci/chatGPT/send2AzureLamsWs?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText)+ "&questionType=" + encodeURIComponent(questionType)+ "&questionNum=" + encodeURIComponent(questionNum)+ "&questionLanguage=" + encodeURIComponent(questionLanguage)+ "&wsId=" + encodeURIComponent(wsId);
 
     // 开发
-    var url = "http://localhost:8005/tansci/chatGPT/send2AzureLamsWs?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText) + "&questionType=" + encodeURIComponent(questionType) + "&questionNum=" + encodeURIComponent(questionNum) + "&questionLanguage=" + encodeURIComponent(questionLanguage)+ "&wsId=" + encodeURIComponent(wsId);
+    // var url = "http://localhost:8005/tansci/chatGPT/send2AzureLamsWs?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText) + "&questionType=" + encodeURIComponent(questionType) + "&questionNum=" + encodeURIComponent(questionNum) + "&questionLanguage=" + encodeURIComponent(questionLanguage)+ "&wsId=" + encodeURIComponent(wsId);
 
     var a = new XMLHttpRequest();
     a.open("Post", url);
@@ -248,8 +248,8 @@
         if (fileName) {
           $.ajax({
             type: 'get',
-            // url: "https://opencast.tet-ai.com.sg/tansci/chatGPT/download?fileName=" + fileName, //上传文件的请求路径必须是绝对路劲
-            url: "http://localhost:8005/tansci/chatGPT/download?fileName=" + fileName, //上传文件的请求路径必须是绝对路劲
+            url: "https://opencast.tet-ai.com.sg/tansci/chatGPT/download?fileName=" + fileName, //上传文件的请求路径必须是绝对路劲
+            // url: "http://localhost:8005/tansci/chatGPT/download?fileName=" + fileName, //上传文件的请求路径必须是绝对路劲
             headers: { "Content-Type": "application/x-www-form-urlencoded", "Authorization": 'Bearer ' + token },
             xhrFields: { responseType: "blob" },
           }).then(function (res) {
