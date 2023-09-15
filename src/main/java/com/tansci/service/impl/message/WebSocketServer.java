@@ -58,9 +58,20 @@ public class WebSocketServer {
 
 
     @OnMessage
-    public void onMessage(Session session, String message) throws IOException {
+    public void onMessage(Session session,@PathParam("id")String id, String message) throws IOException {
         System.out.println(message);
         // 收到客户端消息时调用
+        if("ping".equalsIgnoreCase(message)){
+            if (StringUtils.isNotBlank(id)) {
+                for (WebSocketServer ws : sessionSet) {
+                    if (ws.id.equals(id)) {
+                        System.out.println("wsId:"+id+"  "+message);
+                        ws.sendMessage("pong");
+                    }
+                }
+            }
+        }
+
     }
 
 
