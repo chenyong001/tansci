@@ -27,7 +27,7 @@ C:\\Users\\50212\\AppData\\Roaming\\Python\\Python310\\site-packages
 
 #后端部署
 #tansci根目录下新增Dockerfile
-#cd /home/ubuntu/tansci && git pull
+#cd /home/ubuntu/tansci && git pull && docker ps
 #mvn clean package -Dmaven.test.skip=true
 #docker build -t tansci:v2.5.0.9 .
 #docker stop tansci && docker rm tansci

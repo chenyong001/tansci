@@ -15,6 +15,7 @@ import com.tansci.domain.system.dto.SysDicDto;
 import com.tansci.enums.QuestionTypeEnum;
 import com.tansci.mapper.chatGPT.ChatGPTMapper;
 import com.tansci.service.chatGPT.ChatGPTService;
+import com.tansci.service.impl.message.WebSocketServer;
 import com.tansci.service.system.SysDicService;
 import com.tansci.service.system.SysUserService;
 import com.tansci.utils.CollectionUtil;
@@ -240,6 +241,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
         }
     }
 
+
     /**
      * 题型：单选、多选、判断题、简答题
      * 题数：10
@@ -327,6 +329,109 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
             save(chatGPT);
             return lamsFileName;
         }
+    }
+
+    /**
+     * 题型：单选、多选、判断题、简答题
+     * 题数：10
+     * 参考答案：A
+     * 反馈：答案解释
+     * 语言：回答的语言 questionType questionNum questionLanguage
+     *
+     * @param prompt
+     * @param speechText
+     * @param system
+     * @return
+     */
+    @Override
+    public String send2AzureLamsWs(String prompt, String speechText, String system, String questionType, String questionNum,
+                                 String questionLanguage,String wsId) {
+        String userId = SecurityUserUtils.getUser().getId();
+
+        new Thread(() -> {
+            System.out.println("新线程Lambda表达式..." +Thread.currentThread().getName());
+
+            String lamsFileName = "出题失败，请重试！！！";
+            String result = "";
+            String uri = "https://tsigpt.openai.azure.com/openai/deployments/tsigpt4/chat/completions?api-version=2023-03-15-preview";
+            try {
+                if (StringUtils.isBlank(azureApiKey)) {
+                    SysDicDto sysDicDto = new SysDicDto();
+                    sysDicDto.setKeyword("chat_gpt_azure_apikey");
+                    List<SysDic> sysDics = sysDicService.dicList(sysDicDto);
+                    if (CollectionUtil.isEmpty(sysDics)) {
+                        log.warn("chatGPT apikey is not get!!!");
+                        return ;
+                    }
+                    azureApiKey = sysDics.get(0).getRemarks();
+                }
+
+                Map<String, String> headerParams = Maps.newHashMap();
+                headerParams.put("Content-Type", "application/json");
+                headerParams.put("api-key", azureApiKey);
+                Map<String, Object> bodyParams = Maps.newHashMap();
+                //      bodyParams.put("model", "gpt-3.5-turbo");
+//      List<ChatGPTImpl.ChatGPTMessage> messages = new ArrayList<>();
+//      if (StringUtils.isBlank(system)) {
+//        system = "你是个擅长根据文章提出选择题和答案的专家.";
+//      }
+//      if (messagesLamsMap.containsKey(userId)) {
+//        messages = messagesLamsMap.get(userId);
+//        messages.add(new ChatGPTImpl.ChatGPTMessage("user", prompt));
+//      } else {
+                List<ChatGPTMessage> messages = getConfig(questionType, questionNum, questionLanguage, prompt);
+                //
+                //        messages.add(new ChatGPTImpl.ChatGPTMessage("system", "根据文章提出选择题和答案"));
+                //        messages.add(new ChatGPTImpl.ChatGPTMessage("user", "根据文章提出选择题和答案"));
+                //        messages.add(new ChatGPTImpl.ChatGPTMessage("assistant",
+                //            "以JSON格式返回,每题4个选项A、B、C、D,JSON包含一个questions数组，每个json对象包含title,options,answer,feedback."));
+//      }
+//      messages.add(new ChatGPTImpl.ChatGPTMessage("user", prompt));
+                bodyParams.put("messages", messages);
+                bodyParams.put("max_tokens", 1024*6);
+                bodyParams.put("temperature", 0);
+                String responseString = HttpClientUtil.sendPostRequest2(uri, headerParams, bodyParams);
+                System.out.println("==========responseString=" + responseString);
+
+                StringBuilder sb = analysisResult(questionType, responseString);
+                result = sb.toString();
+                log.info(result);
+                //      将结果转为lams能接受的docx文档
+                lamsFileName = convert2lams(result, userId);
+
+                //      messagesLamsMap.put(userId, messages);
+                //      private String feedback;
+                //      private String feedbackOnCorrect;
+                //      private String feedbackOnPartiallyCorrect;
+                //      private String feedbackOnIncorrect;
+
+            } catch (Exception e) {
+                log.error("Exception:", e);
+            } finally {
+                //      添加记录
+                ChatGPT chatGPT = new ChatGPT();
+                chatGPT.setUserId(userId);
+                chatGPT.setPrompt(prompt);
+                if (StringUtils.isNotBlank(speechText)) {
+                    chatGPT.setSpeechText(speechText);
+                }
+                chatGPT.setContent(result);
+                chatGPT.setCreateTime(new Date());
+                chatGPT.setUpdateTime(new Date());
+                save(chatGPT);
+
+//                发送消息 333
+                try {
+                    System.out.println("发送消息");
+                    WebSocketServer.sendMessage(wsId,lamsFileName);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+        }).start();
+        return "";
+
     }
 
     private static StringBuilder analysisResult(String questionType, String responseString) throws JSONException {

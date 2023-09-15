@@ -48,18 +48,18 @@
       <div class="chatBox" id='chatBox'>
       </div>
       <div class="chatConfig" id='chatConfig'>
-          题型：
-          <select id="questionType">
-              <option value="0" selected>单选题</option>
-              <option value="1">多选题</option>
-              <option value="2">判断题</option>
-              <option value="3">简答题</option>
-          </select>
-          题数：<input type="text" class="TextBox" style="width: 110px;ime-mode:disabled;" name="questionNum" id="questionNum"
-          value="5" oninput="value=value.replace(/[^\d]/g,'')" />
-          语言： <select id="questionLanguage">
-            <option value="中文" selected>中文</option>
-            <option value="English">English</option>
+        题型：
+        <select id="questionType">
+          <option value="0" selected>单选题</option>
+          <option value="1">多选题</option>
+          <option value="2">判断题</option>
+          <option value="3">简答题</option>
+        </select>
+        题数：<input type="text" class="TextBox" style="width: 110px;ime-mode:disabled;" name="questionNum"
+          id="questionNum" value="5" oninput="value=value.replace(/[^\d]/g,'')" />
+        语言： <select id="questionLanguage">
+          <option value="中文" selected>中文</option>
+          <option value="English">English</option>
         </select>
       </div>
       <div><label for="promptTips" id='promptTips'>提问最大支持2000个字符长度！</label></div>
@@ -97,6 +97,55 @@
     onChatGPT(prompt);
     $('#prompt').val('');
   });
+
+
+  debugger
+  
+    var wsId = getUUID();
+    // var wsId = 333;
+    // 创建一个Socket实例
+    debugger
+    var socket = new WebSocket('ws://localhost:8005/tansci/ws/' + wsId);
+    // 打开Socket 
+    socket.onopen = function (event) {
+      // 发送一个初始化消息
+      socket.send('I am the client and I\'m listening!');
+      // 监听消息
+      socket.onmessage = function (event) {
+        console.log('Client received a message', event);
+        debugger
+        const reply = event.data;
+      var thisTime = getCurrentTime() + '  <br>';
+      var thisResponse = reply;
+
+
+      var parent = document.getElementById('chatBox');
+
+    var loadDiv = document.createElement("div");
+    loadDiv.className = "message my_message";
+    loadDiv.id = "loader"
+
+    parent.appendChild(loadDiv);
+    parent.scrollTop = parent.scrollHeight + parent.clientHeight;
+
+      var div2 = document.createElement("div");
+      div2.className = "message my_message";
+      div2.style = "color: blue"
+      div2.innerHTML = "<p>" + thisResponse + "</p>";//添加文字
+      div2.addEventListener('click', download);
+      parent.removeChild(loadDiv);
+      parent.appendChild(div2);
+      parent.scrollTop = parent.scrollHeight + parent.clientHeight;
+
+      };
+      // 监听Socket的关闭
+      socket.onclose = function (event) {
+        console.log('Client notified socket has closed', event);
+      };
+    }
+    // 关闭Socket.... 
+    //socket.close() 
+
   function onChatGPT(prompt) {
     if (!prompt) {
       return;
@@ -118,25 +167,24 @@
     parent.scrollTop = parent.scrollHeight + parent.clientHeight;
     parent.appendChild(div);
 
-    var loadDiv = document.createElement("div");
-    loadDiv.className = "message my_message";
-    loadDiv.id = "loader"
+    // var loadDiv = document.createElement("div");
+    // loadDiv.className = "message my_message";
+    // loadDiv.id = "loader"
 
-    parent.appendChild(loadDiv);
-    parent.scrollTop = parent.scrollHeight + parent.clientHeight;
+    // parent.appendChild(loadDiv);
+    // parent.scrollTop = parent.scrollHeight + parent.clientHeight;
 
     var questionType = $('#questionType').val();
     var questionNum = $('#questionNum').val();
     var questionLanguage = $('#questionLanguage').val();
 
     // 入库数据
-
+    
     // 生产 +"&remark="+remark
-    // var url = "https://opencast.tet-ai.com.sg/tansci/chatGPT/send2AzureLams?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText);
-       var url = "https://opencast.tet-ai.com.sg/tansci/chatGPT/send2AzureLams?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText)+ "&questionType=" + encodeURIComponent(questionType)+ "&questionNum=" + encodeURIComponent(questionNum)+ "&questionLanguage=" + encodeURIComponent(questionLanguage);
+    //  var url = "https://opencast.tet-ai.com.sg/tansci/chatGPT/send2AzureLamsWs?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText)+ "&questionType=" + encodeURIComponent(questionType)+ "&questionNum=" + encodeURIComponent(questionNum)+ "&questionLanguage=" + encodeURIComponent(questionLanguage)+ "&wsid=" + encodeURIComponent(wsid);
 
     // 开发
-    // var url = "http://localhost:8005/tansci/chatGPT/send2AzureLams?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText)+ "&questionType=" + encodeURIComponent(questionType)+ "&questionNum=" + encodeURIComponent(questionNum)+ "&questionLanguage=" + encodeURIComponent(questionLanguage);
+    var url = "http://localhost:8005/tansci/chatGPT/send2AzureLamsWs?prompt=" + encodeURIComponent(prompt) + "&speechText=" + encodeURIComponent(speechText) + "&questionType=" + encodeURIComponent(questionType) + "&questionNum=" + encodeURIComponent(questionNum) + "&questionLanguage=" + encodeURIComponent(questionLanguage)+ "&wsId=" + encodeURIComponent(wsId);
 
     var a = new XMLHttpRequest();
     a.open("Post", url);
@@ -155,72 +203,76 @@
         window.location.href = "/";
         return;
       }
-      const reply = jsonData.result;
-      var thisTime = getCurrentTime() + '  <br>';
-      var thisResponse = reply;
-
-
-      var div2 = document.createElement("div");
-      div2.className = "message my_message";
-      div2.style = "color: blue"
-      div2.innerHTML = "<p>" + thisResponse + "</p>";//添加文字
-      div2.addEventListener('click', download);
-      parent.removeChild(loadDiv);
-      parent.appendChild(div2);
-      parent.scrollTop = parent.scrollHeight + parent.clientHeight;
+      
 
     }
-  }
-  /**
-* 获取当前日期
-* @returns {string} 返回值类型”yyyy-MM-dd HH:mm:ss“，例如：2022-09-13 21:18:23。
-*/
-  function getCurrentTime() {
-    var datetime = new Date();
-    var year = datetime.getFullYear();
-    var month = datetime.getMonth() + 1 < 10 ? "0" + (datetime.getMonth() + 1) : datetime.getMonth() + 1;
-    var date = datetime.getDate() < 10 ? "0" + datetime.getDate() : datetime.getDate();
-    var date = datetime.getDate() < 10 ? "0" + datetime.getDate() : datetime.getDate();
-    var hour = datetime.getHours() < 10 ? "0" + datetime.getHours() : datetime.getHours();
-    var minute = datetime.getMinutes() < 10 ? "0" + datetime.getMinutes() : datetime.getMinutes();
-    var second = datetime.getSeconds() < 10 ? "0" + datetime.getSeconds() : datetime.getSeconds();
-    return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
-  }
-
-  function download() {
-    var fileName = this.innerText;
-    var token = localStorage.getItem('token');
-    if (!token) {
-      localStorage.setItem('chat', 2);
-      window.location.href = "/";
-      return;
-    }
-    if (fileName) {
-      $.ajax({
-        type: 'get',
-        url: "https://opencast.tet-ai.com.sg/tansci/chatGPT/download?fileName=" + fileName, //上传文件的请求路径必须是绝对路劲
-        // url: "http://localhost:8005/tansci/chatGPT/download?fileName=" + fileName, //上传文件的请求路径必须是绝对路劲
-        headers: { "Content-Type": "application/x-www-form-urlencoded", "Authorization": 'Bearer ' + token },
-        xhrFields: { responseType: "blob" },
-      }).then(function (res) {
-        let url = window.URL.createObjectURL(new Blob([res]));
-        let link = document.createElement("a");
-        link.style.display = "none";
-        link.href = url;
-
-        var downloadFileName = fileName.substring(fileName.indexOf('/') + 1, fileName.length);
-
-        link.setAttribute("download", downloadFileName);
-        document.body.appendChild(link);
-        link.click();
-        // 释放URL对象所占资源
-        window.URL.revokeObjectURL(url);
-        // 用完即删
-        document.body.removeChild(link);
-      })
-    }
-
   };
+   
+  
+  function getUUID() {
+  var d = new Date().getTime();
+  if (window.performance && typeof window.performance.now === "function") {
+    d += performance.now(); //use high-precision timer if available
+  }
+  var uuid = "xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    var r = (d + Math.random() * 16) % 16 | 0;
+    d = Math.floor(d / 16);
+    return (c == "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
+  return uuid;
+}
+
+
+      /**
+    * 获取当前日期
+    * @returns {string} 返回值类型”yyyy-MM-dd HH:mm:ss“，例如：2022-09-13 21:18:23。
+    */
+      function getCurrentTime() {
+        var datetime = new Date();
+        var year = datetime.getFullYear();
+        var month = datetime.getMonth() + 1 < 10 ? "0" + (datetime.getMonth() + 1) : datetime.getMonth() + 1;
+        var date = datetime.getDate() < 10 ? "0" + datetime.getDate() : datetime.getDate();
+        var date = datetime.getDate() < 10 ? "0" + datetime.getDate() : datetime.getDate();
+        var hour = datetime.getHours() < 10 ? "0" + datetime.getHours() : datetime.getHours();
+        var minute = datetime.getMinutes() < 10 ? "0" + datetime.getMinutes() : datetime.getMinutes();
+        var second = datetime.getSeconds() < 10 ? "0" + datetime.getSeconds() : datetime.getSeconds();
+        return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
+      }
+
+      function download() {
+        var fileName = this.innerText;
+        var token = localStorage.getItem('token');
+        if (!token) {
+          localStorage.setItem('chat', 2);
+          window.location.href = "/";
+          return;
+        }
+        if (fileName) {
+          $.ajax({
+            type: 'get',
+            // url: "https://opencast.tet-ai.com.sg/tansci/chatGPT/download?fileName=" + fileName, //上传文件的请求路径必须是绝对路劲
+            url: "http://localhost:8005/tansci/chatGPT/download?fileName=" + fileName, //上传文件的请求路径必须是绝对路劲
+            headers: { "Content-Type": "application/x-www-form-urlencoded", "Authorization": 'Bearer ' + token },
+            xhrFields: { responseType: "blob" },
+          }).then(function (res) {
+            let url = window.URL.createObjectURL(new Blob([res]));
+            let link = document.createElement("a");
+            link.style.display = "none";
+            link.href = url;
+
+            var downloadFileName = fileName.substring(fileName.indexOf('/') + 1, fileName.length);
+
+            link.setAttribute("download", downloadFileName);
+            document.body.appendChild(link);
+            link.click();
+            // 释放URL对象所占资源
+            window.URL.revokeObjectURL(url);
+            // 用完即删
+            document.body.removeChild(link);
+          })
+        }
+
+      };
 
 //  function showLoading() {
 //     document.getElementById("loader").style.display = "block";
