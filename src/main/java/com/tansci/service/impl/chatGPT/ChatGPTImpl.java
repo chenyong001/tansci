@@ -516,7 +516,7 @@ public class ChatGPTImpl extends ServiceImpl<ChatGPTMapper, ChatGPT> implements 
             messages.add(new ChatGPTMessage("system", "你是个擅长根据文章提出问题和答案、反馈(feedback)的专家"));
             messages.add(new ChatGPTMessage("user", "请用" + questionLanguage + ",根据文章提出" + questionNum + "道判断题、答案和考点(lo)"));
             messages.add(new ChatGPTMessage("assistant",
-                    "以JSON格式返回,JSON包含一个questions数组，每个json对象包含title、options、answer、feedback、lo,选项为‘true’和‘false’"));
+                    "以JSON格式返回,JSON包含一个questions数组，每个json对象包含title、options(json对象)、answer、feedback、lo,options为‘A:true’和‘B:false’"));
             messages.add(new ChatGPTMessage("user", prompt));
         } else if (questionType.equalsIgnoreCase(QuestionTypeEnum.SHORT_ANSWER_CHOICE.getType())) {
 //      简答题
