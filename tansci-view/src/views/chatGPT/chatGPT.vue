@@ -70,8 +70,8 @@ const onChatGptAzure = () => {
   // window.open("/aigc-chat-azure.html");
 };
 const onChatGptAzureLams = () => {
-  // window.open("/aigc-chat-azure-lams");
-  window.open("/aigc-chat-azure-lams.html");
+  window.open("/aigc-chat-azure-lams");
+  // window.open("/aigc-chat-azure-lams.html");
 };
 
 const menuClick = val => {

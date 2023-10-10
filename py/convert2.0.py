@@ -1,3 +1,6 @@
+# This Python file uses the following encoding: utf-8
+import os, sys
+
 import argparse
 # 传参：filePath
 from docx import Document
@@ -28,6 +31,8 @@ def convertext(fileName,targetName):  #path指的是需要处理文档的路径�
             if item[:7] == "Answer:":
                 ans += item
             elif item[:9] == "Feedback:":
+                ans += item
+            elif item[:3] == "LO:":
                 ans += item
             elif item[:2] not in ["A)", "B)", "C)", "D)","A.","B.","C.","D.","a)","b)","c)","d)","a.","b.","c.","d."] and item[:4] not in ["正确答案","答案：A", "答案：B", "答案：C", "答案：D","答案：a","答案：b","答案：c","答案：d"]:
                 ans += "Question: "

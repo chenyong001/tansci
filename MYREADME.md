@@ -26,8 +26,8 @@ C:\\Users\\50212\\AppData\\Roaming\\Python\\Python310\\site-packages
 #docker run -p 8002:80 --name=cv -d cv:v1.1
 
 #后端部署
-    #tansci根目录下新增Dockerfile
-#cd /home/ubuntu/tansci && git pull
+#tansci根目录下新增Dockerfile
+#cd /home/ubuntu/tansci && git pull && docker ps
 #mvn clean package -Dmaven.test.skip=true
 #docker build -t tansci:v2.5.0.9 .
 #docker stop tansci && docker rm tansci

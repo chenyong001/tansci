@@ -117,6 +117,19 @@ public class ChatGPTController {
     String result = chatGPTService.send2AzureLams(prompt,speechText,system,questionType,questionNum,questionLanguage);
     return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, result);
   }
+  @PostMapping("/send2AzureLamsWs")
+  @ResponseBody
+  public Wrapper<String> send2AzureLamsWs(String prompt,@RequestParam(required=false) String speechText,@RequestParam(required=false) String system
+          ,@RequestParam(required=false) String questionType,@RequestParam(required=false) String questionNum,@RequestParam(required=false) String questionLanguage
+          ,@RequestParam(required=true) String wsId) {
+    log.info("==send2AzureLamsWs==ChatGPT=======,prompt={},speechText={},wsId={}", prompt,speechText,wsId);
+    if (StringUtils.isBlank(prompt)) {
+      //      如果数据为空，则不处理，直接返回
+      return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, null);
+    }
+    String result = chatGPTService.send2AzureLamsWs(prompt,speechText,system,questionType,questionNum,questionLanguage,wsId);
+    return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, result);
+  }
   @ApiOperation(value = "chatGPT列表", notes = "chatGPT列表")
   @Log(modul = "列表", type = Constants.SELECT, desc = "列表")
   @ResponseBody
