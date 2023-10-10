@@ -107,13 +107,16 @@ import { timeFormate2 } from "../../utils/utils.js";
      
     }
        const onAddNoteTranslate = () => {
-        window.open('/index-azure-translate.html' )
+        window.open('/index-azure-translate' )
+        // window.open('/index-azure-translate.html' )
     }
            const onAddNoteUpload = () => {
-        window.open('/index-azure-upload.html' )
+        window.open('/index-azure-upload' )
+        // window.open('/index-azure-upload.html' )
     }
            const onAddNoteUploadTranslate = () => {
-        window.open('/index-azure-upload-translate.html' )
+        window.open('/index-azure-upload-translate' )
+        // window.open('/index-azure-upload-translate.html' )
     }
                const onAddNote4and1 = () => {
         window.open('/index-azure-4and1.html' )
@@ -126,7 +129,8 @@ import { timeFormate2 } from "../../utils/utils.js";
         // window.open('/index-azure-subtitle.html' )
     }
        const onAddNoteTranslateSubtitle = () => {
-        window.open('/index-azure-translate-subtitle.html' )
+        window.open('/index-azure-translate-subtitle' )
+        // window.open('/index-azure-translate-subtitle.html' )
     }
            const onTranslate = () => {
         window.open('/translate.html' )
